@@ -1,22 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Overlay } from 'react-overlays';
-import { components } from 'react-select';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Overlay } from "react-overlays";
+import { components } from "react-select";
 
-import BaseField from 'components/form-elements/BaseField';
-import Select from 'utils/Select';
+import BaseField from "components/form-elements/BaseField";
+import Select from "utils/Select";
 
-import 'components/Filter/FilterStyles.scss';
-import 'components/form-elements/FilterSelectField.scss';
+import "components/Filter/FilterStyles.scss";
+import "components/form-elements/FilterSelectField.scss";
 
-const Dropdown = ({
-  children,
-  style,
-  inputContainerRec,
-  hasOptions,
-}) => {
+const Dropdown = ({ children, style, inputContainerRec, hasOptions }) => {
   const dropdownRef = useRef(null);
   // if current dropdown width is smaller than the input container
   // then change dropdown width to the same width as the input container
@@ -67,13 +62,15 @@ Dropdown.defaultProps = {
 };
 
 const Menu = (props) => {
-  const inputContainer = document.getElementById(`${props.selectProps.id}-container`);
+  const inputContainer = document.getElementById(
+    `${props.selectProps.id}-container`,
+  );
   return (
     <Overlay
       show
       placement="bottom"
       target={inputContainer}
-      container={document.getElementById('root')}
+      container={document.getElementById("root")}
     >
       <Dropdown
         inputContainerRec={inputContainer.getBoundingClientRect()}
@@ -93,24 +90,18 @@ Menu.propTypes = {
   selectProps: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
-  options: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string,
-    PropTypes.shape({})])).isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]),
+  ).isRequired,
 };
 
 const Option = (props) => (
   <components.Option {...props}>
     <div role="listitem" className="d-flex flex-row align-items-center">
-      {props.isMulti
-        && (
-          <input
-            type="checkbox"
-            checked={props.isSelected}
-            className="mr-1"
-          />
-        )}
-      <span className="option-label">
-        {props.data.label}
-      </span>
+      {props.isMulti && (
+        <input type="checkbox" checked={props.isSelected} className="mr-1" />
+      )}
+      <span className="option-label">{props.data.label}</span>
     </div>
   </components.Option>
 );
@@ -125,14 +116,16 @@ Option.propTypes = {
 
 const IndicatorsContainer = ({ children, ...props }) => (
   <components.IndicatorsContainer {...props}>
-    {props.selectProps.isMulti && props.selectProps.value?.length > 0
-      && (
-        <div className="d-flex flex-column justify-content-center align-items-center selected-count-indicator-container">
-          <div className="selected-count-indicator-inner" data-testid="filter-count-indicator">
-            { props.selectProps.value.length }
-          </div>
+    {props.selectProps.isMulti && props.selectProps.value?.length > 0 && (
+      <div className="d-flex flex-column justify-content-center align-items-center selected-count-indicator-container">
+        <div
+          className="selected-count-indicator-inner"
+          data-testid="filter-count-indicator"
+        >
+          {props.selectProps.value.length}
         </div>
-      )}
+      </div>
+    )}
     {children}
   </components.IndicatorsContainer>
 );
@@ -148,27 +141,24 @@ IndicatorsContainer.propTypes = {
   ]).isRequired,
   selectProps: PropTypes.shape({
     isMulti: PropTypes.bool.isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.array,
-      PropTypes.shape({}),
-    ]),
+    value: PropTypes.oneOfType([PropTypes.array, PropTypes.shape({})]),
   }).isRequired,
   width: PropTypes.string,
 };
 
 const FilterSelectField = (props) => {
   const renderInput = ({ className, ...attributes }) => {
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState("");
 
     const handleInputChange = (value, action) => {
       // only set the input when the action that caused the
       // change equals to "input-change" and ignore the other
       // ones like: "set-value", "input-blur", and "menu-close"
-      if (action.action === 'input-change') setInput(value);
+      if (action.action === "input-change") setInput(value);
     };
 
     const handleKeyDown = (event) => {
-      if (event.key === 'Backspace' && !input) {
+      if (event.key === "Backspace" && !input) {
         event.preventDefault();
       }
     };
@@ -177,7 +167,7 @@ const FilterSelectField = (props) => {
       <Select
         name={attributes.id}
         {...attributes}
-        className={`filter-select ${!_.isEmpty(attributes?.value) ? 'filter-select-has-value' : ''} ${className}`}
+        className={`filter-select ${!_.isEmpty(attributes?.value) ? "filter-select-has-value" : ""} ${className}`}
         classNamePrefix="filter-select"
         hideSelectedOptions={false}
         controlShouldRenderValue={!attributes.multi}
@@ -193,12 +183,7 @@ const FilterSelectField = (props) => {
     );
   };
 
-  return (
-    <BaseField
-      {...props}
-      renderInput={renderInput}
-    />
-  );
+  return <BaseField {...props} renderInput={renderInput} />;
 };
 
 export default FilterSelectField;
@@ -208,5 +193,5 @@ FilterSelectField.propTypes = {
 };
 
 FilterSelectField.defaultProps = {
-  className: '',
+  className: "",
 };

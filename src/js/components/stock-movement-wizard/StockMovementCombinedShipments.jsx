@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import AddItemsPage from 'components/stock-movement-wizard/combined-shipments/AddItemsPage';
-import CreateStockMovement from 'components/stock-movement-wizard/combined-shipments/CreateStockMovement';
-import SendMovementPage from 'components/stock-movement-wizard/combined-shipments/SendMovementPage';
-import Wizard from 'components/wizard/Wizard';
-import apiClient from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import AddItemsPage from "components/stock-movement-wizard/combined-shipments/AddItemsPage";
+import CreateStockMovement from "components/stock-movement-wizard/combined-shipments/CreateStockMovement";
+import SendMovementPage from "components/stock-movement-wizard/combined-shipments/SendMovementPage";
+import Wizard from "components/wizard/Wizard";
+import apiClient from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 /** Main combined shipments stock movement form's wizard component. */
 class StockMovementCombinedShipments extends Component {
@@ -28,7 +28,7 @@ class StockMovementCombinedShipments extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'stockMovement');
+    this.props.fetchTranslations("", "stockMovement");
 
     if (this.props.stockMovementTranslationsFetched) {
       this.dataFetched = true;
@@ -38,7 +38,7 @@ class StockMovementCombinedShipments extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'stockMovement');
+      this.props.fetchTranslations(nextProps.locale, "stockMovement");
     }
 
     if (nextProps.stockMovementTranslationsFetched && !this.dataFetched) {
@@ -54,46 +54,49 @@ class StockMovementCombinedShipments extends Component {
     }
     return [
       {
-        text: this.props.translate('react.stockMovement.label', 'Stock Movement'),
-        color: '#000000',
-        delimeter: ' | ',
+        text: this.props.translate(
+          "react.stockMovement.label",
+          "Stock Movement",
+        ),
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: values.movementNumber,
-        color: '#000000',
-        delimeter: ' - ',
+        color: "#000000",
+        delimeter: " - ",
       },
       {
         text: values.origin.name,
-        color: '#004d40',
-        delimeter: ' to ',
+        color: "#004d40",
+        delimeter: " to ",
       },
       {
         text: values.destination.name,
-        color: '#01579b',
-        delimeter: ', ',
+        color: "#01579b",
+        delimeter: ", ",
       },
       {
         text: values.dateRequested,
-        color: '#4a148c',
-        delimeter: ', ',
+        color: "#4a148c",
+        delimeter: ", ",
       },
       {
         text: values.description,
-        color: '#770838',
-        delimeter: '',
+        color: "#770838",
+        delimeter: "",
       },
     ];
   }
 
   get additionalWizardTitle() {
     const { currentPage, values } = this.state;
-    const shipped = values.shipped ? 'SHIPPED' : '';
-    const received = values.received ? 'RECEIVED' : '';
+    const shipped = values.shipped ? "SHIPPED" : "";
+    const received = values.received ? "RECEIVED" : "";
     if (currentPage === 3) {
       return (
         <span className="shipment-status float-right">
-          {`${shipped || received || 'PENDING'}`}
+          {`${shipped || received || "PENDING"}`}
         </span>
       );
     }
@@ -106,9 +109,9 @@ class StockMovementCombinedShipments extends Component {
    */
   get stepList() {
     return [
-      this.props.translate('react.stockMovement.create.label', 'Create'),
-      this.props.translate('react.stockMovement.addItems.label', 'Add items'),
-      this.props.translate('react.stockMovement.send.label', 'Send'),
+      this.props.translate("react.stockMovement.create.label", "Create"),
+      this.props.translate("react.stockMovement.addItems.label", "Add items"),
+      this.props.translate("react.stockMovement.send.label", "Send"),
     ];
   }
 
@@ -132,7 +135,8 @@ class StockMovementCombinedShipments extends Component {
     if (this.props.match.params.stockMovementId) {
       this.props.showSpinner();
       const url = `/api/stockMovements/${this.props.match.params.stockMovementId}`;
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const resp = response.data.data;
           const originType = resp.origin.locationType;
@@ -145,7 +149,7 @@ class StockMovementCombinedShipments extends Component {
               id: resp.origin.id,
               type: originType ? originType.locationTypeCode : null,
               name: resp.origin.name,
-              label: `${resp.origin.organizationCode ? `${resp.origin.organizationCode} - ` : ''}${resp.origin.name}`,
+              label: `${resp.origin.organizationCode ? `${resp.origin.organizationCode} - ` : ""}${resp.origin.name}`,
             },
             destination: {
               id: resp.destination.id,
@@ -157,9 +161,9 @@ class StockMovementCombinedShipments extends Component {
 
           let currentPage = 1;
           switch (values.statusCode) {
-            case 'NEW':
+            case "NEW":
               break;
-            case 'PENDING':
+            case "PENDING":
               currentPage = 2;
               break;
             default:
@@ -193,12 +197,15 @@ class StockMovementCombinedShipments extends Component {
 
 const mapStateToProps = (state) => ({
   locale: state.session.activeLanguage,
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(StockMovementCombinedShipments);
 
 StockMovementCombinedShipments.propTypes = {

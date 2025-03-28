@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import PutAwayCheckPage from 'components/put-away/PutAwayCheckPage';
-import PutAwayPage from 'components/put-away/PutAwayPage';
-import PutAwaySecondPage from 'components/put-away/PutAwaySecondPage';
-import Wizard from 'components/wizard/Wizard';
-import apiClient, { parseResponse } from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import PutAwayCheckPage from "components/put-away/PutAwayCheckPage";
+import PutAwayPage from "components/put-away/PutAwayPage";
+import PutAwaySecondPage from "components/put-away/PutAwaySecondPage";
+import Wizard from "components/wizard/Wizard";
+import apiClient, { parseResponse } from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/put-away/PutAway.scss';
+import "components/put-away/PutAway.scss";
 
 /** Main put-away form's component. */
 class PutAwayMainPage extends Component {
@@ -30,7 +30,7 @@ class PutAwayMainPage extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'putAway');
+    this.props.fetchTranslations("", "putAway");
 
     if (this.props.putAwayTranslationsFetched) {
       this.dataFetched = true;
@@ -41,7 +41,7 @@ class PutAwayMainPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'putAway');
+      this.props.fetchTranslations(nextProps.locale, "putAway");
     }
 
     if (nextProps.putAwayTranslationsFetched && !this.dataFetched) {
@@ -56,9 +56,15 @@ class PutAwayMainPage extends Component {
    */
   get stepList() {
     return [
-      this.props.translate('react.putAway.createPutAway.label', 'Create Putaway'),
-      this.props.translate('react.putAway.startPutAway.label', 'Start Putaway'),
-      this.props.translate('react.putAway.completePutAway.label', 'Complete Putaway'),
+      this.props.translate(
+        "react.putAway.createPutAway.label",
+        "Create Putaway",
+      ),
+      this.props.translate("react.putAway.startPutAway.label", "Start Putaway"),
+      this.props.translate(
+        "react.putAway.completePutAway.label",
+        "Complete Putaway",
+      ),
     ];
   }
 
@@ -67,14 +73,14 @@ class PutAwayMainPage extends Component {
     if (putAway?.putAway?.putawayNumber) {
       return [
         {
-          text: this.props.translate('react.putAway.putAway.label', 'Putaway'),
-          color: '#000000',
-          delimeter: ' | ',
+          text: this.props.translate("react.putAway.putAway.label", "Putaway"),
+          color: "#000000",
+          delimeter: " | ",
         },
         {
           text: putAway.putAway.putawayNumber,
-          color: '#000000',
-          delimeter: '',
+          color: "#000000",
+          delimeter: "",
         },
       ];
     }
@@ -93,13 +99,17 @@ class PutAwayMainPage extends Component {
 
       const url = `/api/putaways/${this.props.match.params.putAwayId}`;
 
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const putAway = parseResponse(response.data.data);
 
           this.props.hideSpinner();
 
-          this.setState({ putAway: { putAway }, page: putAway.putawayStatus === 'COMPLETED' ? 3 : 2 });
+          this.setState({
+            putAway: { putAway },
+            page: putAway.putawayStatus === "COMPLETED" ? 3 : 2,
+          });
         })
         .catch(() => this.props.hideSpinner());
     }
@@ -111,7 +121,7 @@ class PutAwayMainPage extends Component {
     const locationId = location.id;
     const pageList = [PutAwayPage, PutAwaySecondPage, PutAwayCheckPage];
 
-    if (_.get(location, 'id')) {
+    if (_.get(location, "id")) {
       return (
         <Wizard
           pageList={pageList}
@@ -122,7 +132,10 @@ class PutAwayMainPage extends Component {
           prevPage={page === 1 ? 1 : page - 1}
           updateWizardValues={this.updateWizardValues}
           additionalProps={{
-            locationId, location, history, match,
+            locationId,
+            location,
+            history,
+            match,
           }}
         />
       );
@@ -139,9 +152,13 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default withRouter(connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
-})(PutAwayMainPage));
+export default withRouter(
+  connect(mapStateToProps, {
+    showSpinner,
+    hideSpinner,
+    fetchTranslations,
+  })(PutAwayMainPage),
+);
 
 PutAwayMainPage.propTypes = {
   location: PropTypes.shape({

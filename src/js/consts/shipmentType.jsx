@@ -1,8 +1,12 @@
-import React from 'react';
+import React from "react";
 
 import {
-  RiFlightTakeoffLine, RiInformationLine, RiShipLine, RiSuitcaseLine, RiTruckLine,
-} from 'react-icons/ri';
+  RiFlightTakeoffLine,
+  RiInformationLine,
+  RiShipLine,
+  RiSuitcaseLine,
+  RiTruckLine,
+} from "react-icons/ri";
 
 const ShipmentType = {
   AIR: {

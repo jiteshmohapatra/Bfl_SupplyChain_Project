@@ -1,32 +1,27 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import {
-  createInfoBar,
-  hideInfoBar,
-  hideSpinner,
-  showSpinner,
-} from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import CheckboxField from 'components/form-elements/CheckboxField';
-import LabelField from 'components/form-elements/LabelField';
-import TextField from 'components/form-elements/TextField';
-import { REPLENISHMENT_URL } from 'consts/applicationUrls';
-import { InfoBar, InfoBarConfigs } from 'consts/infoBar';
-import apiClient, { flattenRequest, parseResponse } from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import Select from 'utils/Select';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { createInfoBar, hideInfoBar, hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import CheckboxField from "components/form-elements/CheckboxField";
+import LabelField from "components/form-elements/LabelField";
+import TextField from "components/form-elements/TextField";
+import { REPLENISHMENT_URL } from "consts/applicationUrls";
+import { InfoBar, InfoBarConfigs } from "consts/infoBar";
+import apiClient, { flattenRequest, parseResponse } from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import Select from "utils/Select";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const FIELD = {
   requirements: {
@@ -35,11 +30,14 @@ const FIELD = {
     fields: {
       checked: {
         type: CheckboxField,
-        label: 'react.stockMovement.selectAll.label',
-        defaultMessage: 'Select All',
+        label: "react.stockMovement.selectAll.label",
+        defaultMessage: "Select All",
         flexWidth: 4,
         getDynamicAttr: ({
-          rowIndex, allRowsSelected, selectAllCode, updateSelectedItems,
+          rowIndex,
+          allRowsSelected,
+          selectAllCode,
+          updateSelectedItems,
         }) => ({
           headerHtml: () => (
             <input
@@ -52,95 +50,93 @@ const FIELD = {
           onChange: (checkState) => updateSelectedItems(checkState, rowIndex),
         }),
       },
-      'product.productCode': {
+      "product.productCode": {
         type: LabelField,
-        label: 'react.stockMovement.productCode.label',
-        defaultMessage: 'Code',
+        label: "react.stockMovement.productCode.label",
+        defaultMessage: "Code",
         flexWidth: 5,
-        headerAlign: 'left',
+        headerAlign: "left",
         attributes: {
-          cellClassName: 'text-left',
+          cellClassName: "text-left",
         },
       },
-      'product.name': {
+      "product.name": {
         type: LabelField,
-        label: 'react.stockMovement.product.label',
-        defaultMessage: 'Product',
+        label: "react.stockMovement.product.label",
+        defaultMessage: "Product",
         flexWidth: 30,
-        headerAlign: 'left',
+        headerAlign: "left",
         attributes: {
-          cellClassName: 'text-left',
+          cellClassName: "text-left",
           showValueTooltip: true,
         },
       },
       zone: {
         type: LabelField,
-        label: 'react.replenishment.zone.label',
-        defaultMessage: 'Zone',
-        headerAlign: 'left',
+        label: "react.replenishment.zone.label",
+        defaultMessage: "Zone",
+        headerAlign: "left",
         attributes: {
-          className: 'text-left',
+          className: "text-left",
         },
       },
-      'binLocation.name': {
+      "binLocation.name": {
         type: LabelField,
-        label: 'react.replenishment.bin.label',
-        defaultMessage: 'Bin',
-        headerAlign: 'left',
+        label: "react.replenishment.bin.label",
+        defaultMessage: "Bin",
+        headerAlign: "left",
         attributes: {
           formatValue: (value) => {
             if (value) {
               return value;
             }
-            return 'DEFAULT';
+            return "DEFAULT";
           },
-          className: 'text-left',
+          className: "text-left",
         },
       },
       quantityInBin: {
         type: LabelField,
-        label: 'react.replenishment.quantityInBin.label',
-        defaultMessage: 'Qty in Bin',
-        headerAlign: 'right',
+        label: "react.replenishment.quantityInBin.label",
+        defaultMessage: "Qty in Bin",
+        headerAlign: "right",
         flexWidth: 8,
         attributes: {
-          cellClassName: 'text-right',
+          cellClassName: "text-right",
         },
       },
       maxQuantity: {
         type: LabelField,
-        label: 'react.replenishment.maxQuantity.label',
-        defaultMessage: 'Max Qty',
-        headerAlign: 'right',
+        label: "react.replenishment.maxQuantity.label",
+        defaultMessage: "Max Qty",
+        headerAlign: "right",
         flexWidth: 8,
         attributes: {
-          cellClassName: 'text-right',
+          cellClassName: "text-right",
         },
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.replenishment.quantityAvailable.label',
-        defaultMessage: 'Qty available',
-        headerAlign: 'right',
+        label: "react.replenishment.quantityAvailable.label",
+        defaultMessage: "Qty available",
+        headerAlign: "right",
         flexWidth: 8,
         attributes: {
-          cellClassName: 'text-right',
+          cellClassName: "text-right",
         },
       },
       quantity: {
         type: TextField,
-        label: 'react.stockMovement.quantityToTransfer.label',
-        defaultMessage: 'Qty to Transfer',
-        headerAlign: 'center',
+        label: "react.stockMovement.quantityToTransfer.label",
+        defaultMessage: "Qty to Transfer",
+        headerAlign: "center",
         attributes: {
-          type: 'number',
-          cellClassName: 'text-center',
+          type: "number",
+          cellClassName: "text-center",
         },
         flexWidth: 10,
-        fieldKey: '',
-        getDynamicAttr: ({
-          updateRow, values, rowIndex,
-        }) => ({
+        fieldKey: "",
+        getDynamicAttr: ({ updateRow, values, rowIndex }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
@@ -157,15 +153,21 @@ function validate(values) {
       return;
     }
     if (!item.quantity) {
-      errors.requirements[key] = { quantity: 'react.replenishment.error.emptyQtyToTransfer.label' };
+      errors.requirements[key] = {
+        quantity: "react.replenishment.error.emptyQtyToTransfer.label",
+      };
       return;
     }
     if (item.quantity < 1) {
-      errors.requirements[key] = { quantity: 'react.replenishment.error.quantity.label' };
+      errors.requirements[key] = {
+        quantity: "react.replenishment.error.quantity.label",
+      };
       return;
     }
     if (item.quantity > item.quantityAvailable) {
-      errors.requirements[key] = { quantity: 'react.replenishment.error.quantity.greaterThanQATP.label' };
+      errors.requirements[key] = {
+        quantity: "react.replenishment.error.quantity.greaterThanQATP.label",
+      };
     }
   });
 
@@ -174,14 +176,14 @@ function validate(values) {
     _.forEach(values.requirements, (item, key) => {
       errors.requirements[key] = {
         ...errors.requirements[key],
-        checked: 'react.replenishment.error.selected.label',
+        checked: "react.replenishment.error.selected.label",
       };
     });
   }
   return errors;
 }
 
-const DEFAULT_OPTION = 'BELOW_MINIMUM';
+const DEFAULT_OPTION = "BELOW_MINIMUM";
 
 class CreateReplenishment extends Component {
   constructor(props) {
@@ -205,7 +207,9 @@ class CreateReplenishment extends Component {
       this.fetchRequirements(this.props.locationId);
     }
 
-    this.props.createInfoBar(InfoBarConfigs[InfoBar.STOCK_REPLENISHMENT_DESCRIPTION]);
+    this.props.createInfoBar(
+      InfoBarConfigs[InfoBar.STOCK_REPLENISHMENT_DESCRIPTION],
+    );
   }
 
   componentWillUnmount() {
@@ -234,9 +238,11 @@ class CreateReplenishment extends Component {
     this.setState((prev) => ({
       values: update(prev.values, {
         requirements: {
-          $apply: (req) => req.map((it) => ({
-            ...it, checked: !isAllSelected,
-          })),
+          $apply: (req) =>
+            req.map((it) => ({
+              ...it,
+              checked: !isAllSelected,
+            })),
         },
       }),
     }));
@@ -265,8 +271,9 @@ class CreateReplenishment extends Component {
   dataFetched = false;
 
   fetchStatusOptions() {
-    const url = '/api/replenishments/statusOptions';
-    return apiClient.get(url)
+    const url = "/api/replenishments/statusOptions";
+    return apiClient
+      .get(url)
       .then((resp) => {
         const statusOptions = resp.data.data;
         this.setState({ statusOptions });
@@ -282,29 +289,40 @@ class CreateReplenishment extends Component {
       url += `&inventoryLevelStatus=${inventoryLevelStatus.id}`;
     }
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((resp) => {
-        const requirements = _.map(parseResponse(resp.data.data), (requirement) => ({
-          ...requirement,
-          quantity: requirement.quantityNeeded,
-          checked: true,
-        }));
-        this.setState({ values: { requirements }, isDirty: false }, () => this.props.hideSpinner());
+        const requirements = _.map(
+          parseResponse(resp.data.data),
+          (requirement) => ({
+            ...requirement,
+            quantity: requirement.quantityNeeded,
+            checked: true,
+          }),
+        );
+        this.setState({ values: { requirements }, isDirty: false }, () =>
+          this.props.hideSpinner(),
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
 
   createReplenishment(values) {
     this.props.showSpinner();
-    const url = '/api/replenishments/';
+    const url = "/api/replenishments/";
     const payload = {
-      replenishmentItems: values.requirements.filter((item) => item.checked && item.quantity > 0),
+      replenishmentItems: values.requirements.filter(
+        (item) => item.checked && item.quantity > 0,
+      ),
     };
 
-    apiClient.post(url, flattenRequest(payload))
+    apiClient
+      .post(url, flattenRequest(payload))
       .then((response) => {
         this.props.hideSpinner();
-        this.props.history.push(REPLENISHMENT_URL.edit(response.data?.data?.id));
+        this.props.history.push(
+          REPLENISHMENT_URL.edit(response.data?.data?.id),
+        );
         this.props.nextPage(response.data?.data);
       })
       .catch(() => this.props.hideSpinner());
@@ -313,27 +331,37 @@ class CreateReplenishment extends Component {
   inventoryLevelStatusChange(value) {
     if (this.state.isDirty) {
       confirmAlert({
-        title: this.props.translate('react.replenishment.message.confirmStatusChange.label', 'Confirm inventory level status change'),
+        title: this.props.translate(
+          "react.replenishment.message.confirmStatusChange.label",
+          "Confirm inventory level status change",
+        ),
         message: this.props.translate(
-          'react.replenishment.confirmStatusChange.label',
-          'Previously edited quantities will be lost after this change. Are you sure?',
+          "react.replenishment.confirmStatusChange.label",
+          "Previously edited quantities will be lost after this change. Are you sure?",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
-            onClick: () => this.setState({
-              inventoryLevelStatus: value,
-            }, () => this.fetchRequirements(this.props.locationId)),
+            label: this.props.translate("react.default.yes.label", "Yes"),
+            onClick: () =>
+              this.setState(
+                {
+                  inventoryLevelStatus: value,
+                },
+                () => this.fetchRequirements(this.props.locationId),
+              ),
           },
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
           },
         ],
       });
     } else {
-      this.setState({
-        inventoryLevelStatus: value,
-      }, () => this.fetchRequirements(this.props.locationId));
+      this.setState(
+        {
+          inventoryLevelStatus: value,
+        },
+        () => this.fetchRequirements(this.props.locationId),
+      );
     }
   }
 
@@ -374,7 +402,10 @@ class CreateReplenishment extends Component {
                 className="btn btn-outline-primary float-right btn-xs"
                 disabled={invalid}
               >
-                <Translate id="react.replenishment.next.label" defaultMessage="Next" />
+                <Translate
+                  id="react.replenishment.next.label"
+                  defaultMessage="Next"
+                />
               </button>
             </div>
             <form onSubmit={handleSubmit}>
@@ -386,7 +417,8 @@ class CreateReplenishment extends Component {
                     updateSelectedItems: this.updateSelectedItems,
                     allRowsSelected: this.allRowsSelected(),
                     selectAllCode: this.selectAllRows,
-                  }))}
+                  }),
+                )}
               </div>
               <div className="submit-buttons">
                 <button
@@ -399,7 +431,10 @@ class CreateReplenishment extends Component {
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                   disabled={invalid}
                 >
-                  <Translate id="react.replenishment.next.label" defaultMessage="Next" />
+                  <Translate
+                    id="react.replenishment.next.label"
+                    defaultMessage="Next"
+                  />
                 </button>
               </div>
             </form>
@@ -411,7 +446,8 @@ class CreateReplenishment extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  replenishmentTranslationsFetched: state.session.fetchedTranslations.replenishment,
+  replenishmentTranslationsFetched:
+    state.session.fetchedTranslations.replenishment,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
@@ -422,7 +458,10 @@ const mapDispatchToProps = {
   hideInfoBar,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateReplenishment);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CreateReplenishment);
 
 CreateReplenishment.propTypes = {
   initialValues: PropTypes.shape({}),

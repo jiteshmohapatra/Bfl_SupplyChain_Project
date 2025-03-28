@@ -1,4 +1,7 @@
-import { FETCH_UNIT_OF_MEASURE_CURRENCY, FETCH_UNIT_OF_MEASURE_QUANTITY } from 'actions/types';
+import {
+  FETCH_UNIT_OF_MEASURE_CURRENCY,
+  FETCH_UNIT_OF_MEASURE_QUANTITY,
+} from "actions/types";
 
 const initialState = {
   currency: [],

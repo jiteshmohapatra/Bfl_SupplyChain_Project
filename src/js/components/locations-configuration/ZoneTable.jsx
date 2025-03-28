@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import ReactTable from 'react-table';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import ReactTable from "react-table";
 
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import apiClient from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import apiClient from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/locations-configuration/ZoneTable.scss';
+import "components/locations-configuration/ZoneTable.scss";
 
 const INITIAL_STATE = {
   zonePages: -1,
@@ -27,48 +27,53 @@ class ZoneTable extends Component {
   render() {
     const zoneColumns = [
       {
-        Header: 'Status',
-        accessor: 'active',
+        Header: "Status",
+        accessor: "active",
         minWidth: 30,
-        className: 'active-circle',
-        headerClassName: 'header',
+        className: "active-circle",
+        headerClassName: "header",
         Cell: (row) => {
           if (row.original.active) {
-            return (<i className="fa fa-check-circle green-circle" aria-hidden="true" />);
+            return (
+              <i
+                className="fa fa-check-circle green-circle"
+                aria-hidden="true"
+              />
+            );
           }
-          return (<i className="fa fa-times-circle grey-circle" aria-hidden="true" />);
+          return (
+            <i className="fa fa-times-circle grey-circle" aria-hidden="true" />
+          );
         },
       },
       {
-        Header: 'Name',
-        accessor: 'name',
-        className: 'cell',
-        headerClassName: 'header text-align-left',
+        Header: "Name",
+        accessor: "name",
+        className: "cell",
+        headerClassName: "header text-align-left",
       },
       {
-        Header: 'Location Type',
-        accessor: 'locationType.locationTypeCode',
-        className: 'cell',
-        headerClassName: 'header text-align-left',
+        Header: "Location Type",
+        accessor: "locationType.locationTypeCode",
+        className: "cell",
+        headerClassName: "header text-align-left",
       },
       {
-        Header: 'Actions',
+        Header: "Actions",
         minWidth: 20,
-        accessor: 'actions',
-        className: 'action-cell',
-        headerClassName: 'header ',
+        accessor: "actions",
+        className: "action-cell",
+        headerClassName: "header ",
         Cell: (row) => (
           <div className="d-flex justify-content-center align-items-center">
             <ModalWrapper
               onSave={(values) => this.props.handleLocationEdit(values)}
               fields={this.props.FIELDS}
               validate={this.props.validate}
-              initialValues={
-                {
-                  ...row.original,
-                  locationType: row.original.locationType,
-                }
-              }
+              initialValues={{
+                ...row.original,
+                locationType: row.original.locationType,
+              }}
               formProps={{
                 zoneTypes: this.props.zoneTypes,
               }}
@@ -79,7 +84,7 @@ class ZoneTable extends Component {
               btnOpenIcon="fa-pencil"
               btnOpenClassName="action-icons"
               btnContainerClassName="d-flex justify-content-end"
-              btnContainerStyle={{ gap: '3px' }}
+              btnContainerStyle={{ gap: "3px" }}
               btnSaveClassName="btn btn-primary"
               btnCancelClassName="btn btn-outline-primary"
             >
@@ -92,7 +97,11 @@ class ZoneTable extends Component {
                 />
               </div>
             </ModalWrapper>
-            <i className="fa fa-trash-o action-icons icon-pointer" aria-hidden="true" onClick={() => this.props.deleteLocation(row.original)} />
+            <i
+              className="fa fa-trash-o action-icons icon-pointer"
+              aria-hidden="true"
+              onClick={() => this.props.deleteLocation(row.original)}
+            />
           </div>
         ),
       },
@@ -115,16 +124,17 @@ class ZoneTable extends Component {
         nextText={<i className="fa fa-chevron-right" aria-hidden="true" />}
         pageText=""
         onFetchData={(state) => {
-          const offset = state.page > 0 ? (state.page) * state.pageSize : 0;
-          apiClient.get('/api/internalLocations/search', {
-            params: {
-              locationTypeCode: 'ZONE',
-              offset: `${offset}`,
-              max: `${state.pageSize}`,
-              'parentLocation.id': `${this.props.currentLocationId}`,
-              includeInactive: true,
-            },
-          })
+          const offset = state.page > 0 ? state.page * state.pageSize : 0;
+          apiClient
+            .get("/api/internalLocations/search", {
+              params: {
+                locationTypeCode: "ZONE",
+                offset: `${offset}`,
+                max: `${state.pageSize}`,
+                "parentLocation.id": `${this.props.currentLocationId}`,
+                includeInactive: true,
+              },
+            })
             .then((res) => {
               this.setState({
                 zoneLoading: false,
@@ -132,7 +142,16 @@ class ZoneTable extends Component {
               });
               this.props.updateZoneData(res.data.data);
             })
-            .catch(() => Promise.reject(new Error(this.props.translate('react.locationsConfiguration.error.zoneList.label', 'Could not get list of zones'))));
+            .catch(() =>
+              Promise.reject(
+                new Error(
+                  this.props.translate(
+                    "react.locationsConfiguration.error.zoneList.label",
+                    "Could not get list of zones",
+                  ),
+                ),
+              ),
+            );
         }}
       />
     );

@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { setShouldRebuildFilterParams } from 'actions';
-import FilterVisibilityToggler from 'components/Filter/FilterVisibilityToggler';
-import Button from 'components/form-elements/Button';
-import SearchField from 'components/form-elements/SearchField';
-import useTranslation from 'hooks/useTranslation';
-import { renderFormField } from 'utils/form-utils';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { setShouldRebuildFilterParams } from "actions";
+import FilterVisibilityToggler from "components/Filter/FilterVisibilityToggler";
+import Button from "components/form-elements/Button";
+import SearchField from "components/form-elements/SearchField";
+import useTranslation from "hooks/useTranslation";
+import { renderFormField } from "utils/form-utils";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/Filter/FilterStyles.scss';
+import "components/Filter/FilterStyles.scss";
 
 const FilterForm = ({
   filterFields,
@@ -39,7 +39,7 @@ const FilterForm = ({
   const formRef = useRef(null);
 
   const submitOnEnter = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       if (event.target.value) {
         formRef.current.submit();
@@ -50,8 +50,11 @@ const FilterForm = ({
   const searchField = {
     type: SearchField,
     attributes: {
-      placeholder: translate(searchFieldPlaceholder, searchFieldDefaultPlaceholder),
-      ariaLabel: 'Search',
+      placeholder: translate(
+        searchFieldPlaceholder,
+        searchFieldDefaultPlaceholder,
+      ),
+      ariaLabel: "Search",
       filterElement: true,
       onKeyPress: submitOnEnter,
     },
@@ -63,14 +66,18 @@ const FilterForm = ({
     updateFilterParams({ ...defaultValues });
   }, [defaultValues]);
 
-  useTranslation('button');
+  useTranslation("button");
 
   // Calculate which object's values are not empty
   const countFilled = (values) => {
-    setAmountFilled(Object.entries(values)
-      .filter(([key, value]) => {
+    setAmountFilled(
+      Object.entries(values).filter(([key, value]) => {
         // Ignore accounting for filter that is disabled
-        const dynamicAttributes = _.invoke(filterFields, `${key}.getDynamicAttr`, formProps);
+        const dynamicAttributes = _.invoke(
+          filterFields,
+          `${key}.getDynamicAttr`,
+          formProps,
+        );
         const attributes = _.get(filterFields, `${key}.attributes`);
         if (dynamicAttributes?.disabled || attributes?.disabled) return false;
 
@@ -78,23 +85,23 @@ const FilterForm = ({
         // and that is not a search field
         if (!filterFields[key] && key !== searchFieldId) return false;
         // evaluate filter value
-        if (typeof value === 'object') return !_.isEmpty(value);
+        if (typeof value === "object") return !_.isEmpty(value);
         return !!value;
-      }).length);
+      }).length,
+    );
   };
 
   const onClearHandler = (form) => {
-    if (onClear && typeof onClear === 'function') {
+    if (onClear && typeof onClear === "function") {
       onClear(form);
       return;
     }
-    const clearedFilterList = Object.keys(defaultValues)
-      .reduce((acc, key) => {
-        if (ignoreClearFilters.includes(key)) {
-          return { ...acc, [key]: defaultValues[key] };
-        }
-        return { ...acc, [key]: '' };
-      }, {});
+    const clearedFilterList = Object.keys(defaultValues).reduce((acc, key) => {
+      if (ignoreClearFilters.includes(key)) {
+        return { ...acc, [key]: defaultValues[key] };
+      }
+      return { ...acc, [key]: "" };
+    }, {});
     setShouldRebuildFilterValues(true);
     form.reset(clearedFilterList);
   };
@@ -106,7 +113,11 @@ const FilterForm = ({
   }, [currentLocation?.id]);
 
   if (isLoading) {
-    return <div className="loading-text">{translate('react.default.loading.label', 'Loading...')}</div>;
+    return (
+      <div className="loading-text">
+        {translate("react.default.loading.label", "Loading...")}
+      </div>
+    );
   }
 
   return (
@@ -138,9 +149,15 @@ const FilterForm = ({
                       type="button"
                     />
                     <Button
-                      defaultLabel={isCycleCountTab ? 'Filter' : 'Search'}
-                      label={isCycleCountTab ? 'react.button.filter.label' : 'react.button.search.label'}
-                      disabled={!allowEmptySubmit && _.every(values, (value) => !value)}
+                      defaultLabel={isCycleCountTab ? "Filter" : "Search"}
+                      label={
+                        isCycleCountTab
+                          ? "react.button.filter.label"
+                          : "react.button.search.label"
+                      }
+                      disabled={
+                        !allowEmptySubmit && _.every(values, (value) => !value)
+                      }
                       variant="primary"
                       type="submit"
                     />
@@ -148,8 +165,10 @@ const FilterForm = ({
                 </div>
 
                 <div className="d-flex pt-2 flex-wrap gap-8 align-items-center filters-row">
-                  {!filtersHidden && _.map(filterFields, (fieldConfig, fieldName) =>
-                    renderFormField(fieldConfig, fieldName, formProps))}
+                  {!filtersHidden &&
+                    _.map(filterFields, (fieldConfig, fieldName) =>
+                      renderFormField(fieldConfig, fieldName, formProps),
+                    )}
                 </div>
               </div>
             </form>
@@ -193,8 +212,8 @@ FilterForm.propTypes = {
 };
 
 FilterForm.defaultProps = {
-  searchFieldDefaultPlaceholder: 'Search',
-  searchFieldId: 'searchTerm',
+  searchFieldDefaultPlaceholder: "Search",
+  searchFieldId: "searchTerm",
   formProps: {},
   defaultValues: {},
   allowEmptySubmit: false,

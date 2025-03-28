@@ -1,16 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-import Button from 'components/form-elements/Button';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import Translate from 'utils/Translate';
+import Button from "components/form-elements/Button";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import Translate from "utils/Translate";
 
 const StockMovementInboundHeader = ({ showMyStockMovements }) => (
   <div className="d-flex list-page-header">
     <span className="d-flex align-self-center title">
-      <Translate id="react.stockMovement.inbound.list.label" defaultMessage="Inbound Movement List" />
+      <Translate
+        id="react.stockMovement.inbound.list.label"
+        defaultMessage="Inbound Movement List"
+      />
     </span>
     <div className="d-flex justify-content-end buttons align-items-center">
       <Button
@@ -21,17 +24,17 @@ const StockMovementInboundHeader = ({ showMyStockMovements }) => (
       />
       <Link
         className="primary-button"
-        to={{ pathname: STOCK_MOVEMENT_URL.createCombinedShipments(), search: 'direction=INBOUND' }}
+        to={{
+          pathname: STOCK_MOVEMENT_URL.createCombinedShipments(),
+          search: "direction=INBOUND",
+        }}
       >
         <Translate
           id="react.stockMovement.createShipmentFromPO.label"
           defaultMessage="Create Shipment from PO"
         />
       </Link>
-      <Link
-        className="primary-button"
-        to={STOCK_MOVEMENT_URL.createInbound()}
-      >
+      <Link className="primary-button" to={STOCK_MOVEMENT_URL.createInbound()}>
         <Translate
           id="react.stockMovement.createStockMovement.label"
           defaultMessage="Create Stock Movement"

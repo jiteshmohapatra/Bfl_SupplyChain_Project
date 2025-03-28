@@ -1,20 +1,22 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 class VerticalTabs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTab: '',
+      activeTab: "",
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (Object.keys(this.props.tabs).length !== Object.keys(nextProps.tabs).length) {
+    if (
+      Object.keys(this.props.tabs).length !== Object.keys(nextProps.tabs).length
+    ) {
       this.setState({ activeTab: Object.keys(nextProps.tabs)[0] });
     }
   }
@@ -23,12 +25,14 @@ class VerticalTabs extends Component {
     return _.map(Object.keys(this.props.tabs), (tabTitle) => (
       <div
         role="button"
-        className={`p-3 d-flex justify-content-start align-items-center ${this.isActive(tabTitle) ? 'active ' : ''}`}
+        className={`p-3 d-flex justify-content-start align-items-center ${this.isActive(tabTitle) ? "active " : ""}`}
         onClick={() => this.setState({ activeTab: tabTitle })}
         onKeyPress={() => this.setState({ activeTab: tabTitle })}
         tabIndex={0}
       >
-        <i className={`fa tab-title-icon ${this.isActive(tabTitle) ? 'fa-dot-circle-o active ' : 'fa-circle-o'}`} />
+        <i
+          className={`fa tab-title-icon ${this.isActive(tabTitle) ? "fa-dot-circle-o active " : "fa-circle-o"}`}
+        />
         <Translate id={tabTitle} defaultMessage={tabTitle} />
       </div>
     ));

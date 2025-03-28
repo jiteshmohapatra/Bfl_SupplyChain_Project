@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import AddItemsPage from 'components/returns/outbound/AddItemsPage';
-import CreateOutboundReturn from 'components/returns/outbound/CreateOutboundReturn';
-import PickPage from 'components/returns/outbound/PickPage';
-import SendOutboundReturns from 'components/returns/outbound/SendOutboundReturn';
-import Wizard from 'components/wizard/Wizard';
-import apiClient, { parseResponse } from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import AddItemsPage from "components/returns/outbound/AddItemsPage";
+import CreateOutboundReturn from "components/returns/outbound/CreateOutboundReturn";
+import PickPage from "components/returns/outbound/PickPage";
+import SendOutboundReturns from "components/returns/outbound/SendOutboundReturn";
+import Wizard from "components/wizard/Wizard";
+import apiClient, { parseResponse } from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 class OutboundReturns extends Component {
   constructor(props) {
@@ -28,8 +28,8 @@ class OutboundReturns extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'outboundReturns');
-    this.props.fetchTranslations('', 'stockMovement');
+    this.props.fetchTranslations("", "outboundReturns");
+    this.props.fetchTranslations("", "stockMovement");
 
     if (this.props.outboundReturnsTranslationsFetched) {
       this.dataFetched = true;
@@ -40,8 +40,8 @@ class OutboundReturns extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'outboundReturns');
-      this.props.fetchTranslations(nextProps.locale, 'stockMovement');
+      this.props.fetchTranslations(nextProps.locale, "outboundReturns");
+      this.props.fetchTranslations(nextProps.locale, "stockMovement");
     }
 
     if (nextProps.outboundReturnsTranslationsFetched && !this.dataFetched) {
@@ -53,10 +53,10 @@ class OutboundReturns extends Component {
 
   get stepList() {
     return [
-      this.props.translate('react.outboundReturns.create.label', 'Create'),
-      this.props.translate('react.outboundReturns.addItems.label', 'Add items'),
-      this.props.translate('react.outboundReturns.pick.label', 'Pick'),
-      this.props.translate('react.outboundReturns.send.label', 'Send'),
+      this.props.translate("react.outboundReturns.create.label", "Create"),
+      this.props.translate("react.outboundReturns.addItems.label", "Add items"),
+      this.props.translate("react.outboundReturns.pick.label", "Pick"),
+      this.props.translate("react.outboundReturns.send.label", "Send"),
     ];
   }
 
@@ -68,24 +68,24 @@ class OutboundReturns extends Component {
 
     return [
       {
-        text: ` ${this.props.translate('react.outboundReturns.outboundReturn.label', 'Outbound Return')} `,
-        color: '#000000',
-        delimeter: ' | ',
+        text: ` ${this.props.translate("react.outboundReturns.outboundReturn.label", "Outbound Return")} `,
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: values.stockTransferNumber,
-        color: '#000000',
-        delimeter: ' - ',
+        color: "#000000",
+        delimeter: " - ",
       },
       {
         text: values.origin.name,
-        color: '#004d40',
-        delimeter: ` ${this.props.translate('react.default.to.label', 'to')} `,
+        color: "#004d40",
+        delimeter: ` ${this.props.translate("react.default.to.label", "to")} `,
       },
       {
         text: values.destination.name,
-        color: '#01579b',
-        delimeter: '',
+        color: "#01579b",
+        delimeter: "",
       },
     ];
   }
@@ -97,15 +97,16 @@ class OutboundReturns extends Component {
       this.props.showSpinner();
       const url = `/api/stockTransfers/${this.props.match.params.outboundReturnId}`;
 
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const outboundReturn = parseResponse(response.data.data);
           let currentPage;
           switch (outboundReturn.status) {
-            case 'PENDING':
+            case "PENDING":
               currentPage = 2;
               break;
-            case 'APPROVED':
+            case "APPROVED":
               currentPage = 3;
               break;
             default:
@@ -155,7 +156,12 @@ class OutboundReturns extends Component {
 
   render() {
     const { values, currentPage } = this.state;
-    const pageList = [CreateOutboundReturn, AddItemsPage, PickPage, SendOutboundReturns];
+    const pageList = [
+      CreateOutboundReturn,
+      AddItemsPage,
+      PickPage,
+      SendOutboundReturns,
+    ];
     const { location, history, match } = this.props;
     const locationId = location.id;
 
@@ -168,7 +174,10 @@ class OutboundReturns extends Component {
         currentPage={currentPage}
         prevPage={currentPage === 1 ? 1 : currentPage - 1}
         additionalProps={{
-          locationId, location, history, match,
+          locationId,
+          location,
+          history,
+          match,
         }}
         updateWizardValues={this.updateWizardValues}
       />
@@ -179,12 +188,15 @@ class OutboundReturns extends Component {
 const mapStateToProps = (state) => ({
   locale: state.session.activeLanguage,
   location: state.session.currentLocation,
-  outboundReturnsTranslationsFetched: state.session.fetchedTranslations.outboundReturns,
+  outboundReturnsTranslationsFetched:
+    state.session.fetchedTranslations.outboundReturns,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(OutboundReturns);
 
 OutboundReturns.propTypes = {

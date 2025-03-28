@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import AddItemsPage from 'components/returns/inbound/AddItemsPage';
-import CreateInboundReturn from 'components/returns/inbound/CreateInboundReturn';
-import SendInboundReturn from 'components/returns/inbound/SendInboundReturn';
-import Wizard from 'components/wizard/Wizard';
-import apiClient, { parseResponse } from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import AddItemsPage from "components/returns/inbound/AddItemsPage";
+import CreateInboundReturn from "components/returns/inbound/CreateInboundReturn";
+import SendInboundReturn from "components/returns/inbound/SendInboundReturn";
+import Wizard from "components/wizard/Wizard";
+import apiClient, { parseResponse } from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 class InboundReturns extends Component {
   constructor(props) {
@@ -27,8 +27,8 @@ class InboundReturns extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'inboundReturns');
-    this.props.fetchTranslations('', 'stockMovement');
+    this.props.fetchTranslations("", "inboundReturns");
+    this.props.fetchTranslations("", "stockMovement");
 
     if (this.props.inboundReturnsTranslationsFetched) {
       this.dataFetched = true;
@@ -39,8 +39,8 @@ class InboundReturns extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'inboundReturns');
-      this.props.fetchTranslations(nextProps.locale, 'stockMovement');
+      this.props.fetchTranslations(nextProps.locale, "inboundReturns");
+      this.props.fetchTranslations(nextProps.locale, "stockMovement");
     }
 
     if (nextProps.inboundReturnsTranslationsFetched && !this.dataFetched) {
@@ -52,9 +52,9 @@ class InboundReturns extends Component {
 
   get stepList() {
     return [
-      this.props.translate('react.inboundReturns.create.label', 'Create'),
-      this.props.translate('react.inboundReturns.addItems.label', 'Add items'),
-      this.props.translate('react.inboundReturns.send.label', 'Send'),
+      this.props.translate("react.inboundReturns.create.label", "Create"),
+      this.props.translate("react.inboundReturns.addItems.label", "Add items"),
+      this.props.translate("react.inboundReturns.send.label", "Send"),
     ];
   }
 
@@ -66,24 +66,24 @@ class InboundReturns extends Component {
 
     return [
       {
-        text: 'Inbound Return',
-        color: '#000000',
-        delimeter: ' | ',
+        text: "Inbound Return",
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: values.stockTransferNumber,
-        color: '#000000',
-        delimeter: ' - ',
+        color: "#000000",
+        delimeter: " - ",
       },
       {
         text: values.origin.name,
-        color: '#004d40',
-        delimeter: ' to ',
+        color: "#004d40",
+        delimeter: " to ",
       },
       {
         text: values.destination.name,
-        color: '#01579b',
-        delimeter: '',
+        color: "#01579b",
+        delimeter: "",
       },
     ];
   }
@@ -95,7 +95,8 @@ class InboundReturns extends Component {
       this.props.showSpinner();
       const url = `/api/stockTransfers/${this.props.match.params.inboundReturnId}`;
 
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const inboundReturn = parseResponse(response.data.data);
           this.setState({
@@ -112,7 +113,7 @@ class InboundReturns extends Component {
                 label: inboundReturn.destination.name,
               },
             },
-            currentPage: inboundReturn.status === 'PENDING' ? 2 : 3,
+            currentPage: inboundReturn.status === "PENDING" ? 2 : 3,
           });
           this.props.hideSpinner();
         })
@@ -154,7 +155,10 @@ class InboundReturns extends Component {
         currentPage={currentPage}
         prevPage={currentPage === 1 ? 1 : currentPage - 1}
         additionalProps={{
-          locationId, location, history, match,
+          locationId,
+          location,
+          history,
+          match,
         }}
         updateWizardValues={this.updateWizardValues}
       />
@@ -165,12 +169,15 @@ class InboundReturns extends Component {
 const mapStateToProps = (state) => ({
   locale: state.session.activeLanguage,
   location: state.session.currentLocation,
-  inboundReturnsTranslationsFetched: state.session.fetchedTranslations.inboundReturns,
+  inboundReturnsTranslationsFetched:
+    state.session.fetchedTranslations.inboundReturns,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(InboundReturns);
 
 InboundReturns.propTypes = {

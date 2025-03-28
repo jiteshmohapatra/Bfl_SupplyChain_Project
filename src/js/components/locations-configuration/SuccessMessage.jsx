@@ -1,15 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import Modal from 'react-modal';
-import { withRouter } from 'react-router-dom';
+import PropTypes from "prop-types";
+import Modal from "react-modal";
+import { withRouter } from "react-router-dom";
 
-import { LOCATION_CONFIGURATION_URL, LOCATION_URL, PRODUCT_CONFIGURATION_URL } from 'consts/applicationUrls';
-import Translate from 'utils/Translate';
+import {
+  LOCATION_CONFIGURATION_URL,
+  LOCATION_URL,
+  PRODUCT_CONFIGURATION_URL,
+} from "consts/applicationUrls";
+import Translate from "utils/Translate";
 
-import 'components/locations-configuration/SuccessMessage.scss';
+import "components/locations-configuration/SuccessMessage.scss";
 
-const SuccessMessage = ({ setShowSuccessMessage, history, successMessageOpen }) => (
+const SuccessMessage = ({
+  setShowSuccessMessage,
+  history,
+  successMessageOpen,
+}) => (
   <Modal
     isOpen={successMessageOpen}
     className="location-modal"
@@ -18,7 +26,11 @@ const SuccessMessage = ({ setShowSuccessMessage, history, successMessageOpen }) 
     <div className="success-main">
       <div className="success-wrapper">
         <div className="cancel-icon">
-          <i className="fa fa-times" aria-hidden="true" onClick={setShowSuccessMessage} />
+          <i
+            className="fa fa-times"
+            aria-hidden="true"
+            onClick={setShowSuccessMessage}
+          />
         </div>
         <div className="success-content">
           <i className="fa fa-check-circle-o success-icon" aria-hidden="true" />
@@ -47,13 +59,23 @@ const SuccessMessage = ({ setShowSuccessMessage, history, successMessageOpen }) 
                 defaultMessage="Create another location"
               />
             </button>
-            <button type="button" className="btn btn-outline-primary" onClick={() => { window.location = LOCATION_URL.list(); }}>
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => {
+                window.location = LOCATION_URL.list();
+              }}
+            >
               <Translate
                 id="react.locationsConfiguration.success.viewLocationList"
                 defaultMessage="View Location List"
               />
             </button>
-            <button type="button" className="btn btn-outline-primary" onClick={() => history.push(PRODUCT_CONFIGURATION_URL.index())}>
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => history.push(PRODUCT_CONFIGURATION_URL.index())}
+            >
               <Translate
                 id="react.locationsConfiguration.success.createCategoriesAndProducts="
                 defaultMessage="Create Categories and Products"

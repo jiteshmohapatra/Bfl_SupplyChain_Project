@@ -1,13 +1,13 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const Filter = ({ filter, onChange }) => (
   <input
     data-testid="filter-input"
     onChange={(event) => onChange(event.target.value)}
-    value={filter ? filter.value : ''}
-    style={{ width: '100%' }}
+    value={filter ? filter.value : ""}
+    style={{ width: "100%" }}
     placeholder="Search"
   />
 );

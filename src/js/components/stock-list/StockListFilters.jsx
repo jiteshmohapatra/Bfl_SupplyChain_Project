@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import FilterForm from 'components/Filter/FilterForm';
+import FilterForm from "components/Filter/FilterForm";
 
 const StockListFilters = ({
-  setFilterParams, filterFields, defaultValues, formProps,
+  setFilterParams,
+  filterFields,
+  defaultValues,
+  formProps,
 }) => (
   <div className="d-flex flex-column list-page-filters">
     <FilterForm

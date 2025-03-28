@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import 'components/wizard/WizardSteps.scss';
+import "components/wizard/WizardSteps.scss";
 
 const WizardStepsV2 = ({ steps, currentStepKey }) => {
   const isCurrentStep = (iteratedStep) => iteratedStep.key === currentStepKey;
@@ -12,16 +12,12 @@ const WizardStepsV2 = ({ steps, currentStepKey }) => {
         {steps.map((step) => (
           <div
             key={step.key}
-            className={`step-container ${isCurrentStep(step) ? 'active' : ''}`}
+            className={`step-container ${isCurrentStep(step) ? "active" : ""}`}
             data-testid="wizard-step"
-            data-stepstate={isCurrentStep(step) ? 'active' : 'inactive'}
+            data-stepstate={isCurrentStep(step) ? "active" : "inactive"}
           >
-            <div
-              className="circle"
-            />
-            <div className="step-name">
-              {step.title}
-            </div>
+            <div className="circle" />
+            <div className="step-name">{step.title}</div>
           </div>
         ))}
       </div>
@@ -35,14 +31,9 @@ WizardStepsV2.propTypes = {
   steps: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      key: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-      ]).isRequired,
+      key: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     }),
   ).isRequired,
-  currentStepKey: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]).isRequired,
+  currentStepKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    .isRequired,
 };

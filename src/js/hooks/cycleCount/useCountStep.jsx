@@ -1,36 +1,31 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import _ from 'lodash';
-import moment from 'moment/moment';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import _ from "lodash";
+import moment from "moment/moment";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import {
   eraseDraft,
   fetchBinLocations,
   fetchUsers,
   startResolution,
-} from 'actions';
-import cycleCountApi from 'api/services/CycleCountApi';
-import { CYCLE_COUNT as CYCLE_COUNT_URL } from 'api/urls';
-import ActivityCode from 'consts/activityCode';
-import { CYCLE_COUNT } from 'consts/applicationUrls';
-import { TO_COUNT_TAB, TO_RESOLVE_TAB } from 'consts/cycleCount';
-import cycleCountStatus from 'consts/cycleCountStatus';
-import { DateFormat } from 'consts/timeFormat';
-import useCountStepValidation from 'hooks/cycleCount/useCountStepValidation';
-import useSpinner from 'hooks/useSpinner';
-import confirmationModal from 'utils/confirmationModalUtils';
-import exportFileFromApi from 'utils/file-download-util';
-import { checkBinLocationSupport } from 'utils/supportedActivitiesUtils';
+} from "actions";
+import cycleCountApi from "api/services/CycleCountApi";
+import { CYCLE_COUNT as CYCLE_COUNT_URL } from "api/urls";
+import ActivityCode from "consts/activityCode";
+import { CYCLE_COUNT } from "consts/applicationUrls";
+import { TO_COUNT_TAB, TO_RESOLVE_TAB } from "consts/cycleCount";
+import cycleCountStatus from "consts/cycleCountStatus";
+import { DateFormat } from "consts/timeFormat";
+import useCountStepValidation from "hooks/cycleCount/useCountStepValidation";
+import useSpinner from "hooks/useSpinner";
+import confirmationModal from "utils/confirmationModalUtils";
+import exportFileFromApi from "utils/file-download-util";
+import { checkBinLocationSupport } from "utils/supportedActivitiesUtils";
 
 // Managing state for all tables, operations on shared state (from count step)
 const useCountStep = () => {
@@ -52,10 +47,7 @@ const useCountStep = () => {
   const history = useHistory();
   const { show, hide } = useSpinner();
 
-  const {
-    cycleCountIds,
-    currentLocation,
-  } = useSelector((state) => ({
+  const { cycleCountIds, currentLocation } = useSelector((state) => ({
     cycleCountIds: state.cycleCount.requests,
     currentLocation: state.session.currentLocation,
   }));
@@ -64,15 +56,16 @@ const useCountStep = () => {
     setRefreshFocusCounter((prev) => prev + 1);
   };
 
-  const showBinLocation = useMemo(() =>
-    checkBinLocationSupport(currentLocation.supportedActivities), [currentLocation?.id]);
+  const showBinLocation = useMemo(
+    () => checkBinLocationSupport(currentLocation.supportedActivities),
+    [currentLocation?.id],
+  );
 
   useEffect(() => {
     if (showBinLocation) {
-      dispatch(fetchBinLocations(
-        currentLocation?.id,
-        [ActivityCode.RECEIVE_STOCK],
-      ));
+      dispatch(
+        fetchBinLocations(currentLocation?.id, [ActivityCode.RECEIVE_STOCK]),
+      );
     }
   }, [currentLocation?.id]);
 
@@ -84,10 +77,13 @@ const useCountStep = () => {
     resetValidationState,
   } = useCountStepValidation({ tableData });
 
-  const filterCountItems = (cycleCounts) => cycleCounts.map((cycleCount) => ({
-    ...cycleCount,
-    cycleCountItems: cycleCount.cycleCountItems.filter((item) => item.countIndex === 0),
-  }));
+  const filterCountItems = (cycleCounts) =>
+    cycleCounts.map((cycleCount) => ({
+      ...cycleCount,
+      cycleCountItems: cycleCount.cycleCountItems.filter(
+        (item) => item.countIndex === 0,
+      ),
+    }));
 
   // Function used for maintaining the same order in the resolve tab between saves.
   // It's needed because items are returned in the same order as they are on the record stock,
@@ -96,14 +92,17 @@ const useCountStep = () => {
   const moveCustomItemsToTheBottom = (cycleCountItems) => {
     const { false: originalItems, true: customItems } = _.groupBy(
       cycleCountItems,
-      'custom',
+      "custom",
     );
 
     if (!customItems) {
       return originalItems;
     }
 
-    const customItemsSortedByCreationDate = _.sortBy(customItems, 'dateCreated');
+    const customItemsSortedByCreationDate = _.sortBy(
+      customItems,
+      "dateCreated",
+    );
 
     return [...originalItems, ...customItemsSortedByCreationDate];
   };
@@ -121,19 +120,27 @@ const useCountStep = () => {
       );
       tableData.current = filterCountItems(data?.data)?.map((cycleCount) => ({
         ...cycleCount,
-        cycleCountItems: moveCustomItemsToTheBottom(cycleCount?.cycleCountItems),
+        cycleCountItems: moveCustomItemsToTheBottom(
+          cycleCount?.cycleCountItems,
+        ),
       }));
       // Date counted and assignee are the same for all items,
       // so we create a map looking at first item
-      const countedDates = data?.data?.reduce((acc, cycleCount) => ({
-        ...acc,
-        [cycleCount?.id]: cycleCount?.cycleCountItems[0]?.dateCounted,
-      }), {});
+      const countedDates = data?.data?.reduce(
+        (acc, cycleCount) => ({
+          ...acc,
+          [cycleCount?.id]: cycleCount?.cycleCountItems[0]?.dateCounted,
+        }),
+        {},
+      );
       setDateCounted(countedDates);
-      const countedByMap = data?.data?.reduce((acc, cycleCount) => ({
-        ...acc,
-        [cycleCount?.id]: cycleCount?.cycleCountItems[0]?.assignee,
-      }), {});
+      const countedByMap = data?.data?.reduce(
+        (acc, cycleCount) => ({
+          ...acc,
+          [cycleCount?.id]: cycleCount?.cycleCountItems[0]?.assignee,
+        }),
+        {},
+      );
       setCountedBy(countedByMap);
       setDefaultCountedBy(countedByMap);
     } finally {
@@ -169,16 +176,21 @@ const useCountStep = () => {
       if (index === tableIndex) {
         return {
           ...cycleCount,
-          cycleCountItems: cycleCount.cycleCountItems.map((item) => ({ ...item, updated })),
+          cycleCountItems: cycleCount.cycleCountItems.map((item) => ({
+            ...item,
+            updated,
+          })),
         };
       }
       return cycleCount;
     });
   };
 
-  const markAllItemsAsUpdated = (cycleCountId) => setAllItemsUpdatedState(cycleCountId, true);
+  const markAllItemsAsUpdated = (cycleCountId) =>
+    setAllItemsUpdatedState(cycleCountId, true);
 
-  const markAllItemsAsNotUpdated = (cycleCountId) => setAllItemsUpdatedState(cycleCountId, false);
+  const markAllItemsAsNotUpdated = (cycleCountId) =>
+    setAllItemsUpdatedState(cycleCountId, false);
 
   const assignCountedBy = (cycleCountId) => (person) => {
     // We need to mark all items as updated if we change the counted by person,
@@ -186,14 +198,21 @@ const useCountStep = () => {
     // for every item
     markAllItemsAsUpdated(cycleCountId);
     setCountedBy((prevState) => ({ ...prevState, [cycleCountId]: person }));
-    setDefaultCountedBy((prevState) => ({ ...prevState, [cycleCountId]: person }));
-    setDefaultCountedBy((prevState) => ({ ...prevState, [cycleCountId]: person }));
+    setDefaultCountedBy((prevState) => ({
+      ...prevState,
+      [cycleCountId]: person,
+    }));
+    setDefaultCountedBy((prevState) => ({
+      ...prevState,
+      [cycleCountId]: person,
+    }));
     resetFocus();
   };
 
   const getCountedBy = (cycleCountId) => countedBy?.[cycleCountId];
 
-  const getDefaultCountedBy = (cycleCountId) => defaultCountedBy?.[cycleCountId];
+  const getDefaultCountedBy = (cycleCountId) =>
+    defaultCountedBy?.[cycleCountId];
 
   const removeFromState = (cycleCountId, rowId) => {
     const tableIndex = tableData.current.findIndex(
@@ -203,7 +222,9 @@ const useCountStep = () => {
       if (index === tableIndex) {
         return {
           ...data,
-          cycleCountItems: data.cycleCountItems.filter((row) => row.id !== rowId),
+          cycleCountItems: data.cycleCountItems.filter(
+            (row) => row.id !== rowId,
+          ),
         };
       }
 
@@ -216,7 +237,7 @@ const useCountStep = () => {
   const removeRow = async (cycleCountId, rowId) => {
     try {
       show();
-      if (!rowId.includes('newRow')) {
+      if (!rowId.includes("newRow")) {
         await cycleCountApi.deleteCycleCountItem(currentLocation?.id, rowId);
       }
       removeFromState(cycleCountId, rowId);
@@ -228,7 +249,7 @@ const useCountStep = () => {
   const addEmptyRow = (productId, id, shouldResetFocus = true) => {
     // ID is needed for updating appropriate row
     const emptyRow = {
-      id: _.uniqueId('newRow'),
+      id: _.uniqueId("newRow"),
       product: {
         id: productId,
       },
@@ -238,7 +259,7 @@ const useCountStep = () => {
       },
       binLocation: null,
       quantityCounted: null,
-      comment: '',
+      comment: "",
     };
     const tableIndex = tableData.current.findIndex(
       (cycleCount) => cycleCount?.id === id,
@@ -247,10 +268,7 @@ const useCountStep = () => {
       if (index === tableIndex) {
         return {
           ...data,
-          cycleCountItems: [
-            ...data.cycleCountItems,
-            emptyRow,
-          ],
+          cycleCountItems: [...data.cycleCountItems, emptyRow],
         };
       }
 
@@ -291,9 +309,13 @@ const useCountStep = () => {
     inventoryItem: {
       ...cycleCountItem?.inventoryItem,
       product: cycleCountItem.product?.id,
-      expirationDate: cycleCountItem?.inventoryItem?.expirationDate === null
-        ? null
-        : moment(cycleCountItem?.inventoryItem?.expirationDate, DateFormat.MMM_DD_YYYY).format(),
+      expirationDate:
+        cycleCountItem?.inventoryItem?.expirationDate === null
+          ? null
+          : moment(
+              cycleCountItem?.inventoryItem?.expirationDate,
+              DateFormat.MMM_DD_YYYY,
+            ).format(),
     },
   });
 
@@ -302,7 +324,9 @@ const useCountStep = () => {
       show();
       resetValidationState();
       for (const cycleCount of tableData.current) {
-        const cycleCountItemsToUpdate = cycleCount.cycleCountItems.filter((item) => (item.updated && !item.id.includes('newRow')));
+        const cycleCountItemsToUpdate = cycleCount.cycleCountItems.filter(
+          (item) => item.updated && !item.id.includes("newRow"),
+        );
         for (const cycleCountItem of cycleCountItemsToUpdate) {
           await cycleCountApi.updateCycleCountItem(
             getPayload(cycleCountItem, cycleCount),
@@ -310,7 +334,9 @@ const useCountStep = () => {
             cycleCountItem?.id,
           );
         }
-        const cycleCountItemsToCreate = cycleCount.cycleCountItems.filter((item) => item.id.includes('newRow'));
+        const cycleCountItemsToCreate = cycleCount.cycleCountItems.filter(
+          (item) => item.id.includes("newRow"),
+        );
         for (const cycleCountItem of cycleCountItemsToCreate) {
           await cycleCountApi.createCycleCountItem(
             getPayload(cycleCountItem, cycleCount),
@@ -333,54 +359,60 @@ const useCountStep = () => {
 
   const modalLabels = {
     title: {
-      label: 'react.cycleCount.modal.resolveDiscrepanciesTitle.label',
-      default: 'Resolve discrepancies?',
+      label: "react.cycleCount.modal.resolveDiscrepanciesTitle.label",
+      default: "Resolve discrepancies?",
     },
     content: {
-      label: 'react.cycleCount.modal.resolveDiscrepanciesContent.label',
-      default: 'There are discrepancies to resolve. Would you like to resolve them?',
+      label: "react.cycleCount.modal.resolveDiscrepanciesContent.label",
+      default:
+        "There are discrepancies to resolve. Would you like to resolve them?",
     },
   };
 
   const submitCount = () =>
-    tableData.current.reduce((acc, cycleCount) => ([
-      ...acc,
-      cycleCountApi.submitCount({
-        refreshQuantityOnHand: true,
-        failOnOutdatedQuantity: false,
-        requireRecountOnDiscrepancy: true,
-        cycleCountItems: cycleCount.cycleCountItems,
-      },
-      currentLocation?.id,
-      cycleCount?.id),
-    ]), []);
-
-  const resolveDiscrepanciesModalButtons = (requestIdsWithDiscrepancies) => (onClose) => ([
-    {
-      variant: 'transparent',
-      defaultLabel: 'Not now',
-      label: 'react.cycleCount.modal.notNow.label',
-      onClick: () => {
-        history.push(CYCLE_COUNT.list(TO_RESOLVE_TAB));
-        onClose?.();
-      },
-    },
-    {
-      variant: 'primary',
-      defaultLabel: 'Resolve',
-      label: 'react.cycleCount.modal.resolve.label',
-      onClick: async () => {
-        show();
-        onClose?.();
-        await dispatch(startResolution(
-          requestIdsWithDiscrepancies,
+    tableData.current.reduce(
+      (acc, cycleCount) => [
+        ...acc,
+        cycleCountApi.submitCount(
+          {
+            refreshQuantityOnHand: true,
+            failOnOutdatedQuantity: false,
+            requireRecountOnDiscrepancy: true,
+            cycleCountItems: cycleCount.cycleCountItems,
+          },
           currentLocation?.id,
-        ));
-        history.push(CYCLE_COUNT.resolveStep());
-        hide();
+          cycleCount?.id,
+        ),
+      ],
+      [],
+    );
+
+  const resolveDiscrepanciesModalButtons =
+    (requestIdsWithDiscrepancies) => (onClose) => [
+      {
+        variant: "transparent",
+        defaultLabel: "Not now",
+        label: "react.cycleCount.modal.notNow.label",
+        onClick: () => {
+          history.push(CYCLE_COUNT.list(TO_RESOLVE_TAB));
+          onClose?.();
+        },
       },
-    },
-  ]);
+      {
+        variant: "primary",
+        defaultLabel: "Resolve",
+        label: "react.cycleCount.modal.resolve.label",
+        onClick: async () => {
+          show();
+          onClose?.();
+          await dispatch(
+            startResolution(requestIdsWithDiscrepancies, currentLocation?.id),
+          );
+          history.push(CYCLE_COUNT.resolveStep());
+          hide();
+        },
+      },
+    ];
 
   const openResolveDiscrepanciesModal = (requestIdsWithDiscrepancies) => {
     confirmationModal({
@@ -397,15 +429,17 @@ const useCountStep = () => {
       await save();
       const submittedCounts = await Promise.all(submitCount());
 
-      const requestIdsWithDiscrepancies = submittedCounts
-        .reduce((acc, submittedCycleCountRequest) => {
+      const requestIdsWithDiscrepancies = submittedCounts.reduce(
+        (acc, submittedCycleCountRequest) => {
           const { data } = submittedCycleCountRequest;
           if (data.data.status === cycleCountStatus?.COUNTED) {
             return [...acc, data?.data?.requestId];
           }
 
           return acc;
-        }, []);
+        },
+        [],
+      );
       dispatch(eraseDraft());
       if (requestIdsWithDiscrepancies.length > 0) {
         openResolveDiscrepanciesModal(requestIdsWithDiscrepancies);
@@ -429,12 +463,20 @@ const useCountStep = () => {
       (row) => row.id === rowId,
     );
     // Nested path in colum names contains "_" instead of "."
-    const nestedPath = columnId.replaceAll('_', '.');
+    const nestedPath = columnId.replaceAll("_", ".");
     // Update data for: cycleCount (table) -> cycleCountItem (row) -> column (nestedPath)
-    _.set(tableData.current, `[${tableIndex}].cycleCountItems[${rowIndex}].${nestedPath}`, value);
+    _.set(
+      tableData.current,
+      `[${tableIndex}].cycleCountItems[${rowIndex}].${nestedPath}`,
+      value,
+    );
 
     // Mark item as updated, so that the item can be easily distinguished whether it was updated
-    _.set(tableData.current, `[${tableIndex}].cycleCountItems[${rowIndex}].updated`, true);
+    _.set(
+      tableData.current,
+      `[${tableIndex}].cycleCountItems[${rowIndex}].updated`,
+      true,
+    );
   };
 
   const tableMeta = {

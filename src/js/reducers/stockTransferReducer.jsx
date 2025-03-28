@@ -1,4 +1,4 @@
-import { FETCH_STOCK_TRANSFER_STATUSES } from 'actions/types';
+import { FETCH_STOCK_TRANSFER_STATUSES } from "actions/types";
 
 const initialState = {
   statuses: [],

@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import useQueryParams from 'hooks/useQueryParams';
-import Translate from 'utils/Translate';
+import useQueryParams from "hooks/useQueryParams";
+import Translate from "utils/Translate";
 
 const Tabs = ({ config, className }) => {
   const parsedQueryParams = useQueryParams();
@@ -12,13 +12,16 @@ const Tabs = ({ config, className }) => {
       {Object.entries(config).map(([key, value]) => (
         <span
           key={key}
-          className={parsedQueryParams?.tab === key ? 'active-tab' : ''}
+          className={parsedQueryParams?.tab === key ? "active-tab" : ""}
           onClick={() => value.onClick?.(key)}
           role="button"
           tabIndex={0}
           onKeyDown={() => value.onClick?.(key)}
         >
-          <Translate id={value.label.id} defaultMessage={value.label.defaultMessage} />
+          <Translate
+            id={value.label.id}
+            defaultMessage={value.label.defaultMessage}
+          />
         </span>
       ))}
     </div>
@@ -41,6 +44,6 @@ Tabs.propTypes = {
 };
 
 Tabs.defaultProps = {
-  className: '',
+  className: "",
   config: {},
 };

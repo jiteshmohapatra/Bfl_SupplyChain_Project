@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import invoiceApi from 'api/services/InvoiceApi';
-import AddItemsPage from 'components/invoice/create/AddItemsPage';
-import ConfirmInvoicePage from 'components/invoice/create/ConfirmInvoicePage';
-import CreateInvoicePage from 'components/invoice/create/CreateInvoicePage';
-import Wizard from 'components/wizard/Wizard';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import invoiceApi from "api/services/InvoiceApi";
+import AddItemsPage from "components/invoice/create/AddItemsPage";
+import ConfirmInvoicePage from "components/invoice/create/ConfirmInvoicePage";
+import CreateInvoicePage from "components/invoice/create/CreateInvoicePage";
+import Wizard from "components/wizard/Wizard";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/invoice/Invoice.scss';
+import "components/invoice/Invoice.scss";
 
 class InvoiceWizard extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class InvoiceWizard extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'invoice');
+    this.props.fetchTranslations("", "invoice");
 
     if (this.props.invoiceTranslationsFetched) {
       this.dataFetched = true;
@@ -37,7 +37,7 @@ class InvoiceWizard extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'invoice');
+      this.props.fetchTranslations(nextProps.locale, "invoice");
     }
 
     if (nextProps.invoiceTranslationsFetched && !this.dataFetched) {
@@ -53,14 +53,14 @@ class InvoiceWizard extends Component {
     }
     return [
       {
-        text: this.props.translate('react.invoice.label', 'Invoice'),
-        color: '#000000',
-        delimeter: ' | ',
+        text: this.props.translate("react.invoice.label", "Invoice"),
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: values.invoiceNumber,
-        color: '#000000',
-        delimeter: '',
+        color: "#000000",
+        delimeter: "",
       },
     ];
   }
@@ -71,9 +71,9 @@ class InvoiceWizard extends Component {
    */
   get stepList() {
     return [
-      this.props.translate('react.invoice.create.label', 'Create'),
-      this.props.translate('react.invoice.addItems.label', 'Add items'),
-      this.props.translate('react.invoice.confirm.label', 'Confirm'),
+      this.props.translate("react.invoice.create.label", "Create"),
+      this.props.translate("react.invoice.addItems.label", "Add items"),
+      this.props.translate("react.invoice.confirm.label", "Confirm"),
     ];
   }
 
@@ -96,7 +96,8 @@ class InvoiceWizard extends Component {
   fetchInitialValues() {
     if (this.props.match.params.invoiceId) {
       this.props.showSpinner();
-      invoiceApi.getInvoice(this.props.match.params.invoiceId)
+      invoiceApi
+        .getInvoice(this.props.match.params.invoiceId)
         .then((response) => {
           const values = {
             ...response.data.data,
@@ -111,7 +112,9 @@ class InvoiceWizard extends Component {
             currentPage = 3;
           }
 
-          this.setState({ values, currentPage }, () => this.props.hideSpinner());
+          this.setState({ values, currentPage }, () =>
+            this.props.hideSpinner(),
+          );
         })
         .catch(() => this.props.hideSpinner());
     }
@@ -141,7 +144,9 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(InvoiceWizard);
 
 InvoiceWizard.propTypes = {

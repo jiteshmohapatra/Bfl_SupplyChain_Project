@@ -1,73 +1,81 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import DateField from 'components/form-elements/DateField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import ProductSelectField from 'components/form-elements/ProductSelectField';
-import TextField from 'components/form-elements/TextField';
-import DateFormat from 'consts/dateFormat';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import DateField from "components/form-elements/DateField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import ProductSelectField from "components/form-elements/ProductSelectField";
+import TextField from "components/form-elements/TextField";
+import DateFormat from "consts/dateFormat";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
 const FIELDS = {
   lines: {
     type: ArrayField,
     addButton: ({
-    // eslint-disable-next-line react/prop-types
-      addRow, shipmentItemId, binLocation, product,
+      // eslint-disable-next-line react/prop-types
+      addRow,
+      shipmentItemId,
+      binLocation,
+      product,
     }) => (
       <button
         type="button"
         className="btn btn-outline-success btn-xs"
-        onClick={() => addRow({
-          shipmentItemId,
-          binLocation,
-          product,
-          receiptItemId: null,
-          newLine: true,
-        })}
+        onClick={() =>
+          addRow({
+            shipmentItemId,
+            binLocation,
+            product,
+            receiptItemId: null,
+            newLine: true,
+          })
+        }
       >
-        <Translate id="react.default.button.addLine.label" defaultMessage="Add line" />
+        <Translate
+          id="react.default.button.addLine.label"
+          defaultMessage="Add line"
+        />
       </button>
     ),
     fields: {
       product: {
         type: ProductSelectField,
-        label: 'react.partialReceiving.product.label',
-        defaultMessage: 'Product',
-        fieldKey: 'disabled',
+        label: "react.partialReceiving.product.label",
+        defaultMessage: "Product",
+        fieldKey: "disabled",
         getDynamicAttr: ({ fieldValue }) => ({
           disabled: fieldValue,
         }),
       },
       lotNumber: {
         type: TextField,
-        label: 'react.partialReceiving.lot.label',
-        defaultMessage: 'Lot',
+        label: "react.partialReceiving.lot.label",
+        defaultMessage: "Lot",
       },
       expirationDate: {
         type: DateField,
-        label: 'react.partialReceiving.expiry.label',
-        defaultMessage: 'Expiry',
+        label: "react.partialReceiving.expiry.label",
+        defaultMessage: "Expiry",
         attributes: {
           localizeDate: true,
           localizedDateFormat: DateFormat.COMMON,
-          autoComplete: 'off',
+          autoComplete: "off",
         },
       },
       quantityShipped: {
         type: TextField,
-        label: 'react.partialReceiving.quantityShipped.label',
-        defaultMessage: 'Quantity shipped',
+        label: "react.partialReceiving.quantityShipped.label",
+        defaultMessage: "Quantity shipped",
         attributes: {
-          type: 'number',
+          type: "number",
         },
       },
     },
@@ -75,18 +83,19 @@ const FIELDS = {
 };
 
 // Erase receiving quantity when shipped quantity is equal to 0
-const eraseReceivingQuantity = (items) => items.map((item) => {
-  if (!_.parseInt(item.quantityShipped)) {
-    return { ...item, quantityReceiving: null };
-  }
+const eraseReceivingQuantity = (items) =>
+  items.map((item) => {
+    if (!_.parseInt(item.quantityShipped)) {
+      return { ...item, quantityReceiving: null };
+    }
 
-  return item;
-});
+    return item;
+  });
 
 /**
  * Modal window where user can edit receiving's line. User can open it on the first page
  * of partial receiving if they want to change lot information.
-*/
+ */
 class EditLineModal extends Component {
   constructor(props) {
     super(props);
@@ -103,21 +112,26 @@ class EditLineModal extends Component {
      * we already might have edited qty shipped
      * that would be considered as original qty that we should validate further edits with.
      */
-    const groupedShipmentItems = this.groupShipmentItems(this.props.initialReceiptCandidates);
-    const shipmentItemsQuantityMap = Object.entries(groupedShipmentItems)
-      .reduce((acc, [key, value]) =>
-        ({
-          ...acc,
-          [key]: _.sumBy(value, (item) => _.toInteger(item.quantityShipped)),
-        }),
-      {});
+    const groupedShipmentItems = this.groupShipmentItems(
+      this.props.initialReceiptCandidates,
+    );
+    const shipmentItemsQuantityMap = Object.entries(
+      groupedShipmentItems,
+    ).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: _.sumBy(value, (item) => _.toInteger(item.quantityShipped)),
+      }),
+      {},
+    );
 
     this.state = {
       attr,
       formValues: [],
       shipmentItemsQuantityMap,
       // This is the original quantity shipped of a shipmentItem. This indicates the maximum.
-      shipmentItemQuantityShippedSum: shipmentItemsQuantityMap[attr.fieldValue?.shipmentItemId],
+      shipmentItemQuantityShippedSum:
+        shipmentItemsQuantityMap[attr.fieldValue?.shipmentItemId],
       showMismatchQuantityShippedInfo: false,
     };
 
@@ -145,15 +159,17 @@ class EditLineModal extends Component {
      * as after mapping, the result would look like
      * [[<shipmentItem>, <shipmentItem>], [<shipmentItem>, <shipmentItem>]]
      */
-    const shipmentItems = containers.flatMap((container) => container.shipmentItems);
+    const shipmentItems = containers.flatMap(
+      (container) => container.shipmentItems,
+    );
     // Return the results as map of { [shipmentItemId]: [<shipmentItem>, <shipmentItem>] }
-    return _.groupBy(shipmentItems, 'shipmentItemId');
+    return _.groupBy(shipmentItems, "shipmentItemId");
   }
 
   /**
    * Loads available items into modal's form.
    * @public
-  */
+   */
   onOpen() {
     const { shipmentItemsQuantityMap, attr } = this.state;
     this.setState((prev) => ({
@@ -170,7 +186,8 @@ class EditLineModal extends Component {
        * the new, split item contains quantity info from the row,
        * that was at this place before (2nd row, now 3rd row, after splitting the line)
        */
-      shipmentItemQuantityShippedSum: shipmentItemsQuantityMap[attr.fieldValue?.shipmentItemId],
+      shipmentItemQuantityShippedSum:
+        shipmentItemsQuantityMap[attr.fieldValue?.shipmentItemId],
     }));
   }
 
@@ -181,13 +198,26 @@ class EditLineModal extends Component {
    */
   onSave(values) {
     const lines = eraseReceivingQuantity(values.lines);
-    if (_.some(lines, (line) => {
-      const oldItem = _.find(this.state.formValues.lines, (item) => line.product
-        && line.product.id === item.product.id && line.lotNumber === item.lotNumber);
+    if (
+      _.some(lines, (line) => {
+        const oldItem = _.find(
+          this.state.formValues.lines,
+          (item) =>
+            line.product &&
+            line.product.id === item.product.id &&
+            line.lotNumber === item.lotNumber,
+        );
 
-      return oldItem && oldItem.quantityOnHand && oldItem.expirationDate !== line.expirationDate;
-    })) {
-      this.confirmInventoryItemExpirationDateUpdate(() => this.save({ ...values, lines }));
+        return (
+          oldItem &&
+          oldItem.quantityOnHand &&
+          oldItem.expirationDate !== line.expirationDate
+        );
+      })
+    ) {
+      this.confirmInventoryItemExpirationDateUpdate(() =>
+        this.save({ ...values, lines }),
+      );
     } else {
       this.save({ ...values, lines });
     }
@@ -209,18 +239,21 @@ class EditLineModal extends Component {
    */
   confirmInventoryItemExpirationDateUpdate(onConfirm) {
     confirmAlert({
-      title: this.props.translate('react.partialReceiving.message.confirmSave.label', 'Confirm save'),
+      title: this.props.translate(
+        "react.partialReceiving.message.confirmSave.label",
+        "Confirm save",
+      ),
       message: this.props.translate(
-        'react.partialReceiving.confirmExpiryDateUpdate.message',
-        'This will update the expiry date across all depots in the system. Are you sure you want to proceed?',
+        "react.partialReceiving.confirmExpiryDateUpdate.message",
+        "This will update the expiry date across all depots in the system. Are you sure you want to proceed?",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -229,7 +262,9 @@ class EditLineModal extends Component {
   calculateQuantityShippedSum(values) {
     const { shipmentItemQuantityShippedSum } = this.state;
     const originalItem = values.find((item) => item.rowId);
-    const qtyShippedSumFromModal = _.sumBy(values, (item) => _.toInteger(item.quantityShipped));
+    const qtyShippedSumFromModal = _.sumBy(values, (item) =>
+      _.toInteger(item.quantityShipped),
+    );
     /**
      * When calculating grouped shipment items while validating,
      * we want to look at the current form values
@@ -249,17 +284,20 @@ class EditLineModal extends Component {
      * so the existingItemsQuantities for this shipment item would be 35, not 20.
      */
     const sumExistingShipmentItemQuantity = (shipmentItems) =>
-      shipmentItems
-        .reduce((sum, curr) => (curr.rowId === originalItem?.rowId
-          ? sum
-          : sum + _.toInteger(curr.quantityShipped)), 0);
-    const existingItemsQuantities = Object.entries(groupedShipmentItems)
-      .reduce((acc, [key, value]) =>
-        ({
-          ...acc,
-          [key]: sumExistingShipmentItemQuantity(value),
-        }),
-      {});
+      shipmentItems.reduce(
+        (sum, curr) =>
+          curr.rowId === originalItem?.rowId
+            ? sum
+            : sum + _.toInteger(curr.quantityShipped),
+        0,
+      );
+    const existingItemsQuantities = Object.entries(groupedShipmentItems).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: sumExistingShipmentItemQuantity(value),
+      }),
+      {},
+    );
     /** If the original item was not found, it means it's first attempt to edit a line,
      *  and we don't have to check for existing quantities in rows below/above
      *  as we only care about sum from the modal
@@ -270,8 +308,11 @@ class EditLineModal extends Component {
     /**
      * If sum from modal + eventual existing quantities is not equal to the original shipped qty,
      * show the indicator of not matching quantity
-    */
-    if ((qtyShippedSumFromModal + existingItemsQuantitySum) !== shipmentItemQuantityShippedSum) {
+     */
+    if (
+      qtyShippedSumFromModal + existingItemsQuantitySum !==
+      shipmentItemQuantityShippedSum
+    ) {
       this.setState({ showMismatchQuantityShippedInfo: true });
       return;
     }
@@ -282,32 +323,54 @@ class EditLineModal extends Component {
     this.calculateQuantityShippedSum(values.lines);
     const errors = {};
     errors.lines = [];
-    const date = moment(this.props.minimumExpirationDate, 'MM/DD/YYYY');
+    const date = moment(this.props.minimumExpirationDate, "MM/DD/YYYY");
 
     _.forEach(values.lines, (line, key) => {
       if (line && _.isNil(line.quantityShipped)) {
-        errors.lines[key] = { quantityShipped: 'react.partialReceiving.error.enterQuantityShipped.label' };
+        errors.lines[key] = {
+          quantityShipped:
+            "react.partialReceiving.error.enterQuantityShipped.label",
+        };
       }
       if (line.quantityShipped < 0) {
-        errors.lines[key] = { quantityShipped: 'react.partialReceiving.error.quantityShippedNegative.label' };
+        errors.lines[key] = {
+          quantityShipped:
+            "react.partialReceiving.error.quantityShippedNegative.label",
+        };
       }
-      const dateRequested = moment(line.expirationDate, 'MM/DD/YYYY');
+      const dateRequested = moment(line.expirationDate, "MM/DD/YYYY");
       if (date.diff(dateRequested) > 0) {
-        errors.lines[key] = { expirationDate: 'react.partialReceiving.error.invalidDate.label' };
+        errors.lines[key] = {
+          expirationDate: "react.partialReceiving.error.invalidDate.label",
+        };
       }
-      if (line.expirationDate && (_.isNil(line.lotNumber) || _.isEmpty(line.lotNumber))) {
-        errors.lines[key] = { lotNumber: 'react.partialReceiving.error.expiryWithoutLot.label' };
+      if (
+        line.expirationDate &&
+        (_.isNil(line.lotNumber) || _.isEmpty(line.lotNumber))
+      ) {
+        errors.lines[key] = {
+          lotNumber: "react.partialReceiving.error.expiryWithoutLot.label",
+        };
       }
       if (!_.isNil(line.product) && line.product.lotAndExpiryControl) {
-        if (!line.expirationDate && (_.isNil(line.lotNumber) || _.isEmpty(line.lotNumber))) {
+        if (
+          !line.expirationDate &&
+          (_.isNil(line.lotNumber) || _.isEmpty(line.lotNumber))
+        ) {
           errors.lines[key] = {
-            expirationDate: 'react.partialReceiving.error.lotAndExpiryControl.label',
-            lotNumber: 'react.partialReceiving.error.lotAndExpiryControl.label',
+            expirationDate:
+              "react.partialReceiving.error.lotAndExpiryControl.label",
+            lotNumber: "react.partialReceiving.error.lotAndExpiryControl.label",
           };
         } else if (!line.expirationDate) {
-          errors.lines[key] = { expirationDate: 'react.partialReceiving.error.lotAndExpiryControl.label' };
+          errors.lines[key] = {
+            expirationDate:
+              "react.partialReceiving.error.lotAndExpiryControl.label",
+          };
         } else if (_.isNil(line.lotNumber) || _.isEmpty(line.lotNumber)) {
-          errors.lines[key] = { lotNumber: 'react.partialReceiving.error.lotAndExpiryControl.label' };
+          errors.lines[key] = {
+            lotNumber: "react.partialReceiving.error.lotAndExpiryControl.label",
+          };
         }
       }
     });
@@ -333,19 +396,20 @@ class EditLineModal extends Component {
       >
         <div>
           <div className="font-weight-bold mb-3">
-            <Translate id="react.partialReceiving.originalQtyShipped.label" defaultMessage="Original quantity shipped" />
-            :
-            {this.state.attr.fieldValue.quantityShipped}
+            <Translate
+              id="react.partialReceiving.originalQtyShipped.label"
+              defaultMessage="Original quantity shipped"
+            />
+            :{this.state.attr.fieldValue.quantityShipped}
           </div>
-          {this.state.showMismatchQuantityShippedInfo
-            && (
-              <div className="font-weight-bold font-red-ob">
-                <Translate
-                  id="react.partialReceiving.error.mismatchingQuantityShipped.label"
-                  defaultMessage="The total edited quantity does not match the original quantity shipped."
-                />
-              </div>
-            )}
+          {this.state.showMismatchQuantityShippedInfo && (
+            <div className="font-weight-bold font-red-ob">
+              <Translate
+                id="react.partialReceiving.error.mismatchingQuantityShipped.label"
+                defaultMessage="The total edited quantity does not match the original quantity shipped."
+              />
+            </div>
+          )}
         </div>
       </ModalWrapper>
     );
@@ -357,7 +421,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(EditLineModal);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  EditLineModal,
+);
 
 EditLineModal.propTypes = {
   /** Name of the field */

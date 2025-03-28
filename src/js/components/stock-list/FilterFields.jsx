@@ -1,20 +1,20 @@
-import CheckboxField from 'components/form-elements/CheckboxField';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
+import CheckboxField from "components/form-elements/CheckboxField";
+import FilterSelectField from "components/form-elements/FilterSelectField";
 
 export default {
   origin: {
     type: FilterSelectField,
     attributes: {
-      className: 'location-select',
+      className: "location-select",
       multi: true,
       filterElement: true,
-      placeholder: 'react.stocklists.filters.origin.label',
-      defaultPlaceholder: 'Origin',
+      placeholder: "react.stocklists.filters.origin.label",
+      defaultPlaceholder: "Origin",
       showLabelTooltip: true,
       closeMenuOnSelect: false,
       blurInputOnSelect: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     },
     getDynamicAttr: ({ locations }) => ({
       options: locations,
@@ -23,16 +23,16 @@ export default {
   destination: {
     type: FilterSelectField,
     attributes: {
-      className: 'location-select',
+      className: "location-select",
       multi: true,
       filterElement: true,
-      placeholder: 'react.stocklists.filters.destination.label',
-      defaultPlaceholder: 'Destination',
+      placeholder: "react.stocklists.filters.destination.label",
+      defaultPlaceholder: "Destination",
       showLabelTooltip: true,
       closeMenuOnSelect: false,
       blurInputOnSelect: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     },
     getDynamicAttr: ({ locations }) => ({
       options: locations,
@@ -42,8 +42,8 @@ export default {
     type: CheckboxField,
     attributes: {
       withLabel: true,
-      label: 'react.stocklists.includeUnpublished.label',
-      defaultMessage: 'Include unpublished stocklists',
+      label: "react.stocklists.includeUnpublished.label",
+      defaultMessage: "Include unpublished stocklists",
       filterElement: true,
     },
   },

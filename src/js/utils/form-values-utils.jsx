@@ -1,14 +1,18 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import { Tooltip } from "react-tippy";
 
-import notification from 'components/Layout/notifications/notification';
-import NotificationType from 'consts/notificationTypes';
-import renderHandlingIcons from 'utils/product-handling-icons';
+import notification from "components/Layout/notifications/notification";
+import NotificationType from "consts/notificationTypes";
+import renderHandlingIcons from "utils/product-handling-icons";
 
 export const getInvoiceDescription = (rowValue) => {
-  if (!rowValue?.orderAdjustment && !rowValue?.isAdjustment && rowValue?.displayNames?.default) {
+  if (
+    !rowValue?.orderAdjustment &&
+    !rowValue?.isAdjustment &&
+    rowValue?.displayNames?.default
+  ) {
     return (
       <Tooltip
         html={rowValue?.productName}
@@ -24,14 +28,15 @@ export const getInvoiceDescription = (rowValue) => {
   return rowValue?.description;
 };
 
-export const formatProductSupplierSubtext = (productSupplier) => (
-  productSupplier?.name ? `(source: ${productSupplier?.name})` : null
-);
+export const formatProductSupplierSubtext = (productSupplier) =>
+  productSupplier?.name ? `(source: ${productSupplier?.name})` : null;
 
 export const formatProductDisplayName = (rowValue) => (
   <div className="d-flex">
     <span className="text-truncate">
-      {rowValue?.displayName || rowValue?.displayNames?.default || rowValue?.name}
+      {rowValue?.displayName ||
+        rowValue?.displayNames?.default ||
+        rowValue?.name}
     </span>
     {renderHandlingIcons(rowValue?.handlingIcons)}
   </div>
@@ -41,10 +46,14 @@ export const getReceivingPayloadContainers = (formValues) =>
   _.map(formValues.containers, (container) => ({
     ...container,
     shipmentItems: _.map(container.shipmentItems, (item) => {
-      if (!_.get(item, 'recipient.id')) {
-        return _.omit({
-          ...item, recipient: '',
-        }, 'product.displayNames');
+      if (!_.get(item, "recipient.id")) {
+        return _.omit(
+          {
+            ...item,
+            recipient: "",
+          },
+          "product.displayNames",
+        );
       }
       /** We have to omit product.displayNames, due to an error
        *  while binding bindData(partialReceiptItem, shipmentItemMap)
@@ -55,27 +64,29 @@ export const getReceivingPayloadContainers = (formValues) =>
        *  it was recognizing the transient, and we didn't access product.translatedName.something
        *  but product.translatedName directly
        * */
-      return _.omit(item, 'product.displayNames');
+      return _.omit(item, "product.displayNames");
     }),
   }));
 
-export const matchesProductCodeOrName = ({
-  product, filterValue,
-}) => {
+export const matchesProductCodeOrName = ({ product, filterValue }) => {
   const { productCode, name, displayNames } = product;
   const value = filterValue?.toLowerCase();
-  return (productCode?.toLowerCase()?.includes(value)
-    || name?.toLowerCase()?.includes(value)
-    || displayNames?.default?.toLowerCase()?.includes(value)
+  return (
+    productCode?.toLowerCase()?.includes(value) ||
+    name?.toLowerCase()?.includes(value) ||
+    displayNames?.default?.toLowerCase()?.includes(value)
   );
 };
 
 export const showOutboundEditValidationErrors = ({ translate, errors }) => {
-  const errorMessage = `${translate('react.stockMovement.errors.errorInLine.label', 'Error occurred in line')}:`;
-  const errorDetails = errors.reduce((acc, message, key) => [
-    ...acc,
-    `${message && `${key + 1} - ${_.map(message, (val) => translate(`${val}`))}`}`,
-  ], []);
+  const errorMessage = `${translate("react.stockMovement.errors.errorInLine.label", "Error occurred in line")}:`;
+  const errorDetails = errors.reduce(
+    (acc, message, key) => [
+      ...acc,
+      `${message && `${key + 1} - ${_.map(message, (val) => translate(`${val}`))}`}`,
+    ],
+    [],
+  );
 
   notification(NotificationType.ERROR_OUTLINED)({
     message: errorMessage,
@@ -83,13 +94,21 @@ export const showOutboundEditValidationErrors = ({ translate, errors }) => {
   });
 };
 
-export const omitEmptyValues = (values) => _.omitBy(values, (val) => {
-  // Do not omit boolean, numbers and date values
-  if (typeof val === 'boolean' || typeof val === 'number' || val instanceof Date) {
-    return false;
-  }
-  return _.isEmpty(val);
-});
+export const omitEmptyValues = (values) =>
+  _.omitBy(values, (val) => {
+    // Do not omit boolean, numbers and date values
+    if (
+      typeof val === "boolean" ||
+      typeof val === "number" ||
+      val instanceof Date
+    ) {
+      return false;
+    }
+    return _.isEmpty(val);
+  });
 
 export const mapStringToLimitedList = (value, elementsSeparator, lengthLimit) =>
-  (value?.length > lengthLimit ? `${_.take(value, lengthLimit).join('')}...` : value)?.split(elementsSeparator);
+  (value?.length > lengthLimit
+    ? `${_.take(value, lengthLimit).join("")}...`
+    : value
+  )?.split(elementsSeparator);

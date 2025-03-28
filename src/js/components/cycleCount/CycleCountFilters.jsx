@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import cycleCountFilterFields from 'components/cycleCount/CycleCountFilterFields';
-import FilterForm from 'components/Filter/FilterForm';
-import ListFilterFormWrapper from 'wrappers/ListFilterFormWrapper';
+import cycleCountFilterFields from "components/cycleCount/CycleCountFilterFields";
+import FilterForm from "components/Filter/FilterForm";
+import ListFilterFormWrapper from "wrappers/ListFilterFormWrapper";
 
 const CycleCountFilters = ({
   setFilterParams,
@@ -21,7 +21,7 @@ const CycleCountFilters = ({
       allowEmptySubmit
       searchFieldDefaultPlaceholder="Search..."
       searchFieldPlaceholder="react.cycleCount.filter.search.label"
-      ignoreClearFilters={['tab']}
+      ignoreClearFilters={["tab"]}
       hidden={false}
       isLoading={isLoading}
       isCycleCountTab

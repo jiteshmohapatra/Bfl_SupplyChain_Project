@@ -1,56 +1,56 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import CheckboxField from 'components/form-elements/CheckboxField';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import BinTable from 'components/locations-configuration/BinTable';
-import AddBinModal from 'components/locations-configuration/modals/AddBinModal';
-import AddZoneModal from 'components/locations-configuration/modals/AddZoneModal';
-import ImportBinModal from 'components/locations-configuration/modals/ImportBinModal';
-import ZoneTable from 'components/locations-configuration/ZoneTable';
-import apiClient, { flattenRequest } from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import CheckboxField from "components/form-elements/CheckboxField";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import BinTable from "components/locations-configuration/BinTable";
+import AddBinModal from "components/locations-configuration/modals/AddBinModal";
+import AddZoneModal from "components/locations-configuration/modals/AddZoneModal";
+import ImportBinModal from "components/locations-configuration/modals/ImportBinModal";
+import ZoneTable from "components/locations-configuration/ZoneTable";
+import apiClient, { flattenRequest } from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import 'react-table/react-table.css';
-import 'components/locations-configuration/ZoneTable.scss';
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "react-table/react-table.css";
+import "components/locations-configuration/ZoneTable.scss";
 
 const ZONE_FIELDS = {
   active: {
     type: CheckboxField,
-    label: 'react.locationsConfiguration.addZone.status.label',
-    defaultMessage: 'Status',
+    label: "react.locationsConfiguration.addZone.status.label",
+    defaultMessage: "Status",
     attributes: {
       withLabel: true,
-      label: 'Active',
+      label: "Active",
     },
   },
   name: {
     type: TextField,
-    label: 'react.locationsConfiguration.name.label',
-    defaultMessage: 'Name',
+    label: "react.locationsConfiguration.name.label",
+    defaultMessage: "Name",
     attributes: {
       required: true,
       withTooltip: true,
-      tooltip: 'react.locationsConfiguration.addZone.name.tooltip.label',
+      tooltip: "react.locationsConfiguration.addZone.name.tooltip.label",
     },
   },
   locationType: {
     type: SelectField,
-    label: 'react.locationsConfiguration.zoneType.label',
-    defaultMessage: 'Zone Type',
+    label: "react.locationsConfiguration.zoneType.label",
+    defaultMessage: "Zone Type",
     attributes: {
       required: true,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     },
     getDynamicAttr: ({ zoneTypes }) => ({
       options: zoneTypes,
@@ -61,31 +61,31 @@ const ZONE_FIELDS = {
 const BIN_FIELDS = {
   active: {
     type: CheckboxField,
-    label: 'react.locationsConfiguration.addZone.status.label',
-    defaultMessage: 'Status',
+    label: "react.locationsConfiguration.addZone.status.label",
+    defaultMessage: "Status",
     attributes: {
       withLabel: true,
-      label: 'Active',
+      label: "Active",
     },
   },
   name: {
     type: TextField,
-    label: 'react.locationsConfiguration.name.label',
-    defaultMessage: 'Name',
+    label: "react.locationsConfiguration.name.label",
+    defaultMessage: "Name",
     attributes: {
       required: true,
       withTooltip: true,
-      tooltip: 'react.locationsConfiguration.addZone.name.tooltip.label',
+      tooltip: "react.locationsConfiguration.addZone.name.tooltip.label",
     },
   },
   locationType: {
     type: SelectField,
-    label: 'react.locationsConfiguration.binType.label',
-    defaultMessage: 'Bin Type',
+    label: "react.locationsConfiguration.binType.label",
+    defaultMessage: "Bin Type",
     attributes: {
       required: true,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     },
     getDynamicAttr: ({ binTypes }) => ({
       options: binTypes,
@@ -93,11 +93,11 @@ const BIN_FIELDS = {
   },
   zoneLocation: {
     type: SelectField,
-    label: 'react.locationsConfiguration.zoneLocation.label',
-    defaultMessage: 'Zone Location',
+    label: "react.locationsConfiguration.zoneLocation.label",
+    defaultMessage: "Zone Location",
     attributes: {
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     },
     getDynamicAttr: ({ zoneData }) => ({
       options: zoneData,
@@ -106,31 +106,29 @@ const BIN_FIELDS = {
 };
 
 const zoneValidate = (values) => {
-  const requiredFields = ['name', 'locationType'];
-  return Object.keys(ZONE_FIELDS)
-    .reduce((acc, fieldName) => {
-      if (!values[fieldName] && requiredFields.includes(fieldName)) {
-        return {
-          ...acc,
-          [fieldName]: 'react.default.error.requiredField.label',
-        };
-      }
-      return acc;
-    }, {});
+  const requiredFields = ["name", "locationType"];
+  return Object.keys(ZONE_FIELDS).reduce((acc, fieldName) => {
+    if (!values[fieldName] && requiredFields.includes(fieldName)) {
+      return {
+        ...acc,
+        [fieldName]: "react.default.error.requiredField.label",
+      };
+    }
+    return acc;
+  }, {});
 };
 
 const binValidate = (values) => {
-  const requiredFields = ['name', 'locationType'];
-  return Object.keys(BIN_FIELDS)
-    .reduce((acc, fieldName) => {
-      if (!values[fieldName] && requiredFields.includes(fieldName)) {
-        return {
-          ...acc,
-          [fieldName]: 'react.default.error.requiredField.label',
-        };
-      }
-      return acc;
-    }, {});
+  const requiredFields = ["name", "locationType"];
+  return Object.keys(BIN_FIELDS).reduce((acc, fieldName) => {
+    if (!values[fieldName] && requiredFields.includes(fieldName)) {
+      return {
+        ...acc,
+        [fieldName]: "react.default.error.requiredField.label",
+      };
+    }
+    return acc;
+  }, {});
 };
 
 class ZoneAndBinLocations extends Component {
@@ -158,22 +156,38 @@ class ZoneAndBinLocations extends Component {
   }
 
   fetchBinAndZoneTypes() {
-    const url = '/api/locations/locationTypes';
-    apiClient.get(url)
+    const url = "/api/locations/locationTypes";
+    apiClient
+      .get(url)
       .then((response) => {
         const resp = response.data.data;
         const locationTypes = _.map(resp, (locationType) => {
-          const [en, fr] = _.split(locationType.name, '|fr:');
+          const [en, fr] = _.split(locationType.name, "|fr:");
           return {
             ...locationType,
-            label: this.props.locale === 'fr' && fr ? fr : en,
+            label: this.props.locale === "fr" && fr ? fr : en,
           };
         });
-        const binTypes = locationTypes.filter((location) => location.locationTypeCode === 'BIN_LOCATION' || location.locationTypeCode === 'INTERNAL');
-        const zoneTypes = locationTypes.filter((location) => location.locationTypeCode === 'ZONE');
+        const binTypes = locationTypes.filter(
+          (location) =>
+            location.locationTypeCode === "BIN_LOCATION" ||
+            location.locationTypeCode === "INTERNAL",
+        );
+        const zoneTypes = locationTypes.filter(
+          (location) => location.locationTypeCode === "ZONE",
+        );
         this.setState({ binTypes, zoneTypes });
       })
-      .catch(() => Promise.reject(new Error(this.props.translate('react.locationsConfiguration.error.fetchingBinAndZoneTypes', 'Could not load location types'))));
+      .catch(() =>
+        Promise.reject(
+          new Error(
+            this.props.translate(
+              "react.locationsConfiguration.error.fetchingBinAndZoneTypes",
+              "Could not load location types",
+            ),
+          ),
+        ),
+      );
   }
 
   handleLocationEdit(values) {
@@ -186,10 +200,11 @@ class ZoneAndBinLocations extends Component {
       zone: values.zoneLocation && { id: values.zoneLocation.id },
     };
 
-    apiClient.post(`/api/locations/${values.id}`, flattenRequest(payload))
+    apiClient
+      .post(`/api/locations/${values.id}`, flattenRequest(payload))
       .then(() => {
         this.props.hideSpinner();
-        if (values.locationType.locationTypeCode === 'ZONE') {
+        if (values.locationType.locationTypeCode === "ZONE") {
           this.zoneEditCallback();
           return;
         }
@@ -197,17 +212,36 @@ class ZoneAndBinLocations extends Component {
       })
       .catch(() => {
         this.props.hideSpinner();
-        return Promise.reject(new Error(this.props.translate('react.locationsConfiguration.editZone.error.label', 'Could not edit zone location')));
+        return Promise.reject(
+          new Error(
+            this.props.translate(
+              "react.locationsConfiguration.editZone.error.label",
+              "Could not edit zone location",
+            ),
+          ),
+        );
       });
   }
 
   zoneEditCallback() {
-    Alert.success(this.props.translate('react.locationsConfiguration.editZone.success.label', 'Zone location has been edited successfully!'), { timeout: 3000 });
+    Alert.success(
+      this.props.translate(
+        "react.locationsConfiguration.editZone.success.label",
+        "Zone location has been edited successfully!",
+      ),
+      { timeout: 3000 },
+    );
     this.refZoneTable.current.fireFetchData();
   }
 
   binEditCallback() {
-    Alert.success(this.props.translate('react.locationsConfiguration.editBin.success.label', 'Bin location has been edited successfully!'), { timeout: 3000 });
+    Alert.success(
+      this.props.translate(
+        "react.locationsConfiguration.editBin.success.label",
+        "Bin location has been edited successfully!",
+      ),
+      { timeout: 3000 },
+    );
     this.refBinTable.current.fireFetchData();
   }
 
@@ -221,33 +255,51 @@ class ZoneAndBinLocations extends Component {
 
   deleteLocation(location) {
     confirmAlert({
-      title: this.props.translate('react.locationsConfiguration.deleteZoneConfirm.title.label', 'Deleting a location'),
+      title: this.props.translate(
+        "react.locationsConfiguration.deleteZoneConfirm.title.label",
+        "Deleting a location",
+      ),
       message: this.props.translate(
-        'react.locationsConfiguration.deleteZoneConfirm.subtitle.label',
-        'If you press \'Yes\', this will delete the location. If you decide not to delete the location, press \'No\'',
+        "react.locationsConfiguration.deleteZoneConfirm.subtitle.label",
+        "If you press 'Yes', this will delete the location. If you decide not to delete the location, press 'No'",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: () => {
-            apiClient.delete(`/api/locations/${location.id}`)
+            apiClient
+              .delete(`/api/locations/${location.id}`)
               .then(() => {
-                if (location.locationType.locationTypeCode === 'ZONE') {
+                if (location.locationType.locationTypeCode === "ZONE") {
                   this.refetchZoneTable();
                   return;
                 }
                 this.refetchBinTable();
               })
               .catch(() => {
-                if (location.locationType.locationTypeCode === 'ZONE') {
-                  return Promise.reject(new Error(this.props.translate('react.locationsConfiguration.deleteZone.error.label', 'Could not delete zone location')));
+                if (location.locationType.locationTypeCode === "ZONE") {
+                  return Promise.reject(
+                    new Error(
+                      this.props.translate(
+                        "react.locationsConfiguration.deleteZone.error.label",
+                        "Could not delete zone location",
+                      ),
+                    ),
+                  );
                 }
-                return Promise.reject(new Error(this.props.translate('react.locationsConfiguration.deleteBin.error.label', 'Could not delete bin location')));
+                return Promise.reject(
+                  new Error(
+                    this.props.translate(
+                      "react.locationsConfiguration.deleteBin.error.label",
+                      "Could not delete bin location",
+                    ),
+                  ),
+                );
               });
           },
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -275,7 +327,10 @@ class ZoneAndBinLocations extends Component {
         <div className="configuration-wizard-content flex-column">
           <div className="classic-form with-description">
             <div className="form-title">
-              <Translate id="react.locationsConfiguration.zone.label" defaultMessage="Zone Locations" />
+              <Translate
+                id="react.locationsConfiguration.zone.label"
+                defaultMessage="Zone Locations"
+              />
             </div>
             <div className="form-subtitle zone-subtitle">
               <div>
@@ -316,7 +371,10 @@ class ZoneAndBinLocations extends Component {
 
           <div className="classic-form with-description">
             <div className="form-title">
-              <Translate id="react.locationsConfiguration.bin.label" defaultMessage="Bin Locations" />
+              <Translate
+                id="react.locationsConfiguration.bin.label"
+                defaultMessage="Bin Locations"
+              />
             </div>
             <div className="form-subtitle">
               <Translate
@@ -338,9 +396,15 @@ class ZoneAndBinLocations extends Component {
                 locationId={this.props.initialValues.locationId}
                 onResponse={this.refetchBinTable}
               />
-              <button type="button" className="btn-xs btn btn-outline-primary add-zonebin-btn">
+              <button
+                type="button"
+                className="btn-xs btn btn-outline-primary add-zonebin-btn"
+              >
                 <i className="fa fa-arrow-up mr-1" aria-hidden="true" />
-                <Translate id="react.locationsConfiguration.exportBinLocations.label" defaultMessage="Export Bin Locations" />
+                <Translate
+                  id="react.locationsConfiguration.exportBinLocations.label"
+                  defaultMessage="Export Bin Locations"
+                />
               </button>
             </div>
             <BinTable
@@ -357,11 +421,25 @@ class ZoneAndBinLocations extends Component {
             />
           </div>
           <div className="submit-buttons d-flex justify-content-between">
-            <button type="button" onClick={() => this.previousPage()} className="btn btn-outline-primary float-left btn-xs">
-              <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+            <button
+              type="button"
+              onClick={() => this.previousPage()}
+              className="btn btn-outline-primary float-left btn-xs"
+            >
+              <Translate
+                id="react.default.button.previous.label"
+                defaultMessage="Previous"
+              />
             </button>
-            <button type="button" onClick={() => this.nextPage()} className="btn btn-outline-primary float-left btn-xs">
-              <Translate id="react.default.button.next.label" defaultMessage="Next" />
+            <button
+              type="button"
+              onClick={() => this.nextPage()}
+              className="btn btn-outline-primary float-left btn-xs"
+            >
+              <Translate
+                id="react.default.button.next.label"
+                defaultMessage="Next"
+              />
             </button>
           </div>
         </div>
@@ -380,7 +458,10 @@ const mapDispatchToProps = {
   hideSpinner,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ZoneAndBinLocations);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ZoneAndBinLocations);
 
 ZoneAndBinLocations.propTypes = {
   nextPage: PropTypes.func.isRequired,

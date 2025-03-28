@@ -1,28 +1,20 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import AttributesSection from 'components/productSupplier/create/sections/AttributesSection';
-import DetailsSection from 'components/productSupplier/create/sections/DetailsSection';
-import PreferenceTypeSection from 'components/productSupplier/create/sections/PreferenceTypeSection';
-import PricingSection from 'components/productSupplier/create/sections/PricingSection';
-import {
-  additionalDetailsFormErrors,
-} from 'components/productSupplier/create/subsections/AdditionalDetails';
-import { basicDetailsFormErrors } from 'components/productSupplier/create/subsections/BasicDetails';
-import {
-  defaultPreferenceTypeFormErrors,
-} from 'components/productSupplier/create/subsections/DefaultPreferenceType';
-import { fixedPriceFormErrors } from 'components/productSupplier/create/subsections/FixedPrice';
-import {
-  packageSpecificationFormErrors,
-} from 'components/productSupplier/create/subsections/PackageSpecification';
-import {
-  preferenceTypeVariationsFormErrors,
-} from 'components/productSupplier/create/subsections/PreferenceTypeVariations';
-import { FormErrorPropType } from 'utils/propTypes';
+import AttributesSection from "components/productSupplier/create/sections/AttributesSection";
+import DetailsSection from "components/productSupplier/create/sections/DetailsSection";
+import PreferenceTypeSection from "components/productSupplier/create/sections/PreferenceTypeSection";
+import PricingSection from "components/productSupplier/create/sections/PricingSection";
+import { additionalDetailsFormErrors } from "components/productSupplier/create/subsections/AdditionalDetails";
+import { basicDetailsFormErrors } from "components/productSupplier/create/subsections/BasicDetails";
+import { defaultPreferenceTypeFormErrors } from "components/productSupplier/create/subsections/DefaultPreferenceType";
+import { fixedPriceFormErrors } from "components/productSupplier/create/subsections/FixedPrice";
+import { packageSpecificationFormErrors } from "components/productSupplier/create/subsections/PackageSpecification";
+import { preferenceTypeVariationsFormErrors } from "components/productSupplier/create/subsections/PreferenceTypeVariations";
+import { FormErrorPropType } from "utils/propTypes";
 
-import './styles.scss';
+import "./styles.scss";
 
 const ProductSupplierFormMain = ({ formProps }) => {
   const {

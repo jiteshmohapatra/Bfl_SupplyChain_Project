@@ -1,16 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiArrowLeftSLine } from 'react-icons/ri';
-import { useHistory } from 'react-router-dom';
+import PropTypes from "prop-types";
+import { RiArrowLeftSLine } from "react-icons/ri";
+import { useHistory } from "react-router-dom";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
-import './utils.scss';
+import "./utils.scss";
 
-const RedirectButton = ({
-  className, label, defaultMessage, redirectTo,
-}) => {
+const RedirectButton = ({ className, label, defaultMessage, redirectTo }) => {
   const history = useHistory();
 
   return (
@@ -21,10 +19,7 @@ const RedirectButton = ({
     >
       <span>
         <RiArrowLeftSLine />
-        <Translate
-          id={label}
-          defaultMessage={defaultMessage}
-        />
+        <Translate id={label} defaultMessage={defaultMessage} />
       </span>
     </div>
   );
@@ -40,5 +35,5 @@ RedirectButton.propTypes = {
 };
 
 RedirectButton.defaultProps = {
-  className: '',
+  className: "",
 };

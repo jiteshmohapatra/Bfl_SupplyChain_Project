@@ -1,4 +1,4 @@
-import navigationKey from 'consts/navigationKey';
+import navigationKey from "consts/navigationKey";
 
 const useArrowsNavigation = ({
   newRowFocusableCells,
@@ -15,37 +15,56 @@ const useArrowsNavigation = ({
     const remainingColumns = newRowFocusableCells.slice(currentIndex + 1);
     const newRowIndex = tableData[rowIndex + 1];
 
-    if (!remainingColumns.some((col) => existingRowFocusableCells.includes(col))) {
+    if (
+      !remainingColumns.some((col) => existingRowFocusableCells.includes(col))
+    ) {
       if (!newRowIndex) {
         addNewRow();
-        return { newColumnId: newRowFocusableCells[0], newRowIndex: rowIndex + 1 };
+        return {
+          newColumnId: newRowFocusableCells[0],
+          newRowIndex: rowIndex + 1,
+        };
       }
 
       if (isNewRow(newRowIndex)) {
-        return { newColumnId: newRowFocusableCells[0], newRowIndex: rowIndex + 1 };
+        return {
+          newColumnId: newRowFocusableCells[0],
+          newRowIndex: rowIndex + 1,
+        };
       }
-      return { newColumnId: existingRowFocusableCells[0], newRowIndex: rowIndex + 1 };
+      return {
+        newColumnId: existingRowFocusableCells[0],
+        newRowIndex: rowIndex + 1,
+      };
     }
 
     if (isNewRow(tableData[rowIndex])) {
-      return { newColumnId: newRowFocusableCells[currentIndex + 1], newRowIndex: rowIndex };
+      return {
+        newColumnId: newRowFocusableCells[currentIndex + 1],
+        newRowIndex: rowIndex,
+      };
     }
     return {
-      newColumnId: existingRowFocusableCells[existingRowFocusableCells.indexOf(columnId) + 1],
+      newColumnId:
+        existingRowFocusableCells[
+          existingRowFocusableCells.indexOf(columnId) + 1
+        ],
       newRowIndex: rowIndex,
     };
   };
 
   const getPreviousFocus = (columnId, rowIndex) => {
     const currentIndex = newRowFocusableCells.indexOf(columnId);
-    const previousColumns = newRowFocusableCells.slice(0, currentIndex).reverse();
+    const previousColumns = newRowFocusableCells
+      .slice(0, currentIndex)
+      .reverse();
     const previousRow = tableData[rowIndex - 1];
     let newColumnId = newRowFocusableCells[currentIndex - 1];
     let newRowIndex = rowIndex;
 
-    const hasAllowedColumnToLeft = previousColumns
-      .some((col) => existingRowFocusableCells.includes(col))
-      || isNewRow(tableData[rowIndex]);
+    const hasAllowedColumnToLeft =
+      previousColumns.some((col) => existingRowFocusableCells.includes(col)) ||
+      isNewRow(tableData[rowIndex]);
 
     if (currentIndex === 0 || !hasAllowedColumnToLeft) {
       if (!previousRow) {
@@ -53,13 +72,21 @@ const useArrowsNavigation = ({
       }
 
       newRowIndex = rowIndex - 1;
-      newColumnId = isNewRow(previousRow) || previousColumns.id === null
-        ? newRowFocusableCells[newRowFocusableCells.length - 1]
-        : existingRowFocusableCells[existingRowFocusableCells.length - 1];
+      newColumnId =
+        isNewRow(previousRow) || previousColumns.id === null
+          ? newRowFocusableCells[newRowFocusableCells.length - 1]
+          : existingRowFocusableCells[existingRowFocusableCells.length - 1];
     }
 
-    if (!(existingRowFocusableCells.includes(newColumnId) || isNewRow(tableData[newRowIndex]))) {
-      newColumnId = previousColumns.find((col) => existingRowFocusableCells.includes(col));
+    if (
+      !(
+        existingRowFocusableCells.includes(newColumnId) ||
+        isNewRow(tableData[newRowIndex])
+      )
+    ) {
+      newColumnId = previousColumns.find((col) =>
+        existingRowFocusableCells.includes(col),
+      );
     }
 
     return { newColumnId, newRowIndex };

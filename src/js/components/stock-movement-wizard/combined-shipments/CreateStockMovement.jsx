@@ -1,36 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import queryString from 'query-string';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import queryString from "query-string";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-import { hideSpinner, showSpinner } from 'actions';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import apiClient from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { debounceLocationsFetch } from 'utils/option-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import apiClient from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import { debounceLocationsFetch } from "utils/option-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const { orderId } = queryString.parse(window.location.search);
 
 function validate(values) {
   const errors = {};
   if (!values.description) {
-    errors.description = 'react.default.error.requiredField.label';
+    errors.description = "react.default.error.requiredField.label";
   }
   if (!values.origin) {
-    errors.origin = 'react.default.error.requiredField.label';
+    errors.origin = "react.default.error.requiredField.label";
   }
   if (!values.destination) {
-    errors.destination = 'react.default.error.requiredField.label';
+    errors.destination = "react.default.error.requiredField.label";
   }
   return errors;
 }
@@ -38,8 +38,8 @@ function validate(values) {
 const FIELDS = {
   description: {
     type: TextField,
-    label: 'react.stockMovement.description.label',
-    defaultMessage: 'Description',
+    label: "react.stockMovement.description.label",
+    defaultMessage: "Description",
     attributes: {
       required: true,
       autoFocus: true,
@@ -47,8 +47,8 @@ const FIELDS = {
   },
   origin: {
     type: SelectField,
-    label: 'react.stockMovement.origin.label',
-    defaultMessage: 'Origin',
+    label: "react.stockMovement.origin.label",
+    defaultMessage: "Origin",
     attributes: {
       required: true,
       async: true,
@@ -66,8 +66,8 @@ const FIELDS = {
   },
   destination: {
     type: SelectField,
-    label: 'react.stockMovement.destination.label',
-    defaultMessage: 'Destination',
+    label: "react.stockMovement.destination.label",
+    defaultMessage: "Destination",
     attributes: {
       required: true,
       async: true,
@@ -80,8 +80,9 @@ const FIELDS = {
     },
     getDynamicAttr: (props) => ({
       loadOptions: props.debouncedDestinationLocationsFetch,
-      disabled: (!props.isSuperuser || !_.isNil(props.stockMovementId))
-        && !props.hasCentralPurchasingEnabled,
+      disabled:
+        (!props.isSuperuser || !_.isNil(props.stockMovementId)) &&
+        !props.hasCentralPurchasingEnabled,
     }),
   },
 };
@@ -115,7 +116,8 @@ class CreateStockMovement extends Component {
   componentDidMount() {
     if (orderId) {
       const url = `/api/combineShipments/${orderId}`;
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((resp) => {
           const { data } = resp.data;
           this.setInitialValues(data.origin, data.destination);
@@ -125,8 +127,13 @@ class CreateStockMovement extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.match.params.stockMovementId && this.state.setInitialValues
-      && nextProps.location.id && !orderId && !this.props.hasCentralPurchasingEnabled) {
+    if (
+      !this.props.match.params.stockMovementId &&
+      this.state.setInitialValues &&
+      nextProps.location.id &&
+      !orderId &&
+      !this.props.hasCentralPurchasingEnabled
+    ) {
       this.setInitialValues(null, nextProps.location);
     }
   }
@@ -139,13 +146,15 @@ class CreateStockMovement extends Component {
         id: origin.id,
         type: origin.locationType ? origin.locationType.locationTypeCode : null,
         name: origin.name,
-        label: `${origin.organizationCode ? `${origin.organizationCode} - ` : ''}${origin.name}`,
+        label: `${origin.organizationCode ? `${origin.organizationCode} - ` : ""}${origin.name}`,
       };
     }
     if (destination) {
       destinationLocation = {
         id: destination.id,
-        type: destination.locationType ? destination.locationType.locationTypeCode : null,
+        type: destination.locationType
+          ? destination.locationType.locationTypeCode
+          : null,
         name: destination.name,
         label: `${destination.name} [${destination.locationType ? destination.locationType.description : null}]`,
       };
@@ -173,7 +182,7 @@ class CreateStockMovement extends Component {
         origin: { id: values.origin.id },
         destination: { id: values.destination.id },
       };
-      let stockMovementUrl = '';
+      let stockMovementUrl = "";
 
       if (values.stockMovementId) {
         stockMovementUrl = `/api/stockMovements/${values.stockMovementId}/updateRequisition`;
@@ -182,14 +191,17 @@ class CreateStockMovement extends Component {
           destination: { id: values.destination.id },
         };
       } else {
-        stockMovementUrl = '/api/stockMovements/createCombinedShipments';
+        stockMovementUrl = "/api/stockMovements/createCombinedShipments";
       }
 
-      apiClient.post(stockMovementUrl, payload)
+      apiClient
+        .post(stockMovementUrl, payload)
         .then((response) => {
           if (response.data) {
             const resp = response.data.data;
-            this.props.history.push(STOCK_MOVEMENT_URL.editCombinedShipments(resp.id));
+            this.props.history.push(
+              STOCK_MOVEMENT_URL.editCombinedShipments(resp.id),
+            );
             this.props.nextPage({
               ...values,
               dateRequested: resp.dateRequested,
@@ -202,7 +214,14 @@ class CreateStockMovement extends Component {
         })
         .catch(() => {
           this.props.hideSpinner();
-          return Promise.reject(new Error(this.props.translate('react.stockMovement.error.createStockMovement.label', 'Could not create stock movement')));
+          return Promise.reject(
+            new Error(
+              this.props.translate(
+                "react.stockMovement.error.createStockMovement.label",
+                "Could not create stock movement",
+              ),
+            ),
+          );
         });
     }
   }
@@ -216,20 +235,28 @@ class CreateStockMovement extends Component {
         render={({ handleSubmit, values }) => (
           <form onSubmit={handleSubmit}>
             <div className="classic-form with-description">
-              {_.map(
-                FIELDS,
-                (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName, {
+              {_.map(FIELDS, (fieldConfig, fieldName) =>
+                renderFormField(fieldConfig, fieldName, {
                   isSuperuser: this.props.isSuperuser,
-                  debouncedDestinationLocationsFetch: this.debouncedDestinationLocationsFetch,
-                  debouncedOriginLocationsFetch: this.debouncedOriginLocationsFetch,
+                  debouncedDestinationLocationsFetch:
+                    this.debouncedDestinationLocationsFetch,
+                  debouncedOriginLocationsFetch:
+                    this.debouncedOriginLocationsFetch,
                   stockMovementId: values.stockMovementId,
-                  hasCentralPurchasingEnabled: this.props.hasCentralPurchasingEnabled,
+                  hasCentralPurchasingEnabled:
+                    this.props.hasCentralPurchasingEnabled,
                 }),
               )}
             </div>
             <div className="submit-buttons">
-              <button type="submit" className="btn btn-outline-primary float-right btn-xs">
-                <Translate id="react.default.button.next.label" defaultMessage="Next" />
+              <button
+                type="submit"
+                className="btn btn-outline-primary float-right btn-xs"
+              >
+                <Translate
+                  id="react.default.button.next.label"
+                  defaultMessage="Next"
+                />
               </button>
             </div>
           </form>
@@ -245,12 +272,16 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
   debounceTime: state.session.searchConfig.debounceTime,
   minSearchLength: state.session.searchConfig.minSearchLength,
-  hasCentralPurchasingEnabled: state.session.currentLocation.hasCentralPurchasingEnabled,
+  hasCentralPurchasingEnabled:
+    state.session.currentLocation.hasCentralPurchasingEnabled,
 });
 
-export default withRouter(connect(mapStateToProps, {
-  showSpinner, hideSpinner,
-})(CreateStockMovement));
+export default withRouter(
+  connect(mapStateToProps, {
+    showSpinner,
+    hideSpinner,
+  })(CreateStockMovement),
+);
 
 CreateStockMovement.propTypes = {
   /** React router's object which contains information about url varaiables and params */

@@ -1,4 +1,4 @@
-import ColorPalette from 'components/dashboard/ColorPalette.scss';
+import ColorPalette from "components/dashboard/ColorPalette.scss";
 
 /* global _ */
 
@@ -20,21 +20,23 @@ function formatColorPalette(colorPalette) {
 
   Object.entries(colorPalette).forEach(([key, value]) => {
     const stateMatch = key.match(/^(light|dark)?[sS]tate[0-9]+$/);
-    const gyrMatch = key.match(/^(light|dark)?([sS]uccess|[wW]arning|[eE]rror)$/);
+    const gyrMatch = key.match(
+      /^(light|dark)?([sS]uccess|[wW]arning|[eE]rror)$/,
+    );
 
     if (stateMatch) {
-      formattedPalette.state[stateMatch[1] || 'default'].push(value);
+      formattedPalette.state[stateMatch[1] || "default"].push(value);
     }
     if (gyrMatch) {
       let index = 0;
-      if (gyrMatch[2].toLowerCase() === 'warning') {
+      if (gyrMatch[2].toLowerCase() === "warning") {
         index = 1;
-      } else if (gyrMatch[2].toLowerCase() === 'error') {
+      } else if (gyrMatch[2].toLowerCase() === "error") {
         index = 2;
       }
-      formattedPalette.gyr[gyrMatch[1] || 'default'][index] = value;
+      formattedPalette.gyr[gyrMatch[1] || "default"][index] = value;
     }
-    if (key === 'default') {
+    if (key === "default") {
       formattedPalette.default = value;
     }
   });
@@ -44,7 +46,7 @@ function formatColorPalette(colorPalette) {
 
 const COLORS = formatColorPalette(ColorPalette);
 
-function getRandomColor(index = null, palette = 'default') {
+function getRandomColor(index = null, palette = "default") {
   const paletteLength = COLORS.state[palette].length;
 
   if (!index) {
@@ -64,14 +66,14 @@ function getColorByName(name, palette) {
   const gyrMatch = name.match(/(success|warning|error)/);
   const stateMatch = name.match(/state([0-9]+)/);
 
-  if (name === 'default') {
+  if (name === "default") {
     return COLORS.default;
   }
   if (gyrMatch) {
     let gyrIndex = 0;
-    if (gyrMatch[1].toLowerCase() === 'warning') {
+    if (gyrMatch[1].toLowerCase() === "warning") {
       gyrIndex = 1;
-    } else if (gyrMatch[1].toLowerCase() === 'error') {
+    } else if (gyrMatch[1].toLowerCase() === "error") {
       gyrIndex = 2;
     }
     return COLORS.gyr[palette][gyrIndex];
@@ -88,7 +90,7 @@ function getColorByName(name, palette) {
 function getColor(index, config, hover = false) {
   let { palette } = config;
   if (hover) {
-    const palettes = ['default', 'dark', 'light'];
+    const palettes = ["default", "dark", "light"];
     palette = palettes[(palettes.indexOf(palette) + 1) % palettes.length];
   }
 
@@ -110,6 +112,4 @@ function getArrayOfColors(length, config, hover = false) {
   return colorsArray;
 }
 
-export {
-  getArrayOfColors, getColor, getColorByName, getRandomColor,
-};
+export { getArrayOfColors, getColor, getColorByName, getRandomColor };

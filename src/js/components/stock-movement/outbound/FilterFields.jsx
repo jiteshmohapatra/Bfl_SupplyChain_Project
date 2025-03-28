@@ -1,6 +1,6 @@
-import DateFilter from 'components/form-elements/DateFilter/DateFilter';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
-import DateFormat from 'consts/dateFormat';
+import DateFilter from "components/form-elements/DateFilter/DateFilter";
+import FilterSelectField from "components/form-elements/FilterSelectField";
+import DateFormat from "consts/dateFormat";
 
 export default (isRequest) => ({
   requisitionStatusCode: {
@@ -8,8 +8,9 @@ export default (isRequest) => ({
     attributes: {
       multi: true,
       filterElement: true,
-      placeholder: 'react.stockMovement.outbound.filters.requisitionStatus.label',
-      defaultPlaceholder: 'Requisition Status',
+      placeholder:
+        "react.stockMovement.outbound.filters.requisitionStatus.label",
+      defaultPlaceholder: "Requisition Status",
       showLabelTooltip: true,
       closeMenuOnSelect: false,
       blurInputOnSelect: false,
@@ -21,10 +22,10 @@ export default (isRequest) => ({
   origin: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.stockMovement.origin.label',
-      defaultPlaceholder: 'Origin',
+      placeholder: "react.stockMovement.origin.label",
+      defaultPlaceholder: "Origin",
       options: [],
       showLabelTooltip: true,
       disabled: true,
@@ -37,18 +38,16 @@ export default (isRequest) => ({
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.destination.label',
-      defaultPlaceholder: 'Destination',
+      placeholder: "react.stockMovement.destination.label",
+      defaultPlaceholder: "Destination",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchLocations,
-    }) => ({
+    getDynamicAttr: ({ fetchLocations }) => ({
       loadOptions: fetchLocations,
     }),
   },
@@ -57,14 +56,14 @@ export default (isRequest) => ({
     attributes: {
       multi: true,
       filterElement: true,
-      placeholder: 'react.stockMovement.shipmentType.label',
-      defaultPlaceholder: 'Shipment type',
+      placeholder: "react.stockMovement.shipmentType.label",
+      defaultPlaceholder: "Shipment type",
       showLabelTooltip: true,
       options: [],
       blurInputOnSelect: false,
       closeMenuOnSelect: false,
-      valueKey: 'id',
-      labelKey: 'displayName',
+      valueKey: "id",
+      labelKey: "displayName",
     },
     getDynamicAttr: ({ shipmentTypes }) => ({
       options: shipmentTypes,
@@ -77,18 +76,16 @@ export default (isRequest) => ({
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.requestedBy.label',
-      defaultPlaceholder: 'Requested By',
+      placeholder: "react.stockMovement.requestedBy.label",
+      defaultPlaceholder: "Requested By",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchPeople,
-    }) => ({
+    getDynamicAttr: ({ fetchPeople }) => ({
       loadOptions: fetchPeople,
     }),
   },
@@ -100,21 +97,19 @@ export default (isRequest) => ({
         openOnClick: false,
         autoload: false,
         cache: false,
-        valueKey: 'id',
-        labelKey: 'name',
+        valueKey: "id",
+        labelKey: "name",
         options: [],
         filterOptions: (options) => options,
         filterElement: true,
-        placeholder: 'react.stockMovement.request.approvers.label',
-        defaultPlaceholder: 'Approvers',
+        placeholder: "react.stockMovement.request.approvers.label",
+        defaultPlaceholder: "Approvers",
         showLabelTooltip: true,
         multi: true,
         nullOption: true,
-        nullOptionDefaultLabel: 'None',
+        nullOptionDefaultLabel: "None",
       },
-      getDynamicAttr: ({
-        approvers,
-      }) => ({
+      getDynamicAttr: ({ approvers }) => ({
         options: approvers,
       }),
     },
@@ -126,18 +121,16 @@ export default (isRequest) => ({
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.createdBy.label',
-      defaultPlaceholder: 'Created By',
+      placeholder: "react.stockMovement.createdBy.label",
+      defaultPlaceholder: "Created By",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchUsers,
-    }) => ({
+    getDynamicAttr: ({ fetchUsers }) => ({
       loadOptions: fetchUsers,
     }),
   },
@@ -148,18 +141,16 @@ export default (isRequest) => ({
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.updatedBy.label',
-      defaultPlaceholder: 'Updated By',
+      placeholder: "react.stockMovement.updatedBy.label",
+      defaultPlaceholder: "Updated By",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchUsers,
-    }) => ({
+    getDynamicAttr: ({ fetchUsers }) => ({
       loadOptions: fetchUsers,
     }),
   },
@@ -168,37 +159,37 @@ export default (isRequest) => ({
     attributes: {
       openOnClick: false,
       options: [
-        { label: 'STOCK', value: 'STOCK' },
-        { label: 'ADHOC', value: 'ADHOC' },
+        { label: "STOCK", value: "STOCK" },
+        { label: "ADHOC", value: "ADHOC" },
       ],
       filterElement: true,
-      placeholder: 'react.stockMovement.outbound.filters.requestType.label',
-      defaultPlaceholder: 'Request type',
+      placeholder: "react.stockMovement.outbound.filters.requestType.label",
+      defaultPlaceholder: "Request type",
       showLabelTooltip: true,
     },
   },
   createdAfter: {
     type: DateFilter,
     attributes: {
-      label: 'react.stockMovement.filter.createdAfter.label',
-      defaultMessage: 'Created after',
+      label: "react.stockMovement.filter.createdAfter.label",
+      defaultMessage: "Created after",
       localizeDate: true,
       localizedDateFormat: DateFormat.COMMON,
       filterElement: true,
       // date format in which the date will be sent to the API
-      dateFormat: 'MM/DD/YYYY',
+      dateFormat: "MM/DD/YYYY",
     },
   },
   createdBefore: {
     type: DateFilter,
     attributes: {
-      label: 'react.stockMovement.filter.createdBefore.label',
-      defaultMessage: 'Created before',
+      label: "react.stockMovement.filter.createdBefore.label",
+      defaultMessage: "Created before",
       localizeDate: true,
       localizedDateFormat: DateFormat.COMMON,
       filterElement: true,
       // date format in which the date will be sent to the API
-      dateFormat: 'MM/DD/YYYY',
+      dateFormat: "MM/DD/YYYY",
     },
   },
 });

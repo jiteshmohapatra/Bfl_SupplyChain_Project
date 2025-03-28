@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations } from 'actions';
-import ConfigureProductCategories from 'components/products-configuration/ConfigureProductCategories';
-import ConfigureProducts from 'components/products-configuration/ConfigureProducts';
-import ReviewCategories from 'components/products-configuration/ReviewCategories';
-import Wizard from 'components/wizard/Wizard';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations } from "actions";
+import ConfigureProductCategories from "components/products-configuration/ConfigureProductCategories";
+import ConfigureProducts from "components/products-configuration/ConfigureProducts";
+import ReviewCategories from "components/products-configuration/ReviewCategories";
+import Wizard from "components/wizard/Wizard";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 class ProductsConfigurationWizard extends Component {
   constructor(props) {
@@ -28,20 +28,29 @@ class ProductsConfigurationWizard extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'productsConfiguration');
+    this.props.fetchTranslations("", "productsConfiguration");
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'productsConfiguration');
+      this.props.fetchTranslations(nextProps.locale, "productsConfiguration");
     }
   }
 
   get stepList() {
     return [
-      this.props.translate('react.productsConfiguration.configureCategories.label', 'Configure Product Categories'),
-      this.props.translate('react.productsConfiguration.reviewCategories.label', 'Review Categories'),
-      this.props.translate('react.productsConfiguration.configureProducts.label', 'Configure Products'),
+      this.props.translate(
+        "react.productsConfiguration.configureCategories.label",
+        "Configure Product Categories",
+      ),
+      this.props.translate(
+        "react.productsConfiguration.reviewCategories.label",
+        "Review Categories",
+      ),
+      this.props.translate(
+        "react.productsConfiguration.configureProducts.label",
+        "Configure Products",
+      ),
     ];
   }
 
@@ -55,7 +64,11 @@ class ProductsConfigurationWizard extends Component {
 
   render() {
     const { values, currentPage } = this.state;
-    const pageList = [ConfigureProductCategories, ReviewCategories, ConfigureProducts];
+    const pageList = [
+      ConfigureProductCategories,
+      ReviewCategories,
+      ConfigureProducts,
+    ];
     const { location, history } = this.props;
     const locationId = location.id;
 
@@ -67,7 +80,9 @@ class ProductsConfigurationWizard extends Component {
         currentPage={currentPage}
         prevPage={currentPage === 1 ? 1 : currentPage - 1}
         additionalProps={{
-          locationId, location, history,
+          locationId,
+          location,
+          history,
         }}
         updateWizardValues={this.updateWizardValues}
         showStepNumber

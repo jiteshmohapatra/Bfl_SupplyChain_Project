@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { Tooltip } from "react-tippy";
 
-import { hideSpinner, showSpinner } from 'actions';
+import { hideSpinner, showSpinner } from "actions";
 import {
   STOCK_MOVEMENT_ITEM_BY_ID,
   STOCK_MOVEMENT_ITEM_DETAILS,
   STOCK_MOVEMENT_UPDATE_PICKLIST,
-} from 'api/urls';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import DateFormat from 'consts/dateFormat';
-import { OutboundWorkflowState } from 'consts/WorkflowState';
-import apiClient from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+} from "api/urls";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import DateFormat from "consts/dateFormat";
+import { OutboundWorkflowState } from "consts/WorkflowState";
+import apiClient from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
 const FIELDS = {
   reasonCode: {
     type: SelectField,
-    label: 'react.stockMovement.reasonCode.label',
-    defaultMessage: 'Reason code',
+    label: "react.stockMovement.reasonCode.label",
+    defaultMessage: "Reason code",
     attributes: {
-      className: 'mb-2',
+      className: "mb-2",
     },
     getDynamicAttr: (props) => ({
       options: props.reasonCodes,
@@ -38,98 +38,135 @@ const FIELDS = {
   availableItems: {
     type: ArrayField,
     getDynamicRowAttr: ({ rowValues }) => {
-      let className = '';
+      let className = "";
       if (!rowValues.quantityAvailable) {
-        className = 'text-disabled';
+        className = "text-disabled";
       }
       return { className };
     },
     fields: {
       status: {
         type: LabelField,
-        fieldKey: '',
-        fixedWidth: '120px',
+        fieldKey: "",
+        fixedWidth: "120px",
         getDynamicAttr: ({ translate }) => ({
           showValueTooltip: true,
           formatValue: (fieldValue) => {
-            if (fieldValue.status === 'AVAILABLE' && fieldValue.pickedRequisitionNumbers.length !== 0) {
-              const status = translate('react.stockMovement.enum.AvailableItemStatus.PICKED', 'PICKED');
-              return status + (fieldValue.pickedRequisitionNumbers ? ` [${fieldValue.pickedRequisitionNumbers}]` : '');
-            } if (!fieldValue.status || fieldValue.status === 'AVAILABLE') {
-              return '';
+            if (
+              fieldValue.status === "AVAILABLE" &&
+              fieldValue.pickedRequisitionNumbers.length !== 0
+            ) {
+              const status = translate(
+                "react.stockMovement.enum.AvailableItemStatus.PICKED",
+                "PICKED",
+              );
+              return (
+                status +
+                (fieldValue.pickedRequisitionNumbers
+                  ? ` [${fieldValue.pickedRequisitionNumbers}]`
+                  : "")
+              );
+            }
+            if (!fieldValue.status || fieldValue.status === "AVAILABLE") {
+              return "";
             }
 
-            const status = translate(`react.stockMovement.enum.AvailableItemStatus.${fieldValue.status}`, fieldValue.status);
-            return status + (fieldValue.pickedRequisitionNumbers ? ` [${fieldValue.pickedRequisitionNumbers}]` : '');
+            const status = translate(
+              `react.stockMovement.enum.AvailableItemStatus.${fieldValue.status}`,
+              fieldValue.status,
+            );
+            return (
+              status +
+              (fieldValue.pickedRequisitionNumbers
+                ? ` [${fieldValue.pickedRequisitionNumbers}]`
+                : "")
+            );
           },
         }),
       },
       lotNumber: {
         type: LabelField,
-        label: 'react.stockMovement.lot.label',
-        defaultMessage: 'Lot',
+        label: "react.stockMovement.lot.label",
+        defaultMessage: "Lot",
         attributes: {
           showValueTooltip: true,
         },
       },
       expirationDate: {
         type: LabelField,
-        label: 'react.stockMovement.expiry.label',
-        defaultMessage: 'Expiry',
-        fixedWidth: '120px',
+        label: "react.stockMovement.expiry.label",
+        defaultMessage: "Expiry",
+        fixedWidth: "120px",
         getDynamicAttr: ({ formatLocalizedDate }) => ({
           formatValue: (value) => formatLocalizedDate(value, DateFormat.COMMON),
         }),
       },
       binLocation: {
         type: LabelField,
-        label: 'react.stockMovement.binLocation.label',
-        defaultMessage: 'Bin Location',
+        label: "react.stockMovement.binLocation.label",
+        defaultMessage: "Bin Location",
         getDynamicAttr: ({ hasBinLocationSupport }) => ({
           hide: !hasBinLocationSupport,
         }),
         attributes: {
           showValueTooltip: true,
-          formatValue: (fieldValue) => fieldValue && (
-            <div className="d-flex justify-content-center">
-              {fieldValue.zoneName ? <div className="text-truncate" style={{ minWidth: 30, flexShrink: 20 }}>{fieldValue.zoneName}</div> : ''}
-              <div className="text-truncate">{fieldValue.zoneName ? `: ${fieldValue.name}` : fieldValue.name}</div>
-            </div>
-          ),
+          formatValue: (fieldValue) =>
+            fieldValue && (
+              <div className="d-flex justify-content-center">
+                {fieldValue.zoneName ? (
+                  <div
+                    className="text-truncate"
+                    style={{ minWidth: 30, flexShrink: 20 }}
+                  >
+                    {fieldValue.zoneName}
+                  </div>
+                ) : (
+                  ""
+                )}
+                <div className="text-truncate">
+                  {fieldValue.zoneName
+                    ? `: ${fieldValue.name}`
+                    : fieldValue.name}
+                </div>
+              </div>
+            ),
         },
       },
       quantityOnHand: {
         type: LabelField,
-        label: 'react.stockMovement.onHand.label',
-        defaultMessage: 'On Hand',
-        fixedWidth: '150px',
+        label: "react.stockMovement.onHand.label",
+        defaultMessage: "On Hand",
+        fixedWidth: "150px",
         attributes: {
-          formatValue: (value) => (value || value === 0 ? value.toLocaleString('en-US') : null),
+          formatValue: (value) =>
+            value || value === 0 ? value.toLocaleString("en-US") : null,
         },
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.stockMovement.available.label',
-        defaultMessage: 'Available',
-        fixedWidth: '150px',
+        label: "react.stockMovement.available.label",
+        defaultMessage: "Available",
+        fixedWidth: "150px",
         attributes: {
-          formatValue: (value) => (value || value === 0 ? value.toLocaleString('en-US') : null),
+          formatValue: (value) =>
+            value || value === 0 ? value.toLocaleString("en-US") : null,
         },
       },
       quantityPicked: {
         type: TextField,
-        fieldKey: '',
-        label: 'react.stockMovement.picked.label',
-        defaultMessage: 'Picked',
-        headerAlign: 'left',
-        fixedWidth: '120px',
+        fieldKey: "",
+        label: "react.stockMovement.picked.label",
+        defaultMessage: "Picked",
+        headerAlign: "left",
+        fixedWidth: "120px",
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({ fieldValue }) => ({
-          disabled: fieldValue
-              && !fieldValue.quantityAvailable
-              && !fieldValue.quantityPicked,
+          disabled:
+            fieldValue &&
+            !fieldValue.quantityAvailable &&
+            !fieldValue.quantityPicked,
         }),
       },
     },
@@ -141,22 +178,30 @@ function validate(values) {
   errors.availableItems = [];
   _.forEach(values.availableItems, (item, key) => {
     if (item.quantityPicked > item.quantityAvailable) {
-      errors.availableItems[key] = { quantityPicked: 'react.stockMovement.errors.higherTyPicked.label' };
+      errors.availableItems[key] = {
+        quantityPicked: "react.stockMovement.errors.higherTyPicked.label",
+      };
     }
     if (item.quantityPicked < 0) {
-      errors.availableItems[key] = { quantityPicked: 'react.stockMovement.errors.negativeQtyPicked.label' };
+      errors.availableItems[key] = {
+        quantityPicked: "react.stockMovement.errors.negativeQtyPicked.label",
+      };
     }
   });
 
   const pickedSum = _.reduce(
-    values.availableItems, (sum, val) =>
-      (sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0)),
+    values.availableItems,
+    (sum, val) =>
+      sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0),
     0,
   );
 
-  if (_.some(values.availableItems, (val) => !_.isNil(val.quantityPicked))
-    && !values.reasonCode && pickedSum !== values.quantityRequired) {
-    errors.reasonCode = 'react.stockMovement.errors.differentTotalQty.label';
+  if (
+    _.some(values.availableItems, (val) => !_.isNil(val.quantityPicked)) &&
+    !values.reasonCode &&
+    pickedSum !== values.quantityRequired
+  ) {
+    errors.reasonCode = "react.stockMovement.errors.differentTotalQty.label";
   }
 
   return errors;
@@ -211,28 +256,39 @@ class EditPickModal extends Component {
 
     const payload = {
       picklistItems: _.map(values.availableItems, (avItem) => ({
-        id: avItem.id || '',
-        inventoryItem: { id: avItem['inventoryItem.id'] },
-        binLocation: { id: avItem['binLocation.id'] || '' },
-        quantityPicked: _.isNil(avItem.quantityPicked) ? '' : avItem.quantityPicked,
+        id: avItem.id || "",
+        inventoryItem: { id: avItem["inventoryItem.id"] },
+        binLocation: { id: avItem["binLocation.id"] || "" },
+        quantityPicked: _.isNil(avItem.quantityPicked)
+          ? ""
+          : avItem.quantityPicked,
       })),
-      reasonCode: values.reasonCode.value || '',
+      reasonCode: values.reasonCode.value || "",
     };
 
-    apiClient.post(STOCK_MOVEMENT_UPDATE_PICKLIST(this.state.attr.itemId), payload)
+    apiClient
+      .post(STOCK_MOVEMENT_UPDATE_PICKLIST(this.state.attr.itemId), payload)
       .then(() => {
-        apiClient.get(STOCK_MOVEMENT_ITEM_BY_ID(this.state.attr.itemId), {
-          params: { stepNumber: OutboundWorkflowState.PICK_ITEMS, refreshPicklistItems: false },
-        })
+        apiClient
+          .get(STOCK_MOVEMENT_ITEM_BY_ID(this.state.attr.itemId), {
+            params: {
+              stepNumber: OutboundWorkflowState.PICK_ITEMS,
+              refreshPicklistItems: false,
+            },
+          })
           .then((resp) => {
             const pickPageItem = resp.data.data;
 
             this.state.attr.onResponse(pickPageItem);
             this.props.hideSpinner();
           })
-          .catch(() => { this.props.hideSpinner(); });
+          .catch(() => {
+            this.props.hideSpinner();
+          });
       })
-      .catch(() => { this.props.hideSpinner(); });
+      .catch(() => {
+        this.props.hideSpinner();
+      });
   }
 
   /**
@@ -245,10 +301,17 @@ class EditPickModal extends Component {
     return (
       <div>
         <div className="font-weight-bold pb-2">
-          <Translate id="react.stockMovement.quantityPicked.label" defaultMessage="Qty Picked" />
+          <Translate
+            id="react.stockMovement.quantityPicked.label"
+            defaultMessage="Qty Picked"
+          />
           :
-          {_.reduce(values.availableItems, (sum, val) =>
-            (sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0)), 0)}
+          {_.reduce(
+            values.availableItems,
+            (sum, val) =>
+              sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0),
+            0,
+          )}
         </div>
         <hr />
       </div>
@@ -256,52 +319,64 @@ class EditPickModal extends Component {
   }
 
   fetchPickPageItem() {
-    apiClient.get(STOCK_MOVEMENT_ITEM_DETAILS(this.state.attr.itemId), {
-      params: { stepNumber: OutboundWorkflowState.PICK_ITEMS, refreshPicklistItems: false },
-    }).then((resp) => {
-      const pickPageItem = resp.data.data;
+    apiClient
+      .get(STOCK_MOVEMENT_ITEM_DETAILS(this.state.attr.itemId), {
+        params: {
+          stepNumber: OutboundWorkflowState.PICK_ITEMS,
+          refreshPicklistItems: false,
+        },
+      })
+      .then((resp) => {
+        const pickPageItem = resp.data.data;
 
-      const availableItems = _.map(pickPageItem.availableItems, (avItem) => {
-        // check if this picklist item already exists
-        const picklistItem = _.find(pickPageItem.picklistItems, (item) => item['inventoryItem.id'] === avItem['inventoryItem.id'] && item['binLocation.id'] === avItem['binLocation.id']);
+        const availableItems = _.map(pickPageItem.availableItems, (avItem) => {
+          // check if this picklist item already exists
+          const picklistItem = _.find(
+            pickPageItem.picklistItems,
+            (item) =>
+              item["inventoryItem.id"] === avItem["inventoryItem.id"] &&
+              item["binLocation.id"] === avItem["binLocation.id"],
+          );
 
-        if (picklistItem) {
+          if (picklistItem) {
+            return {
+              ...avItem,
+              id: picklistItem.id,
+              quantityPicked: picklistItem.quantityPicked,
+              binLocation: {
+                id: picklistItem["binLocation.id"],
+                name: picklistItem["binLocation.name"],
+                zoneName: picklistItem["binLocation.zoneName"],
+              },
+            };
+          }
+
           return {
             ...avItem,
-            id: picklistItem.id,
-            quantityPicked: picklistItem.quantityPicked,
             binLocation: {
-              id: picklistItem['binLocation.id'],
-              name: picklistItem['binLocation.name'],
-              zoneName: picklistItem['binLocation.zoneName'],
+              id: avItem["binLocation.id"],
+              name: avItem["binLocation.name"],
+              zoneName: avItem["binLocation.zoneName"],
             },
           };
-        }
+        });
 
-        return {
-          ...avItem,
-          binLocation: {
-            id: avItem['binLocation.id'],
-            name: avItem['binLocation.name'],
-            zoneName: avItem['binLocation.zoneName'],
+        this.setState({
+          formValues: {
+            availableItems,
+            reasonCode: "",
+            quantityRequired: pickPageItem.quantityRequired,
+            productCode: pickPageItem.productCode,
+            productName: pickPageItem.product.name,
+            displayName: pickPageItem.product?.displayNames?.default,
           },
-        };
-      });
+        });
 
-      this.setState({
-        formValues: {
-          availableItems,
-          reasonCode: '',
-          quantityRequired: pickPageItem.quantityRequired,
-          productCode: pickPageItem.productCode,
-          productName: pickPageItem.product.name,
-          displayName: pickPageItem.product?.displayNames?.default,
-        },
+        this.props.hideSpinner();
+      })
+      .catch(() => {
+        this.props.hideSpinner();
       });
-
-      this.props.hideSpinner();
-    })
-      .catch(() => { this.props.hideSpinner(); });
   }
 
   render() {
@@ -327,29 +402,40 @@ class EditPickModal extends Component {
       >
         <div>
           <div className="font-weight-bold">
-            <Translate id="react.stockMovement.productCode.label" defaultMessage="Product code" />
-            :
-            {this.state.formValues.productCode}
+            <Translate
+              id="react.stockMovement.productCode.label"
+              defaultMessage="Product code"
+            />
+            :{this.state.formValues.productCode}
           </div>
           <div className="font-weight-bold">
             <Tooltip
-              html={<div className="text-truncate">{this.state.formValues.productName}</div>}
+              html={
+                <div className="text-truncate">
+                  {this.state.formValues.productName}
+                </div>
+              }
               theme="dark"
               disabled={!this.state.formValues.displayName}
               position="top-start"
             >
               <span className="d-flex">
-                <Translate id="react.stockMovement.productName.label" defaultMessage="Product name" />
-                :
-                {' '}
-                {this.state.formValues.displayName ?? this.state.formValues.productName}
+                <Translate
+                  id="react.stockMovement.productName.label"
+                  defaultMessage="Product name"
+                />
+                :{" "}
+                {this.state.formValues.displayName ??
+                  this.state.formValues.productName}
               </span>
             </Tooltip>
           </div>
           <div className="font-weight-bold">
-            <Translate id="react.stockMovement.quantityRequired.label" defaultMessage="Qty Required" />
-            :
-            {this.state.formValues.quantityRequired}
+            <Translate
+              id="react.stockMovement.quantityRequired.label"
+              defaultMessage="Qty Required"
+            />
+            :{this.state.formValues.quantityRequired}
           </div>
         </div>
       </ModalWrapper>
@@ -362,7 +448,9 @@ const mapStateToProps = (state) => ({
   formatLocalizedDate: formatDate(state.localize),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(EditPickModal);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  EditPickModal,
+);
 
 EditPickModal.propTypes = {
   /** Name of the field */

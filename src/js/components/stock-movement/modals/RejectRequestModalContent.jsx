@@ -1,26 +1,26 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Form } from "react-final-form";
+import { connect } from "react-redux";
 
-import Button from 'components/form-elements/Button';
-import SelectField from 'components/form-elements/SelectField';
-import TextareaField from 'components/form-elements/TextareaField';
-import { renderFormField } from 'utils/form-utils';
-import { debouncePeopleFetch } from 'utils/option-utils';
+import Button from "components/form-elements/Button";
+import SelectField from "components/form-elements/SelectField";
+import TextareaField from "components/form-elements/TextareaField";
+import { renderFormField } from "utils/form-utils";
+import { debouncePeopleFetch } from "utils/option-utils";
 
 const FIELDS = {
   recipient: {
     type: SelectField,
-    label: 'react.default.to.label',
-    defaultMessage: 'to',
+    label: "react.default.to.label",
+    defaultMessage: "to",
     attributes: {
       async: true,
-      valueKey: 'id',
-      labelKey: 'name',
-      className: 'request-modal-select text-capitalize',
+      valueKey: "id",
+      labelKey: "name",
+      className: "request-modal-select text-capitalize",
       options: [],
       filterOptions: (options) => options,
     },
@@ -30,20 +30,20 @@ const FIELDS = {
   },
   sender: {
     type: SelectField,
-    label: 'react.default.from.label',
-    defaultMessage: 'from',
+    label: "react.default.from.label",
+    defaultMessage: "from",
     attributes: {
-      className: 'request-modal-select text-capitalize',
+      className: "request-modal-select text-capitalize",
       disabled: true,
     },
   },
   comment: {
     type: TextareaField,
-    label: 'react.rejectRequestModal.comment.label',
-    defaultMessage: 'Comment',
+    label: "react.rejectRequestModal.comment.label",
+    defaultMessage: "Comment",
     attributes: {
       rows: 7,
-      className: 'request-modal-textarea',
+      className: "request-modal-textarea",
       required: true,
       isResizable: false,
     },
@@ -79,40 +79,42 @@ const RejectRequestModalContent = ({
     [debounceTime, minSearchLength],
   );
 
-  const validate = (values) => (!values?.comment ? { comment: 'react.default.error.requiredField.label' } : {});
+  const validate = (values) =>
+    !values?.comment
+      ? { comment: "react.default.error.requiredField.label" }
+      : {};
 
   return (
     <Form
       onSubmit={submitRejection}
       validate={validate}
       initialValues={initialValues}
-      render={({ handleSubmit, values }) =>
-        (
-          <form id="modalForm" onSubmit={handleSubmit}>
-            <div className="classic-form location-field-rows">
-              {_.map(
-                FIELDS,
-                (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName, {
-                  values, debouncedPeopleFetch,
-                }),
-              )}
-            </div>
-            <div className="btn-toolbar justify-content-between">
-              <Button
-                type="button"
-                onClick={closeRejectionModal}
-                defaultLabel="Cancel"
-                label="react.default.button.cancel.label"
-              />
+      render={({ handleSubmit, values }) => (
+        <form id="modalForm" onSubmit={handleSubmit}>
+          <div className="classic-form location-field-rows">
+            {_.map(FIELDS, (fieldConfig, fieldName) =>
+              renderFormField(fieldConfig, fieldName, {
+                values,
+                debouncedPeopleFetch,
+              }),
+            )}
+          </div>
+          <div className="btn-toolbar justify-content-between">
+            <Button
+              type="button"
+              onClick={closeRejectionModal}
+              defaultLabel="Cancel"
+              label="react.default.button.cancel.label"
+            />
 
-              <Button
-                type="submit"
-                defaultLabel="Confirm reject"
-                label="react.rejectRequestModal.confirmReject.label"
-              />
-            </div>
-          </form>
-        )}
+            <Button
+              type="submit"
+              defaultLabel="Confirm reject"
+              label="react.rejectRequestModal.confirmReject.label"
+            />
+          </div>
+        </form>
+      )}
     />
   );
 };

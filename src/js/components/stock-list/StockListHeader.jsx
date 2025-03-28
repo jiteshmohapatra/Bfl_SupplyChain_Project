@@ -1,24 +1,31 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import { REQUISITION_TEMPLATE_URL } from 'consts/applicationUrls';
-import Translate from 'utils/Translate';
+import { REQUISITION_TEMPLATE_URL } from "consts/applicationUrls";
+import Translate from "utils/Translate";
 
 const StockListHeader = ({ isUserAdmin }) => (
   <div className="d-flex list-page-header">
     <span className="d-flex align-self-center title">
-      <Translate id="react.stocklists.header.label" defaultMessage="Stock List" />
+      <Translate
+        id="react.stocklists.header.label"
+        defaultMessage="Stock List"
+      />
     </span>
     <div className="d-flex justify-content-end buttons align-items-center">
-      {
-        isUserAdmin && (
-          <a className="primary-button" href={`${REQUISITION_TEMPLATE_URL.create()}?type=STOCK`}>
-            <Translate id="react.stocklists.addStockList.label" defaultMessage="Add stocklist" />
-          </a>
-        )
-      }
+      {isUserAdmin && (
+        <a
+          className="primary-button"
+          href={`${REQUISITION_TEMPLATE_URL.create()}?type=STOCK`}
+        >
+          <Translate
+            id="react.stocklists.addStockList.label"
+            defaultMessage="Add stocklist"
+          />
+        </a>
+      )}
     </div>
   </div>
 );

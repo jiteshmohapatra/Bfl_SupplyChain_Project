@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import PropTypes from 'prop-types';
-import { Tooltip } from 'react-tippy';
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tippy";
 
 const NavbarIcon = ({ tooltip, component, name }) => {
   const [isTooltipDisabled, setIsTooltipDisabled] = useState(false);

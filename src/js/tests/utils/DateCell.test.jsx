@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import { render, screen, within } from '@testing-library/react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import store from 'store';
+import { render, screen, within } from "@testing-library/react";
+import { BrowserRouter as Router } from "react-router-dom";
+import store from "store";
 
-import DateCell from 'components/DataTable/DateCell';
+import DateCell from "components/DataTable/DateCell";
 
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
-describe('date cell', () => {
-  it('should contain proper text when date provided', () => {
+describe("date cell", () => {
+  it("should contain proper text when date provided", () => {
     const dateCell = (
       <Router>
         <DateCell
@@ -21,11 +21,11 @@ describe('date cell', () => {
       </Router>
     );
     render(dateCell);
-    const { getByText } = within(screen.getByTestId('table-cell'));
-    expect(getByText('Feb 09, 2023')).toBeInTheDocument();
+    const { getByText } = within(screen.getByTestId("table-cell"));
+    expect(getByText("Feb 09, 2023")).toBeInTheDocument();
   });
 
-  it('should contain default value when date not provided', () => {
+  it("should contain default value when date not provided", () => {
     const dateCell = (
       <Router>
         <DateCell
@@ -37,11 +37,11 @@ describe('date cell', () => {
       </Router>
     );
     render(dateCell);
-    const { getByText } = within(screen.getByTestId('table-cell'));
-    expect(getByText('-')).toBeInTheDocument();
+    const { getByText } = within(screen.getByTestId("table-cell"));
+    expect(getByText("-")).toBeInTheDocument();
   });
 
-  it('should contain proper text when date provided with hour', () => {
+  it("should contain proper text when date provided with hour", () => {
     const dateCell = (
       <Router>
         <DateCell
@@ -53,7 +53,7 @@ describe('date cell', () => {
       </Router>
     );
     render(dateCell);
-    const { getByText } = within(screen.getByTestId('table-cell'));
-    expect(getByText('Feb 17, 2023')).toBeInTheDocument();
+    const { getByText } = within(screen.getByTestId("table-cell"));
+    expect(getByText("Feb 17, 2023")).toBeInTheDocument();
   });
 });

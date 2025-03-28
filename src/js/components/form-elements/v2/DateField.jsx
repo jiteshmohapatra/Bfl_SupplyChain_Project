@@ -1,20 +1,20 @@
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import DatePicker from 'react-datepicker';
+import moment from "moment";
+import PropTypes from "prop-types";
+import DatePicker from "react-datepicker";
 
-import DateFieldInput from 'components/form-elements/v2/DateFieldInput';
-import componentType from 'consts/componentType';
-import { DateFormat, TimeFormat } from 'consts/timeFormat';
-import useFocusOnMatch from 'hooks/useFocusOnMatch';
-import useTranslate from 'hooks/useTranslate';
-import InputWrapper from 'wrappers/InputWrapper';
-import RootPortalWrapper from 'wrappers/RootPortalWrapper';
+import DateFieldInput from "components/form-elements/v2/DateFieldInput";
+import componentType from "consts/componentType";
+import { DateFormat, TimeFormat } from "consts/timeFormat";
+import useFocusOnMatch from "hooks/useFocusOnMatch";
+import useTranslate from "hooks/useTranslate";
+import InputWrapper from "wrappers/InputWrapper";
+import RootPortalWrapper from "wrappers/RootPortalWrapper";
 
-import 'react-datepicker/dist/react-datepicker.css';
-import 'components/form-elements/DateFilter/DateFilter.scss';
-import './style.scss';
+import "react-datepicker/dist/react-datepicker.css";
+import "components/form-elements/DateFilter/DateFilter.scss";
+import "./style.scss";
 
 const DateField = ({
   title,
@@ -59,20 +59,27 @@ const DateField = ({
   const selectedDate = formatDate(value);
   const highlightedDates = [selectedDate || formatDate(new Date())];
 
-  const placeholderText = typeof placeholder === 'object'
-    ? translate(placeholder?.id, placeholder?.default)
-    : placeholder;
+  const placeholderText =
+    typeof placeholder === "object"
+      ? translate(placeholder?.id, placeholder?.default)
+      : placeholder;
 
   const datePickerRef = useRef(null);
 
   const getDateFormat = () => {
     if (showTimeSelect) {
-      return customDateFormat ? `${customDateFormat} HH:mm:ss` : DateFormat.MMM_DD_YYYY_HH_MM_SS;
+      return customDateFormat
+        ? `${customDateFormat} HH:mm:ss`
+        : DateFormat.MMM_DD_YYYY_HH_MM_SS;
     }
     return customDateFormat || DateFormat.MMM_DD_YYYY;
   };
 
-  useFocusOnMatch({ ...focusProps, ref: datePickerRef, type: componentType.DATE_FIELD });
+  useFocusOnMatch({
+    ...focusProps,
+    ref: datePickerRef,
+    type: componentType.DATE_FIELD,
+  });
 
   return (
     <InputWrapper
@@ -87,7 +94,7 @@ const DateField = ({
         {...fieldProps}
         showTimeSelect={showTimeSelect}
         customInput={<DateFieldInput onClear={onClear} />}
-        className={`form-element-input ${errorMessage ? 'has-errors' : ''} ${className}`}
+        className={`form-element-input ${errorMessage ? "has-errors" : ""} ${className}`}
         dropdownMode="scroll"
         dateFormat={getDateFormat()}
         timeFormat={TimeFormat.HH_MM}
@@ -173,8 +180,8 @@ DateField.defaultProps = {
   button: null,
   errorMessage: null,
   disabled: false,
-  placeholder: '',
-  className: '',
+  placeholder: "",
+  className: "",
   value: null,
   onChange: () => {},
   showTimeSelect: false,

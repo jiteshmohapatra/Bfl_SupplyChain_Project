@@ -1,14 +1,14 @@
-import DateFilter from 'components/form-elements/DateFilter/DateFilter';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
+import DateFilter from "components/form-elements/DateFilter/DateFilter";
+import FilterSelectField from "components/form-elements/FilterSelectField";
 
 export default {
   buyerOrganization: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.invoice.buyerOrganization.label',
-      defaultPlaceholder: 'Buyer organization',
+      placeholder: "react.invoice.buyerOrganization.label",
+      defaultPlaceholder: "Buyer organization",
       showLabelTooltip: true,
       disabled: true,
     },
@@ -27,8 +27,8 @@ export default {
     type: FilterSelectField,
     attributes: {
       filterElement: true,
-      placeholder: 'react.invoice.status.label',
-      defaultPlaceholder: 'Invoice Status',
+      placeholder: "react.invoice.status.label",
+      defaultPlaceholder: "Invoice Status",
       showLabelTooltip: true,
     },
     getDynamicAttr: ({ statuses }) => ({
@@ -38,10 +38,10 @@ export default {
   vendor: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.invoice.vendor.label',
-      defaultPlaceholder: 'Vendor',
+      placeholder: "react.invoice.vendor.label",
+      defaultPlaceholder: "Vendor",
       showLabelTooltip: true,
     },
     getDynamicAttr: ({ suppliers }) => ({
@@ -52,8 +52,8 @@ export default {
     type: FilterSelectField,
     attributes: {
       filterElement: true,
-      placeholder: 'react.invoice.typeCode.label',
-      defaultPlaceholder: 'Invoice Type',
+      placeholder: "react.invoice.typeCode.label",
+      defaultPlaceholder: "Invoice Type",
       showLabelTooltip: true,
     },
     getDynamicAttr: ({ typeCodes }) => ({
@@ -63,10 +63,10 @@ export default {
   dateInvoiced: {
     type: DateFilter,
     attributes: {
-      dateFormat: 'MM/DD/YYYY',
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
-      label: 'react.invoice.invoiceDate.label',
-      defaultMessage: 'Invoice Date',
+      label: "react.invoice.invoiceDate.label",
+      defaultMessage: "Invoice Date",
     },
   },
   createdBy: {
@@ -76,18 +76,16 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.invoice.createdBy.label',
-      defaultPlaceholder: 'Created by',
+      placeholder: "react.invoice.createdBy.label",
+      defaultPlaceholder: "Created by",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedPeopleFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedPeopleFetch }) => ({
       loadOptions: debouncedPeopleFetch,
     }),
   },

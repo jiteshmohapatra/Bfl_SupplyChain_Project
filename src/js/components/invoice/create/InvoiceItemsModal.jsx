@@ -1,38 +1,40 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import update from 'immutability-helper';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import update from "immutability-helper";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import invoiceApi from 'api/services/InvoiceApi';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import TextField from 'components/form-elements/TextField';
-import { ORDER_URL, STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import Checkbox from 'utils/Checkbox';
-import { getInvoiceDescription } from 'utils/form-values-utils';
-import accountingFormat from 'utils/number-utils';
-import Select from 'utils/Select';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import invoiceApi from "api/services/InvoiceApi";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import TextField from "components/form-elements/TextField";
+import { ORDER_URL, STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import Checkbox from "utils/Checkbox";
+import { getInvoiceDescription } from "utils/form-values-utils";
+import accountingFormat from "utils/number-utils";
+import Select from "utils/Select";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
 const FIELDS = {
   invoiceItems: {
     type: ArrayField,
     arrowsNavigation: true,
-    maxTableHeight: 'calc(100vh - 500px)',
-    overflowStyle: 'overlay',
+    maxTableHeight: "calc(100vh - 500px)",
+    overflowStyle: "overlay",
     fields: {
       checked: {
-        fieldKey: '',
-        label: '',
-        flexWidth: '0.4',
+        fieldKey: "",
+        label: "",
+        flexWidth: "0.4",
         type: ({
           // eslint-disable-next-line react/prop-types
-          rowIndex, fieldValue, selectRow,
+          rowIndex,
+          fieldValue,
+          selectRow,
         }) => (
           <Checkbox
             id={rowIndex.toString()}
@@ -45,53 +47,57 @@ const FIELDS = {
       },
       orderNumber: {
         type: LabelField,
-        label: 'react.invoice.orderNumber.label',
-        defaultMessage: 'PO Number',
-        flexWidth: '1',
+        label: "react.invoice.orderNumber.label",
+        defaultMessage: "PO Number",
+        flexWidth: "1",
         getDynamicAttr: ({ values, rowIndex }) => {
-          const orderId = values && values.invoiceItems
-              && values.invoiceItems[rowIndex]
-              && values.invoiceItems[rowIndex].orderId;
-          return { url: orderId ? ORDER_URL.show(orderId) : '' };
+          const orderId =
+            values &&
+            values.invoiceItems &&
+            values.invoiceItems[rowIndex] &&
+            values.invoiceItems[rowIndex].orderId;
+          return { url: orderId ? ORDER_URL.show(orderId) : "" };
         },
       },
       shipmentNumber: {
         type: LabelField,
-        label: 'react.invoice.shipmentNumber.label',
-        defaultMessage: 'Shipment Number',
-        flexWidth: '1',
+        label: "react.invoice.shipmentNumber.label",
+        defaultMessage: "Shipment Number",
+        flexWidth: "1",
         getDynamicAttr: ({ values, rowIndex }) => {
-          const shipmentId = values && values.invoiceItems
-              && values.invoiceItems[rowIndex]
-              && values.invoiceItems[rowIndex].shipmentId;
-          return { url: shipmentId ? STOCK_MOVEMENT_URL.show(shipmentId) : '' };
+          const shipmentId =
+            values &&
+            values.invoiceItems &&
+            values.invoiceItems[rowIndex] &&
+            values.invoiceItems[rowIndex].shipmentId;
+          return { url: shipmentId ? STOCK_MOVEMENT_URL.show(shipmentId) : "" };
         },
       },
       budgetCode: {
         type: LabelField,
-        label: 'react.invoice.budgetCode.label',
-        defaultMessage: 'Budget Code',
-        flexWidth: '1',
+        label: "react.invoice.budgetCode.label",
+        defaultMessage: "Budget Code",
+        flexWidth: "1",
       },
       glCode: {
         type: LabelField,
-        label: 'react.invoice.glCode.label',
-        defaultMessage: 'GL Code',
-        flexWidth: '1',
+        label: "react.invoice.glCode.label",
+        defaultMessage: "GL Code",
+        flexWidth: "1",
       },
       productCode: {
         type: LabelField,
-        label: 'react.invoice.itemNumber.label',
-        defaultMessage: 'Item No',
-        flexWidth: '1',
+        label: "react.invoice.itemNumber.label",
+        defaultMessage: "Item No",
+        flexWidth: "1",
       },
       description: {
         type: LabelField,
-        label: 'react.invoice.description.label',
-        defaultMessage: 'Description',
-        flexWidth: '3',
+        label: "react.invoice.description.label",
+        defaultMessage: "Description",
+        flexWidth: "3",
         attributes: {
-          className: 'text-left',
+          className: "text-left",
         },
         getDynamicAttr: (params) => ({
           formatValue: () => {
@@ -105,41 +111,39 @@ const FIELDS = {
       },
       supplierCode: {
         type: LabelField,
-        label: 'react.invoice.supplierCode.label',
-        defaultMessage: 'Supplier Code',
-        flexWidth: '1',
+        label: "react.invoice.supplierCode.label",
+        defaultMessage: "Supplier Code",
+        flexWidth: "1",
       },
       quantity: {
         type: LabelField,
-        label: 'react.invoice.quantity.label',
-        defaultMessage: 'Qty',
-        flexWidth: '1',
+        label: "react.invoice.quantity.label",
+        defaultMessage: "Qty",
+        flexWidth: "1",
       },
       quantityToInvoice: {
         type: TextField,
-        label: 'react.invoice.quantityToInvoice.label',
-        defaultMessage: 'Qty to Invoice',
-        flexWidth: '1',
+        label: "react.invoice.quantityToInvoice.label",
+        defaultMessage: "Qty to Invoice",
+        flexWidth: "1",
         attributes: {
-          type: 'number',
+          type: "number",
         },
-        getDynamicAttr: ({
-          updateRow, values, rowIndex,
-        }) => ({
+        getDynamicAttr: ({ updateRow, values, rowIndex }) => ({
           onChange: () => updateRow(values, rowIndex),
         }),
       },
       uom: {
         type: LabelField,
-        label: 'react.invoice.uom.label',
-        defaultMessage: 'UoM',
-        flexWidth: '1',
+        label: "react.invoice.uom.label",
+        defaultMessage: "UoM",
+        flexWidth: "1",
       },
       unitPrice: {
         type: LabelField,
-        label: 'react.invoice.unitPrice.label',
-        defaultMessage: 'Unit Price',
-        flexWidth: '1',
+        label: "react.invoice.unitPrice.label",
+        defaultMessage: "Unit Price",
+        flexWidth: "1",
         attributes: {
           formatValue: (value) => (value ? accountingFormat(value) : value),
         },
@@ -154,13 +158,13 @@ function validate(values) {
 
   _.forEach(values.invoiceItems, (item, key) => {
     if (
-      item.checked
-      && (
-        (_.toInteger(item.quantityToInvoice) > item.quantity)
-        || _.toInteger(item.quantityToInvoice) <= 0
-      )
+      item.checked &&
+      (_.toInteger(item.quantityToInvoice) > item.quantity ||
+        _.toInteger(item.quantityToInvoice) <= 0)
     ) {
-      errors.invoiceItems[key] = { quantityToInvoice: 'react.invoice.errors.quantityToInvoice.label' };
+      errors.invoiceItems[key] = {
+        quantityToInvoice: "react.invoice.errors.quantityToInvoice.label",
+      };
     }
   });
 
@@ -208,7 +212,8 @@ class InvoiceItemsModal extends Component {
       })),
     };
 
-    invoiceApi.saveInvoiceItems(invoiceId, payload)
+    invoiceApi
+      .saveInvoiceItems(invoiceId, payload)
       .then(() => {
         this.setState(INITIAL_STATE, () => {
           this.props.hideSpinner();
@@ -219,11 +224,15 @@ class InvoiceItemsModal extends Component {
   }
 
   setSelectedOrders(selectedOrderNumbers) {
-    this.setState({ selectedOrderNumbers }, () => this.fetchInvoiceItemCandidates());
+    this.setState({ selectedOrderNumbers }, () =>
+      this.fetchInvoiceItemCandidates(),
+    );
   }
 
   setSelectedShipments(selectedShipmentNumbers) {
-    this.setState({ selectedShipmentNumbers }, () => this.fetchInvoiceItemCandidates());
+    this.setState({ selectedShipmentNumbers }, () =>
+      this.fetchInvoiceItemCandidates(),
+    );
   }
 
   getSortOrder() {
@@ -243,8 +252,8 @@ class InvoiceItemsModal extends Component {
             return {
               ...item,
               checked: value,
-              quantityToInvoice: value ? item.quantity : '',
-              sortOrder: value ? item.sortOrder : '',
+              quantityToInvoice: value ? item.quantity : "",
+              sortOrder: value ? item.sortOrder : "",
             };
           }
           return { ...item };
@@ -264,8 +273,10 @@ class InvoiceItemsModal extends Component {
           ...selectedInvoiceItems,
           [formValues.invoiceItems[rowIndex].id]: {
             ...formValues.invoiceItems[rowIndex],
-            quantityToInvoice: value ? formValues.invoiceItems[rowIndex].quantity : '',
-            sortOrder: value ? formValues.invoiceItems[rowIndex].sortOrder : '',
+            quantityToInvoice: value
+              ? formValues.invoiceItems[rowIndex].quantity
+              : "",
+            sortOrder: value ? formValues.invoiceItems[rowIndex].sortOrder : "",
           },
         },
       };
@@ -283,61 +294,82 @@ class InvoiceItemsModal extends Component {
       }),
       selectedInvoiceItems: {
         ...selectedInvoiceItems,
-        [item.id]: { quantityToInvoice: item.quantityToInvoice, sortOrder: item.sortOrder },
+        [item.id]: {
+          quantityToInvoice: item.quantityToInvoice,
+          sortOrder: item.sortOrder,
+        },
       },
     });
   }
 
   fetchInvoiceItemCandidates() {
-    const { selectedOrderNumbers, selectedShipmentNumbers, selectedInvoiceItems } = this.state;
+    const {
+      selectedOrderNumbers,
+      selectedShipmentNumbers,
+      selectedInvoiceItems,
+    } = this.state;
     const { invoiceId } = this.props;
 
     const payload = {
-      orderNumbers: _.map(selectedOrderNumbers, (orderNumber) => orderNumber.value),
-      shipmentNumbers: _.map(selectedShipmentNumbers, (shipmentNumber) => shipmentNumber.value),
+      orderNumbers: _.map(
+        selectedOrderNumbers,
+        (orderNumber) => orderNumber.value,
+      ),
+      shipmentNumbers: _.map(
+        selectedShipmentNumbers,
+        (shipmentNumber) => shipmentNumber.value,
+      ),
     };
 
-    return invoiceApi.saveInvoiceItemsCandidates(invoiceId, payload)
+    return invoiceApi
+      .saveInvoiceItemsCandidates(invoiceId, payload)
       .then((resp) => {
-        this.setState({
-          formValues: {
-            invoiceItems: _.map(resp.data.data, (item) => ({
-              ...item,
-              checked: selectedInvoiceItems && !!selectedInvoiceItems[item.id],
-              quantityToInvoice: selectedInvoiceItems && selectedInvoiceItems[item.id] ? selectedInvoiceItems[item.id].quantityToInvoice : '',
-              sortOrder: this.getSortOrder(),
-            })),
+        this.setState(
+          {
+            formValues: {
+              invoiceItems: _.map(resp.data.data, (item) => ({
+                ...item,
+                checked:
+                  selectedInvoiceItems && !!selectedInvoiceItems[item.id],
+                quantityToInvoice:
+                  selectedInvoiceItems && selectedInvoiceItems[item.id]
+                    ? selectedInvoiceItems[item.id].quantityToInvoice
+                    : "",
+                sortOrder: this.getSortOrder(),
+              })),
+            },
           },
-        }, () => {
-          this.fetchOrderNumbers(invoiceId);
-          this.fetchShipmentNumbers(invoiceId);
-        });
+          () => {
+            this.fetchOrderNumbers(invoiceId);
+            this.fetchShipmentNumbers(invoiceId);
+          },
+        );
       });
   }
 
   fetchOrderNumbers(invoiceId) {
     if (this.state.orderNumberOptions.length === 0) {
-      invoiceApi.getInvoiceOrders(invoiceId)
-        .then((resp) => {
-          this.setState({
-            orderNumberOptions: _.map(resp.data.data, (orderNumber) => (
-              { value: orderNumber, label: orderNumber }
-            )),
-          });
+      invoiceApi.getInvoiceOrders(invoiceId).then((resp) => {
+        this.setState({
+          orderNumberOptions: _.map(resp.data.data, (orderNumber) => ({
+            value: orderNumber,
+            label: orderNumber,
+          })),
         });
+      });
     }
   }
 
   fetchShipmentNumbers(invoiceId) {
     if (this.state.shipmentNumberOptions.length === 0) {
-      invoiceApi.getInvoiceShipments(invoiceId)
-        .then((resp) => {
-          this.setState({
-            shipmentNumberOptions: _.map(resp.data.data, (shipmentNumber) => (
-              { value: shipmentNumber, label: shipmentNumber }
-            )),
-          });
+      invoiceApi.getInvoiceShipments(invoiceId).then((resp) => {
+        this.setState({
+          shipmentNumberOptions: _.map(resp.data.data, (shipmentNumber) => ({
+            value: shipmentNumber,
+            label: shipmentNumber,
+          })),
         });
+      });
     }
   }
 
@@ -345,25 +377,31 @@ class InvoiceItemsModal extends Component {
     const { formValues: formValuesFromState } = this.state;
     const formValues = update(formValuesFromState, {
       invoiceItems: {
-        $apply: (items) => items.map((invoiceItem) => (
-          {
+        $apply: (items) =>
+          items.map((invoiceItem) => ({
             ...invoiceItem,
             checked: value,
-            quantityToInvoice: value ? invoiceItem.quantity : '',
-            sortOrder: value ? invoiceItem.sortOrder : '',
-          }
-        )),
+            quantityToInvoice: value ? invoiceItem.quantity : "",
+            sortOrder: value ? invoiceItem.sortOrder : "",
+          })),
       },
     });
-    const selectedItems = this.state.selectedInvoiceItems ? this.state.selectedInvoiceItems : [];
+    const selectedItems = this.state.selectedInvoiceItems
+      ? this.state.selectedInvoiceItems
+      : [];
     if (value) {
       // eslint-disable-next-line no-return-assign
-      _.map(formValues.invoiceItems, (invoiceItem, key) =>
-        selectedItems[invoiceItem.id] = {
-          ...formValues.invoiceItems[key],
-          quantityToInvoice: value ? formValues.invoiceItems[key].quantity : '',
-          sortOrder: value ? formValues.invoiceItems[key].sortOrder : '',
-        });
+      _.map(
+        formValues.invoiceItems,
+        (invoiceItem, key) =>
+          (selectedItems[invoiceItem.id] = {
+            ...formValues.invoiceItems[key],
+            quantityToInvoice: value
+              ? formValues.invoiceItems[key].quantity
+              : "",
+            sortOrder: value ? formValues.invoiceItems[key].sortOrder : "",
+          }),
+      );
     } else {
       _.map(formValues.invoiceItems, (invoiceItem, key) => {
         delete selectedItems[formValues.invoiceItems[key].id];
@@ -375,7 +413,8 @@ class InvoiceItemsModal extends Component {
 
   checkSelected() {
     return _.every(this.state.formValues.invoiceItems, (item) =>
-      _.includes(_.keys(this.state.selectedInvoiceItems), item.id));
+      _.includes(_.keys(this.state.selectedInvoiceItems), item.id),
+    );
   }
 
   render() {
@@ -386,9 +425,7 @@ class InvoiceItemsModal extends Component {
       selectedOrderNumbers,
       selectedShipmentNumbers,
     } = this.state;
-    const {
-      translate, btnOpenDisabled,
-    } = this.props;
+    const { translate, btnOpenDisabled } = this.props;
 
     return (
       <ModalWrapper
@@ -420,12 +457,17 @@ class InvoiceItemsModal extends Component {
         btnSaveText="react.invoice.addInvoiceItems.label"
         btnSaveDefaultText="Add invoice items"
         btnOpenDisabled={btnOpenDisabled}
-        btnSaveDisabled={!_.find(formValues.invoiceItems, (item) => item.checked)}
+        btnSaveDisabled={
+          !_.find(formValues.invoiceItems, (item) => item.checked)
+        }
       >
         <div className="d-flex mb-3 justify-content-start align-items-center w-100 combined-shipment-filter">
           <Select
             fieldName="orderNumber"
-            placeholder={translate('react.invoice.selectOrders.label', 'Select orders...')}
+            placeholder={translate(
+              "react.invoice.selectOrders.label",
+              "Select orders...",
+            )}
             value={selectedOrderNumbers}
             multi
             options={orderNumberOptions}
@@ -437,7 +479,10 @@ class InvoiceItemsModal extends Component {
           &nbsp;
           <Select
             fieldName="shipmentNumber"
-            placeholder={translate('react.invoice.selectShipments.label', 'Select shipments...')}
+            placeholder={translate(
+              "react.invoice.selectShipments.label",
+              "Select shipments...",
+            )}
             value={selectedShipmentNumbers}
             multi
             options={shipmentNumberOptions}
@@ -464,7 +509,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default (connect(mapStateToProps, { showSpinner, hideSpinner })(InvoiceItemsModal));
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  InvoiceItemsModal,
+);
 
 InvoiceItemsModal.propTypes = {
   showSpinner: PropTypes.func.isRequired,

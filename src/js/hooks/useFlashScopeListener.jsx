@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import _ from 'lodash';
-import queryString from 'query-string';
-import { useHistory, useLocation } from 'react-router-dom';
+import _ from "lodash";
+import queryString from "query-string";
+import { useHistory, useLocation } from "react-router-dom";
 
-import notification from 'components/Layout/notifications/notification';
-import NotificationType from 'consts/notificationTypes';
+import notification from "components/Layout/notifications/notification";
+import NotificationType from "consts/notificationTypes";
 
 const useFlashScopeListener = () => {
   const { search } = useLocation();
@@ -32,7 +32,7 @@ const useFlashScopeListener = () => {
     if (error) {
       notification(NotificationType.ERROR)({ error });
     }
-    clearQuerySearch('flash');
+    clearQuerySearch("flash");
   }, []);
 };
 

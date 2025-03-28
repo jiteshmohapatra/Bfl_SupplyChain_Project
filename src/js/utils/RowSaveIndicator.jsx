@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import RowSaveStatus from 'consts/rowSaveStatus';
+import RowSaveStatus from "consts/rowSaveStatus";
 
-const RowSaveIndicator = ({ lineItemSaveStatus }) =>
-  <div className={`${lineItemSaveStatus?.toLowerCase()} line-item-save-indicator`} />;
+const RowSaveIndicator = ({ lineItemSaveStatus }) => (
+  <div
+    className={`${lineItemSaveStatus?.toLowerCase()} line-item-save-indicator`}
+  />
+);
 
 export default RowSaveIndicator;
 

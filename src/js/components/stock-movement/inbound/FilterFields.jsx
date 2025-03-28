@@ -1,6 +1,6 @@
-import DateFilter from 'components/form-elements/DateFilter/DateFilter';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
-import DateFormat from 'consts/dateFormat';
+import DateFilter from "components/form-elements/DateFilter/DateFilter";
+import FilterSelectField from "components/form-elements/FilterSelectField";
+import DateFormat from "consts/dateFormat";
 
 export default {
   receiptStatusCode: {
@@ -8,9 +8,9 @@ export default {
     attributes: {
       multi: true,
       filterElement: true,
-      placeholder: 'react.stockMovement.inbound.filters.receiptStatus.label',
-      defaultPlaceholder: 'Receipt Status',
-      ariaLabel: 'Receipt Status',
+      placeholder: "react.stockMovement.inbound.filters.receiptStatus.label",
+      defaultPlaceholder: "Receipt Status",
+      ariaLabel: "Receipt Status",
       showLabelTooltip: true,
       options: [],
       closeMenuOnSelect: false,
@@ -27,31 +27,29 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.origin.label',
-      defaultPlaceholder: 'Origin',
-      ariaLabel: 'Origin',
+      placeholder: "react.stockMovement.origin.label",
+      defaultPlaceholder: "Origin",
+      ariaLabel: "Origin",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchLocations,
-    }) => ({
+    getDynamicAttr: ({ fetchLocations }) => ({
       loadOptions: fetchLocations,
     }),
   },
   destination: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       options: [],
       filterElement: true,
-      placeholder: 'react.stockMovement.destination.label',
-      defaultPlaceholder: 'Destination',
-      ariaLabel: 'Destination',
+      placeholder: "react.stockMovement.destination.label",
+      defaultPlaceholder: "Destination",
+      ariaLabel: "Destination",
       showLabelTooltip: true,
       disabled: true,
     },
@@ -61,15 +59,15 @@ export default {
     attributes: {
       multi: true,
       filterElement: true,
-      placeholder: 'react.stockMovement.shipmentType.label',
-      defaultPlaceholder: 'Shipment type',
-      ariaLabel: 'Shipment type',
+      placeholder: "react.stockMovement.shipmentType.label",
+      defaultPlaceholder: "Shipment type",
+      ariaLabel: "Shipment type",
       showLabelTooltip: true,
       options: [],
       blurInputOnSelect: false,
       closeMenuOnSelect: false,
-      valueKey: 'id',
-      labelKey: 'displayName',
+      valueKey: "id",
+      labelKey: "displayName",
     },
     getDynamicAttr: ({ shipmentTypes }) => ({
       options: shipmentTypes,
@@ -82,19 +80,17 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.requestedBy.label',
-      defaultPlaceholder: 'Requested By',
-      ariaLabel: 'Requested By',
+      placeholder: "react.stockMovement.requestedBy.label",
+      defaultPlaceholder: "Requested By",
+      ariaLabel: "Requested By",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchPeople,
-    }) => ({
+    getDynamicAttr: ({ fetchPeople }) => ({
       loadOptions: fetchPeople,
     }),
   },
@@ -105,19 +101,17 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.createdBy.label',
-      defaultPlaceholder: 'Created By',
-      ariaLabel: 'Created By',
+      placeholder: "react.stockMovement.createdBy.label",
+      defaultPlaceholder: "Created By",
+      ariaLabel: "Created By",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchUsers,
-    }) => ({
+    getDynamicAttr: ({ fetchUsers }) => ({
       loadOptions: fetchUsers,
     }),
   },
@@ -128,19 +122,17 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.stockMovement.updatedBy.label',
-      defaultPlaceholder: 'Updated By',
-      ariaLabel: 'Updated By',
+      placeholder: "react.stockMovement.updatedBy.label",
+      defaultPlaceholder: "Updated By",
+      ariaLabel: "Updated By",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      fetchUsers,
-    }) => ({
+    getDynamicAttr: ({ fetchUsers }) => ({
       loadOptions: fetchUsers,
     }),
   },
@@ -149,11 +141,11 @@ export default {
     attributes: {
       localizeDate: true,
       localizedDateFormat: DateFormat.COMMON,
-      label: 'react.stockMovement.filter.createdAfter.label',
-      defaultMessage: 'Created after',
+      label: "react.stockMovement.filter.createdAfter.label",
+      defaultMessage: "Created after",
       // date format in which the date will be sent to the API
-      dateFormat: 'MM/DD/YYYY',
-      ariaLabel: 'Created after',
+      dateFormat: "MM/DD/YYYY",
+      ariaLabel: "Created after",
       filterElement: true,
     },
   },
@@ -162,11 +154,11 @@ export default {
     attributes: {
       localizeDate: true,
       localizedDateFormat: DateFormat.COMMON,
-      label: 'react.stockMovement.filter.createdBefore.label',
-      defaultMessage: 'Created before',
+      label: "react.stockMovement.filter.createdBefore.label",
+      defaultMessage: "Created before",
       // date format in which the date will be sent to the API
-      dateFormat: 'MM/DD/YYYY',
-      ariaLabel: 'Created before',
+      dateFormat: "MM/DD/YYYY",
+      ariaLabel: "Created before",
       filterElement: true,
     },
   },

@@ -1,15 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Tooltip } from 'react-tippy';
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tippy";
 
-const CustomTooltip = ({
-  children,
-  content,
-  className,
-  show,
-  icon: Icon,
-}) => (
+const CustomTooltip = ({ children, content, className, show, icon: Icon }) =>
   // This div was added to ensure the tooltip works correctly with absolute positioning
   show ? (
     <div className={className}>
@@ -26,8 +20,9 @@ const CustomTooltip = ({
         </div>
       </Tooltip>
     </div>
-  ) : children
-);
+  ) : (
+    children
+  );
 
 export default CustomTooltip;
 
@@ -40,7 +35,7 @@ CustomTooltip.propTypes = {
 };
 
 CustomTooltip.defaultProps = {
-  className: '',
+  className: "",
   icon: null,
   show: true,
 };

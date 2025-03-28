@@ -1,21 +1,24 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const MenuConfigurationSubsection = ({ subsection }) => (
   <div className="padding-8">
-    <span className="subsection-section-title">{subsection.label && subsection.label}</span>
-    {subsection.menuItems && subsection.menuItems.map((menuItem) => (
-      <a
-        role="menuitem"
-        className="dropdown-item"
-        key={`${menuItem.label}-menuItem`}
-        href={menuItem.href}
-        target={menuItem.target}
-      >
-        {menuItem.label}
-      </a>
-    ))}
+    <span className="subsection-section-title">
+      {subsection.label && subsection.label}
+    </span>
+    {subsection.menuItems &&
+      subsection.menuItems.map((menuItem) => (
+        <a
+          role="menuitem"
+          className="dropdown-item"
+          key={`${menuItem.label}-menuItem`}
+          href={menuItem.href}
+          target={menuItem.target}
+        >
+          {menuItem.label}
+        </a>
+      ))}
   </div>
 );
 

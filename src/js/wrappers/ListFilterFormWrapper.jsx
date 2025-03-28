@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const ListFilterFormWrapper = ({ children, className }) => (
   <div className={`d-flex flex-column list-page-filters ${className}`}>
@@ -16,5 +16,5 @@ ListFilterFormWrapper.propTypes = {
 };
 
 ListFilterFormWrapper.defaultProps = {
-  className: '',
+  className: "",
 };

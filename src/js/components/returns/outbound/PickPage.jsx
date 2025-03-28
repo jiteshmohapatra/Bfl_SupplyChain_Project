@@ -1,105 +1,105 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import arrayMutators from "final-form-arrays";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import DateFormat from 'consts/dateFormat';
-import apiClient, { parseResponse } from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { formatProductDisplayName } from 'utils/form-values-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import DateFormat from "consts/dateFormat";
+import apiClient, { parseResponse } from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import { formatProductDisplayName } from "utils/form-values-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const FIELDS = {
   picklistItems: {
     type: ArrayField,
     getDynamicRowAttr: ({ rowValues, translate }) => {
-      let className = '';
-      let tooltip = '';
+      let className = "";
+      let tooltip = "";
       if (rowValues.recalled && rowValues.onHold) {
-        className = 'recalled-and-on-hold';
-        tooltip = translate('react.outboundReturns.recalledAndOnHold.label');
+        className = "recalled-and-on-hold";
+        tooltip = translate("react.outboundReturns.recalledAndOnHold.label");
       } else if (rowValues.recalled) {
-        className = 'recalled';
-        tooltip = translate('react.outboundReturns.recalled.label');
+        className = "recalled";
+        tooltip = translate("react.outboundReturns.recalled.label");
       } else if (rowValues.onHold) {
-        className = 'on-hold';
-        tooltip = translate('react.outboundReturns.onHold.label');
+        className = "on-hold";
+        tooltip = translate("react.outboundReturns.onHold.label");
       }
       return { className, tooltip };
     },
     fields: {
-      'product.productCode': {
+      "product.productCode": {
         type: LabelField,
-        label: 'react.stockMovement.productCode.label',
-        defaultMessage: 'Code',
-        flexWidth: '0.5',
+        label: "react.stockMovement.productCode.label",
+        defaultMessage: "Code",
+        flexWidth: "0.5",
       },
       product: {
         type: LabelField,
-        label: 'react.stockMovement.product.label',
-        defaultMessage: 'Product',
-        flexWidth: '2',
-        headerAlign: 'left',
+        label: "react.stockMovement.product.label",
+        defaultMessage: "Product",
+        flexWidth: "2",
+        headerAlign: "left",
         getDynamicAttr: ({ fieldValue }) => ({
           tooltipValue: fieldValue?.name,
         }),
         attributes: {
           formatValue: formatProductDisplayName,
-          className: 'text-left ml-1',
+          className: "text-left ml-1",
           showValueTooltip: true,
         },
       },
       originZone: {
         type: LabelField,
-        label: 'react.outboundReturns.zone.label',
-        defaultMessage: 'Zone',
-        flexWidth: '0.5',
+        label: "react.outboundReturns.zone.label",
+        defaultMessage: "Zone",
+        flexWidth: "0.5",
         attributes: {
           showValueTooltip: true,
         },
       },
-      'originBinLocation.name': {
+      "originBinLocation.name": {
         type: LabelField,
-        label: 'react.outboundReturns.bin.label',
-        defaultMessage: 'Bin Location',
-        flexWidth: '1',
+        label: "react.outboundReturns.bin.label",
+        defaultMessage: "Bin Location",
+        flexWidth: "1",
         attributes: {
           showValueTooltip: true,
         },
         getDynamicAttr: () => ({
-          formatValue: (value) => value || 'DEFAULT',
+          formatValue: (value) => value || "DEFAULT",
         }),
       },
       lotNumber: {
         type: LabelField,
-        label: 'react.outboundReturns.lot.label',
-        defaultMessage: 'Lot',
-        flexWidth: '1',
+        label: "react.outboundReturns.lot.label",
+        defaultMessage: "Lot",
+        flexWidth: "1",
       },
       expirationDate: {
         type: LabelField,
-        label: 'react.outboundReturns.expiry.label',
-        defaultMessage: 'Expiry',
-        flexWidth: '1',
+        label: "react.outboundReturns.expiry.label",
+        defaultMessage: "Expiry",
+        flexWidth: "1",
         getDynamicAttr: ({ formatLocalizedDate }) => ({
           formatValue: (value) => formatLocalizedDate(value, DateFormat.COMMON),
         }),
       },
       quantity: {
         type: LabelField,
-        label: 'react.outboundReturns.quantity.label',
-        defaultMessage: 'Qty to Return',
-        flexWidth: '1',
+        label: "react.outboundReturns.quantity.label",
+        defaultMessage: "Qty to Return",
+        flexWidth: "1",
       },
     },
   },
@@ -110,7 +110,7 @@ class PickPage extends Component {
     super(props);
     this.state = {
       values: { outboundReturn: { ...this.props.initialValues } },
-      printPicksUrl: '',
+      printPicksUrl: "",
     };
 
     this.fetchOutboundReturn = this.fetchOutboundReturn.bind(this);
@@ -137,17 +137,21 @@ class PickPage extends Component {
     this.props.showSpinner();
     const url = `/api/stockTransfers/${this.props.match.params.outboundReturnId}`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((resp) => {
         const outboundReturn = resp.data.data;
         const printPicks = _.find(
           outboundReturn.documents,
-          (doc) => doc.documentType === 'PICKLIST',
+          (doc) => doc.documentType === "PICKLIST",
         );
-        this.setState({
-          values: { outboundReturn },
-          printPicksUrl: printPicks ? printPicks.uri : '/',
-        }, () => this.props.hideSpinner());
+        this.setState(
+          {
+            values: { outboundReturn },
+            printPicksUrl: printPicks ? printPicks.uri : "/",
+          },
+          () => this.props.hideSpinner(),
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -157,10 +161,11 @@ class PickPage extends Component {
     const url = `/api/stockTransfers/${this.props.match.params.outboundReturnId}`;
     const payload = parseResponse({
       ...this.state.values.outboundReturn,
-      status: 'PLACED',
+      status: "PLACED",
     });
 
-    apiClient.put(url, payload)
+    apiClient
+      .put(url, payload)
       .then((resp) => {
         const outboundReturn = resp.data.data;
         this.props.hideSpinner();
@@ -176,7 +181,9 @@ class PickPage extends Component {
   render() {
     // There is a parseResponse to avoid affecting outboundReturn in state
     const { outboundReturn } = parseResponse(this.state.values);
-    const picklistItems = _.flatten(_.map(outboundReturn.stockTransferItems, 'picklistItems'));
+    const picklistItems = _.flatten(
+      _.map(outboundReturn.stockTransferItems, "picklistItems"),
+    );
 
     return (
       <Form
@@ -194,20 +201,25 @@ class PickPage extends Component {
               >
                 <span>
                   <i className="fa fa-print pr-2" />
-                  <Translate id="react.stockMovement.printPicklist.label" defaultMessage="Print picklist" />
+                  <Translate
+                    id="react.stockMovement.printPicklist.label"
+                    defaultMessage="Print picklist"
+                  />
                 </span>
               </a>
             </span>
             <form onSubmit={handleSubmit} className="print-mt">
               <div className="table-form">
-                {_.map(FIELDS, (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName, {
-                  outboundReturnId: this.props.match.params.outboundReturnId,
-                  refetchOutboundReturn: this.fetchOutboundReturn,
-                  locationId: this.props.locationId,
-                  translate: this.props.translate,
-                  formatLocalizedDate: this.props.formatLocalizedDate,
-                  values,
-                }))}
+                {_.map(FIELDS, (fieldConfig, fieldName) =>
+                  renderFormField(fieldConfig, fieldName, {
+                    outboundReturnId: this.props.match.params.outboundReturnId,
+                    refetchOutboundReturn: this.fetchOutboundReturn,
+                    locationId: this.props.locationId,
+                    translate: this.props.translate,
+                    formatLocalizedDate: this.props.formatLocalizedDate,
+                    values,
+                  }),
+                )}
               </div>
               <div className="submit-buttons d-flex justify-content-between">
                 <button
@@ -215,13 +227,19 @@ class PickPage extends Component {
                   onClick={() => this.previousPage(outboundReturn)}
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                 >
-                  <Translate id="react.outboundReturns.previous.label" defaultMessage="Previous" />
+                  <Translate
+                    id="react.outboundReturns.previous.label"
+                    defaultMessage="Previous"
+                  />
                 </button>
                 <button
                   type="submit"
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                 >
-                  <Translate id="react.outboundReturns.next.label" defaultMessage="Next" />
+                  <Translate
+                    id="react.outboundReturns.next.label"
+                    defaultMessage="Next"
+                  />
                 </button>
               </div>
             </form>
@@ -233,17 +251,16 @@ class PickPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  outboundReturnsTranslationsFetched: state.session.fetchedTranslations.outboundReturns,
+  outboundReturnsTranslationsFetched:
+    state.session.fetchedTranslations.outboundReturns,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
   formatLocalizedDate: formatDate(state.localize),
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    showSpinner, hideSpinner,
-  },
-)(PickPage);
+export default connect(mapStateToProps, {
+  showSpinner,
+  hideSpinner,
+})(PickPage);
 
 PickPage.propTypes = {
   showSpinner: PropTypes.func.isRequired,

@@ -1,12 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiInformationLine } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiInformationLine } from "react-icons/ri";
 
-import ShipmentType from 'consts/shipmentType';
+import ShipmentType from "consts/shipmentType";
 
 const ShipmentIdentifier = ({ shipmentType, identifier }) => {
-  const getShipmentTypeIcon = () => ShipmentType[shipmentType?.enumKey ?? 'Default']?.icon ?? <RiInformationLine />;
+  const getShipmentTypeIcon = () =>
+    ShipmentType[shipmentType?.enumKey ?? "Default"]?.icon ?? (
+      <RiInformationLine />
+    );
   return (
     <div className="d-flex align-items-center gap-8 shipment-identifier">
       {getShipmentTypeIcon()}

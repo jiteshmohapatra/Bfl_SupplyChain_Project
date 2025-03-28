@@ -1,4 +1,4 @@
-import { FETCH_SHIPMENT_STATUS_CODES } from 'actions/types';
+import { FETCH_SHIPMENT_STATUS_CODES } from "actions/types";
 
 const initialState = {
   data: [],

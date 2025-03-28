@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { ClimbingBoxLoader } from 'react-spinners';
+import { ClimbingBoxLoader } from "react-spinners";
 
-import LoadDemoDataErrorMessage from 'components/load-demo-data/LoadDemoDataErrorMessage';
-import LoadDemoDataSuccessMessage from 'components/load-demo-data/LoadDemoDataSuccessMessage';
-import apiClient from 'utils/apiClient';
-import Translate from 'utils/Translate';
+import LoadDemoDataErrorMessage from "components/load-demo-data/LoadDemoDataErrorMessage";
+import LoadDemoDataSuccessMessage from "components/load-demo-data/LoadDemoDataSuccessMessage";
+import apiClient from "utils/apiClient";
+import Translate from "utils/Translate";
 
 const LoadDemoDataProgressScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +13,8 @@ const LoadDemoDataProgressScreen = () => {
   const [supportLinks, setSupportLinks] = useState({});
 
   useEffect(() => {
-    apiClient.get('/api/config/data/demo')
+    apiClient
+      .get("/api/config/data/demo")
       .then(() => {
         setIsLoading(false);
       })
@@ -22,7 +23,7 @@ const LoadDemoDataProgressScreen = () => {
         setIsLoading(false);
       });
 
-    apiClient.get('/api/supportLinks').then((response) => {
+    apiClient.get("/api/supportLinks").then((response) => {
       const links = response.data.data;
       setSupportLinks(links);
     });
@@ -59,13 +60,9 @@ const LoadDemoDataProgressScreen = () => {
   }
 
   if (error) {
-    return (
-      <LoadDemoDataErrorMessage supportLinks={supportLinks} />
-    );
+    return <LoadDemoDataErrorMessage supportLinks={supportLinks} />;
   }
-  return (
-    <LoadDemoDataSuccessMessage supportLinks={supportLinks} />
-  );
+  return <LoadDemoDataSuccessMessage supportLinks={supportLinks} />;
 };
 
 export default LoadDemoDataProgressScreen;

@@ -1,53 +1,62 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import fileDownload from 'js-file-download';
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import fileDownload from "js-file-download";
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { fetchUsers, hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import ButtonField from 'components/form-elements/ButtonField';
-import DateField from 'components/form-elements/DateField';
-import ProductSelectField from 'components/form-elements/ProductSelectField';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import apiClient from 'utils/apiClient';
-import { renderFormField, setColumnValue } from 'utils/form-utils';
-import Select from 'utils/Select';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchUsers, hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import ButtonField from "components/form-elements/ButtonField";
+import DateField from "components/form-elements/DateField";
+import ProductSelectField from "components/form-elements/ProductSelectField";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import apiClient from "utils/apiClient";
+import { renderFormField, setColumnValue } from "utils/form-utils";
+import Select from "utils/Select";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const DELETE_BUTTON_FIELD = {
   type: ButtonField,
-  label: 'react.default.button.delete.label',
-  defaultMessage: 'Delete',
-  flexWidth: '1',
-  fieldKey: '',
-  buttonLabel: 'react.default.button.delete.label',
-  buttonDefaultMessage: 'Delete',
+  label: "react.default.button.delete.label",
+  defaultMessage: "Delete",
+  flexWidth: "1",
+  fieldKey: "",
+  buttonLabel: "react.default.button.delete.label",
+  buttonDefaultMessage: "Delete",
   getDynamicAttr: ({
-    fieldValue, removeItem, removeRow, updateTotalCount,
+    fieldValue,
+    removeItem,
+    removeRow,
+    updateTotalCount,
   }) => ({
-    onClick: fieldValue && fieldValue.id ? () => {
-      removeItem(fieldValue.id).then(() => {
-        updateTotalCount(-1);
-        removeRow();
-      });
-    } : () => { updateTotalCount(-1); removeRow(); },
-    disabled: fieldValue && fieldValue.statusCode === 'SUBSTITUTED',
+    onClick:
+      fieldValue && fieldValue.id
+        ? () => {
+            removeItem(fieldValue.id).then(() => {
+              updateTotalCount(-1);
+              removeRow();
+            });
+          }
+        : () => {
+            updateTotalCount(-1);
+            removeRow();
+          },
+    disabled: fieldValue && fieldValue.statusCode === "SUBSTITUTED",
   }),
   attributes: {
-    className: 'btn btn-outline-danger',
+    className: "btn btn-outline-danger",
   },
 };
 
@@ -63,7 +72,10 @@ const VENDOR_FIELDS = {
     // eslint-disable-next-line react/prop-types
     addButton: ({
       // eslint-disable-next-line react/prop-types
-      addRow, getSortOrder, isFromOrder, updateTotalCount,
+      addRow,
+      getSortOrder,
+      isFromOrder,
+      updateTotalCount,
     }) => (
       <button
         type="button"
@@ -78,49 +90,54 @@ const VENDOR_FIELDS = {
       >
         <span>
           <i className="fa fa-plus pr-2" />
-          <Translate id="react.default.button.addLine.label" defaultMessage="Add line" />
+          <Translate
+            id="react.default.button.addLine.label"
+            defaultMessage="Add line"
+          />
         </span>
       </button>
     ),
     fields: {
       palletName: {
         type: TextField,
-        label: 'react.stockMovement.packLevel1.label',
-        defaultMessage: 'Pack level 1',
-        flexWidth: '1',
-        getDynamicAttr: ({
-          rowIndex, rowCount, updateRow, values,
-        }) => ({
+        label: "react.stockMovement.packLevel1.label",
+        defaultMessage: "Pack level 1",
+        flexWidth: "1",
+        getDynamicAttr: ({ rowIndex, rowCount, updateRow, values }) => ({
           autoFocus: rowIndex === rowCount - 1,
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       boxName: {
         type: TextField,
-        label: 'react.stockMovement.packLevel2.label',
-        defaultMessage: 'Pack level 2',
-        flexWidth: '1',
+        label: "react.stockMovement.packLevel2.label",
+        defaultMessage: "Pack level 2",
+        flexWidth: "1",
         getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       product: {
         type: ProductSelectField,
-        label: 'react.stockMovement.product.label',
-        defaultMessage: 'Product',
-        headerAlign: 'left',
-        flexWidth: '4',
+        label: "react.stockMovement.product.label",
+        defaultMessage: "Product",
+        headerAlign: "left",
+        flexWidth: "4",
         required: true,
         attributes: {
           showSelectedOptionColor: true,
         },
         getDynamicAttr: ({
-          updateRow, rowIndex, values, originId, focusField,
+          updateRow,
+          rowIndex,
+          values,
+          originId,
+          focusField,
         }) => ({
           locationId: originId,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityRequested');
+              focusField(rowIndex, "quantityRequested");
             }
           },
           onBlur: () => updateRow(values, rowIndex),
@@ -128,22 +145,22 @@ const VENDOR_FIELDS = {
       },
       lotNumber: {
         type: TextField,
-        label: 'react.stockMovement.lot.label',
-        defaultMessage: 'Lot',
-        flexWidth: '1',
+        label: "react.stockMovement.lot.label",
+        defaultMessage: "Lot",
+        flexWidth: "1",
         getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       expirationDate: {
         type: DateField,
-        label: 'react.stockMovement.expiry.label',
-        defaultMessage: 'Expiry',
-        flexWidth: '1.5',
+        label: "react.stockMovement.expiry.label",
+        defaultMessage: "Expiry",
+        flexWidth: "1.5",
         attributes: {
           localizeDate: true,
           showLocalizedPlaceholder: true,
-          autoComplete: 'off',
+          autoComplete: "off",
         },
         getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
@@ -151,12 +168,12 @@ const VENDOR_FIELDS = {
       },
       quantityRequested: {
         type: TextField,
-        label: 'react.stockMovement.quantity.label',
-        defaultMessage: 'Qty',
-        flexWidth: '1',
+        label: "react.stockMovement.quantity.label",
+        defaultMessage: "Qty",
+        flexWidth: "1",
         required: true,
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
@@ -164,16 +181,27 @@ const VENDOR_FIELDS = {
       },
       recipient: {
         type: SelectField,
-        label: 'react.stockMovement.recipient.label',
-        defaultMessage: 'Recipient',
-        flexWidth: '1.5',
+        label: "react.stockMovement.recipient.label",
+        defaultMessage: "Recipient",
+        flexWidth: "1.5",
         getDynamicAttr: ({
-          recipients, addRow, rowCount, rowIndex, getSortOrder,
-          updateTotalCount, updateRow, values, setRecipientValue, translate,
+          recipients,
+          addRow,
+          rowCount,
+          rowIndex,
+          getSortOrder,
+          updateTotalCount,
+          updateRow,
+          values,
+          setRecipientValue,
+          translate,
         }) => ({
           headerHtml: () => (
             <Select
-              placeholder={translate('react.stockMovement.recipient.label', 'Recipient')}
+              placeholder={translate(
+                "react.stockMovement.recipient.label",
+                "Recipient",
+              )}
               className="select-xs my-2"
               classNamePrefix="react-select"
               options={recipients}
@@ -185,22 +213,31 @@ const VENDOR_FIELDS = {
             />
           ),
           options: recipients,
-          onTabPress: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
-          arrowRight: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
-          arrowDown: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
+          onTabPress:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
+          arrowRight:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
+          arrowDown:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
           onBlur: () => updateRow(values, rowIndex),
         }),
         attributes: {
-          labelKey: 'name',
+          labelKey: "name",
           openOnClick: false,
         },
       },
@@ -265,37 +302,53 @@ class AddItemsPage extends Component {
    * @public
    */
   getLineItemsToBeSaved(lineItems) {
-    const lineItemsToBeAdded = _.filter(lineItems, (item) =>
-      !item.statusCode && item.quantityRequested && item.quantityRequested !== '0' && item.product);
+    const lineItemsToBeAdded = _.filter(
+      lineItems,
+      (item) =>
+        !item.statusCode &&
+        item.quantityRequested &&
+        item.quantityRequested !== "0" &&
+        item.product,
+    );
     const lineItemsWithStatus = _.filter(lineItems, (item) => item.statusCode);
     const lineItemsToBeUpdated = [];
     _.forEach(lineItemsWithStatus, (item) => {
-      const oldItem = _.find(this.state.currentLineItems, (old) => old.id === item.id);
+      const oldItem = _.find(
+        this.state.currentLineItems,
+        (old) => old.id === item.id,
+      );
       const oldQty = parseInt(oldItem.quantityRequested, 10);
       const newQty = parseInt(item.quantityRequested, 10);
-      const oldRecipient = oldItem.recipient && _.isObject(oldItem.recipient)
-        ? oldItem.recipient.id : oldItem.recipient;
-      const newRecipient = item.recipient && _.isObject(item.recipient)
-        ? item.recipient.id : item.recipient;
+      const oldRecipient =
+        oldItem.recipient && _.isObject(oldItem.recipient)
+          ? oldItem.recipient.id
+          : oldItem.recipient;
+      const newRecipient =
+        item.recipient && _.isObject(item.recipient)
+          ? item.recipient.id
+          : item.recipient;
 
       // Intersection of keys common to both objects (excluding product key)
       const keyIntersection = _.remove(
-        _.intersection(
-          _.keys(oldItem),
-          _.keys(item),
-        ),
-        (key) => key !== 'product',
+        _.intersection(_.keys(oldItem), _.keys(item)),
+        (key) => key !== "product",
       );
 
       if (
-        !_.isEqual(_.pick(item, keyIntersection), _.pick(oldItem, keyIntersection))
-        || (item.product.id !== oldItem.product.id)
+        !_.isEqual(
+          _.pick(item, keyIntersection),
+          _.pick(oldItem, keyIntersection),
+        ) ||
+        item.product.id !== oldItem.product.id
       ) {
         lineItemsToBeUpdated.push(item);
       } else if (newQty !== oldQty || newRecipient !== oldRecipient) {
         lineItemsToBeUpdated.push(item);
-      } else if (item.inventoryItem?.expirationDate && item.expirationDate
-        && item.inventoryItem?.expirationDate !== item.expirationDate) {
+      } else if (
+        item.inventoryItem?.expirationDate &&
+        item.expirationDate &&
+        item.inventoryItem?.expirationDate !== item.expirationDate
+      ) {
         lineItemsToBeUpdated.push(item);
       }
     });
@@ -308,7 +361,11 @@ class AddItemsPage extends Component {
         boxName: item.boxName,
         lotNumber: item.lotNumber,
         expirationDate: item.expirationDate,
-        recipient: { id: _.isObject(item.recipient) ? item.recipient.id || '' : item.recipient || '' },
+        recipient: {
+          id: _.isObject(item.recipient)
+            ? item.recipient.id || ""
+            : item.recipient || "",
+        },
         sortOrder: item.sortOrder,
       })),
       _.map(lineItemsToBeUpdated, (item) => ({
@@ -319,7 +376,11 @@ class AddItemsPage extends Component {
         boxName: item.boxName,
         lotNumber: item.lotNumber,
         expirationDate: item.expirationDate,
-        recipient: { id: _.isObject(item.recipient) ? item.recipient.id || '' : item.recipient || '' },
+        recipient: {
+          id: _.isObject(item.recipient)
+            ? item.recipient.id || ""
+            : item.recipient || "",
+        },
         sortOrder: item.sortOrder,
       })),
     );
@@ -340,31 +401,36 @@ class AddItemsPage extends Component {
     if (this.state.values.lineItems.length === 0 && !data.length) {
       lineItemsData = new Array(1).fill({ sortOrder: 100 });
     } else {
-      lineItemsData = _.map(
-        data,
-        (val) => ({
-          ...val,
-          disabled: true,
-        }),
-      );
+      lineItemsData = _.map(data, (val) => ({
+        ...val,
+        disabled: true,
+      }));
     }
 
     const sortOrder = _.toInteger(_.last(lineItemsData).sortOrder) + 100;
-    this.setState((prev) => ({
-      currentLineItems: this.props.isPaginated
-        ? _.uniqBy(_.concat(prev.currentLineItems, data), 'id') : data,
-      values: {
-        ...prev.values,
-        lineItems: this.props.isPaginated
-          ? _.uniqBy(_.concat(prev.values.lineItems, lineItemsData), 'id') : lineItemsData,
+    this.setState(
+      (prev) => ({
+        currentLineItems: this.props.isPaginated
+          ? _.uniqBy(_.concat(prev.currentLineItems, data), "id")
+          : data,
+        values: {
+          ...prev.values,
+          lineItems: this.props.isPaginated
+            ? _.uniqBy(_.concat(prev.values.lineItems, lineItemsData), "id")
+            : lineItemsData,
+        },
+        sortOrder,
+      }),
+      () => {
+        if (
+          !_.isNull(startIndex) &&
+          this.state.values.lineItems.length !== this.state.totalCount
+        ) {
+          this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
+        }
+        this.props.hideSpinner();
       },
-      sortOrder,
-    }), () => {
-      if (!_.isNull(startIndex) && this.state.values.lineItems.length !== this.state.totalCount) {
-        this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
-      }
-      this.props.hideSpinner();
-    });
+    );
   }
 
   updateTotalCount(value) {
@@ -387,34 +453,57 @@ class AddItemsPage extends Component {
   validate(values, ignoreLotAndExpiry) {
     const errors = {};
     errors.lineItems = [];
-    const date = moment(this.props.minimumExpirationDate, 'MM/DD/YYYY');
+    const date = moment(this.props.minimumExpirationDate, "MM/DD/YYYY");
 
     _.forEach(values.lineItems, (item, key) => {
       errors.lineItems[key] = {};
-      if (!_.isNil(item.product) && (!item.quantityRequested || item.quantityRequested < 0)) {
-        errors.lineItems[key] = { quantityRequested: 'react.stockMovement.error.enterQuantity.label' };
+      if (
+        !_.isNil(item.product) &&
+        (!item.quantityRequested || item.quantityRequested < 0)
+      ) {
+        errors.lineItems[key] = {
+          quantityRequested: "react.stockMovement.error.enterQuantity.label",
+        };
       }
       if (!_.isEmpty(item.boxName) && _.isEmpty(item.palletName)) {
-        errors.lineItems[key] = { boxName: 'react.stockMovement.error.boxWithoutPallet.label' };
+        errors.lineItems[key] = {
+          boxName: "react.stockMovement.error.boxWithoutPallet.label",
+        };
       }
-      const dateRequested = moment(item.expirationDate, 'MM/DD/YYYY');
+      const dateRequested = moment(item.expirationDate, "MM/DD/YYYY");
       if (date.diff(dateRequested) > 0) {
-        errors.lineItems[key] = { expirationDate: 'react.stockMovement.error.invalidDate.label' };
+        errors.lineItems[key] = {
+          expirationDate: "react.stockMovement.error.invalidDate.label",
+        };
       }
       if (!ignoreLotAndExpiry) {
-        if (item.expirationDate && (_.isNil(item.lotNumber) || _.isEmpty(item.lotNumber))) {
-          errors.lineItems[key] = { lotNumber: 'react.stockMovement.error.expiryWithoutLot.label' };
+        if (
+          item.expirationDate &&
+          (_.isNil(item.lotNumber) || _.isEmpty(item.lotNumber))
+        ) {
+          errors.lineItems[key] = {
+            lotNumber: "react.stockMovement.error.expiryWithoutLot.label",
+          };
         }
         if (!_.isNil(item.product) && item.product.lotAndExpiryControl) {
-          if (!item.expirationDate && (_.isNil(item.lotNumber) || _.isEmpty(item.lotNumber))) {
+          if (
+            !item.expirationDate &&
+            (_.isNil(item.lotNumber) || _.isEmpty(item.lotNumber))
+          ) {
             errors.lineItems[key] = {
-              expirationDate: 'react.stockMovement.error.lotAndExpiryControl.label',
-              lotNumber: 'react.stockMovement.error.lotAndExpiryControl.label',
+              expirationDate:
+                "react.stockMovement.error.lotAndExpiryControl.label",
+              lotNumber: "react.stockMovement.error.lotAndExpiryControl.label",
             };
           } else if (!item.expirationDate) {
-            errors.lineItems[key] = { expirationDate: 'react.stockMovement.error.lotAndExpiryControl.label' };
+            errors.lineItems[key] = {
+              expirationDate:
+                "react.stockMovement.error.lotAndExpiryControl.label",
+            };
           } else if (_.isNil(item.lotNumber) || _.isEmpty(item.lotNumber)) {
-            errors.lineItems[key] = { lotNumber: 'react.stockMovement.error.lotAndExpiryControl.label' };
+            errors.lineItems[key] = {
+              lotNumber: "react.stockMovement.error.lotAndExpiryControl.label",
+            };
           }
         }
       }
@@ -440,18 +529,21 @@ class AddItemsPage extends Component {
    */
   confirmSave(onConfirm) {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.message.confirmSave.label', 'Confirm save'),
+      title: this.props.translate(
+        "react.stockMovement.message.confirmSave.label",
+        "Confirm save",
+      ),
       message: this.props.translate(
-        'react.stockMovement.confirmSave.message',
-        'Are you sure you want to save? There are some lines with empty or zero quantity, those lines will be deleted.',
+        "react.stockMovement.confirmSave.message",
+        "Are you sure you want to save? There are some lines with empty or zero quantity, those lines will be deleted.",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -465,7 +557,10 @@ class AddItemsPage extends Component {
    */
   confirmTransition(onConfirm, items) {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.confirmTransition.label', 'You have entered the same code twice. Do you want to continue?'),
+      title: this.props.translate(
+        "react.stockMovement.confirmTransition.label",
+        "You have entered the same code twice. Do you want to continue?",
+      ),
       message: _.map(items, (item) => (
         <p key={item.sortOrder}>
           {`${item.product.productCode} ${item.product.displayNames?.default || item.product.name} ${item.quantityRequested}`}
@@ -473,11 +568,11 @@ class AddItemsPage extends Component {
       )),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -490,18 +585,21 @@ class AddItemsPage extends Component {
    */
   confirmInventoryItemExpirationDateUpdate(onConfirm) {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.message.confirmSave.label', 'Confirm save'),
+      title: this.props.translate(
+        "react.stockMovement.message.confirmSave.label",
+        "Confirm save",
+      ),
       message: this.props.translate(
-        'react.stockMovement.confirmExpiryDateUpdate.message',
-        'This will update the expiry date across all depots in the system. Are you sure you want to proceed?',
+        "react.stockMovement.confirmExpiryDateUpdate.message",
+        "This will update the expiry date across all depots in the system. Are you sure you want to proceed?",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -526,11 +624,15 @@ class AddItemsPage extends Component {
   fetchLineItems() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?stepNumber=2`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
-        this.setState({
-          totalCount: response.data.data.length,
-        }, () => this.setLineItems(response, null));
+        this.setState(
+          {
+            totalCount: response.data.data.length,
+          },
+          () => this.setLineItems(response, null),
+        );
       })
       .catch((err) => err);
   }
@@ -544,21 +646,23 @@ class AddItemsPage extends Component {
     this.props.showSpinner();
 
     const url = `/api/stockMovements/${this.state.values.stockMovementId}`;
-    apiClient.get(url)
-      .then((resp) => {
-        const { hasManageInventory } = resp.data.data;
-        const { statusCode } = resp.data.data;
-        const { totalCount } = resp.data;
+    apiClient.get(url).then((resp) => {
+      const { hasManageInventory } = resp.data.data;
+      const { statusCode } = resp.data.data;
+      const { totalCount } = resp.data;
 
-        this.setState((prev) => ({
+      this.setState(
+        (prev) => ({
           values: {
             ...prev.values,
             hasManageInventory,
             statusCode,
           },
           totalCount: totalCount === 0 ? 1 : totalCount,
-        }), () => this.props.hideSpinner());
-      });
+        }),
+        () => this.props.hideSpinner(),
+      );
+    });
   }
 
   loadMoreRows({ startIndex }) {
@@ -566,10 +670,9 @@ class AddItemsPage extends Component {
       isFirstPageLoaded: true,
     });
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?offset=${startIndex}&max=${this.props.pageSize}&stepNumber=2`;
-    apiClient.get(url)
-      .then((response) => {
-        this.setLineItems(response, startIndex);
-      });
+    apiClient.get(url).then((response) => {
+      this.setLineItems(response, startIndex);
+    });
   }
 
   /**
@@ -578,11 +681,20 @@ class AddItemsPage extends Component {
    * @public
    */
   nextPage(formValues) {
-    const lineItems = _.filter(formValues.lineItems, (val) => !_.isEmpty(val) && val.product);
+    const lineItems = _.filter(
+      formValues.lineItems,
+      (val) => !_.isEmpty(val) && val.product,
+    );
 
-    if (_.some(lineItems, (item) => !item.quantityRequested || item.quantityRequested === '0')) {
+    if (
+      _.some(
+        lineItems,
+        (item) => !item.quantityRequested || item.quantityRequested === "0",
+      )
+    ) {
       this.confirmSave(() =>
-        this.checkDuplicatesSaveAndTransitionToNextStep(formValues, lineItems));
+        this.checkDuplicatesSaveAndTransitionToNextStep(formValues, lineItems),
+      );
     } else {
       this.checkDuplicatesSaveAndTransitionToNextStep(formValues, lineItems);
     }
@@ -599,7 +711,13 @@ class AddItemsPage extends Component {
     });
     const itemsWithSameCode = _.filter(itemsMap, (item) => item.length > 1);
 
-    if (_.some(itemsMap, (item) => item.length > 1) && !(this.state.values.origin.type === 'SUPPLIER' || !this.state.values.hasManageInventory)) {
+    if (
+      _.some(itemsMap, (item) => item.length > 1) &&
+      !(
+        this.state.values.origin.type === "SUPPLIER" ||
+        !this.state.values.hasManageInventory
+      )
+    ) {
       this.confirmTransition(
         () => this.saveAndTransitionToNextStep(formValues, lineItems),
         _.reduce(itemsWithSameCode, (a, b) => a.concat(b), []),
@@ -625,12 +743,29 @@ class AddItemsPage extends Component {
           values = { ...formValues, lineItems: resp.data.data.lineItems };
         }
 
-        if (_.some(values.lineItems, (item) => item.inventoryItem
-          && item.expirationDate !== item.inventoryItem.expirationDate)) {
-          if (_.some(values.lineItems, (item) => item.inventoryItem.quantity && item.inventoryItem.quantity !== '0')) {
+        if (
+          _.some(
+            values.lineItems,
+            (item) =>
+              item.inventoryItem &&
+              item.expirationDate !== item.inventoryItem.expirationDate,
+          )
+        ) {
+          if (
+            _.some(
+              values.lineItems,
+              (item) =>
+                item.inventoryItem.quantity &&
+                item.inventoryItem.quantity !== "0",
+            )
+          ) {
             this.props.hideSpinner();
             this.confirmInventoryItemExpirationDateUpdate(() =>
-              this.updateInventoryItemsAndTransitionToNextStep(values, lineItems));
+              this.updateInventoryItemsAndTransitionToNextStep(
+                values,
+                lineItems,
+              ),
+            );
           } else {
             this.updateInventoryItemsAndTransitionToNextStep(values, lineItems);
           }
@@ -657,7 +792,8 @@ class AddItemsPage extends Component {
 
     this.props.showSpinner();
 
-    apiClient.post(updateItemsUrl, payload)
+    apiClient
+      .post(updateItemsUrl, payload)
       .then(() => this.transitionToNextStepAndChangePage(formValues))
       .catch(() => this.props.hideSpinner());
   }
@@ -676,16 +812,14 @@ class AddItemsPage extends Component {
     };
 
     if (payload.lineItems.length) {
-      return apiClient.post(updateItemsUrl, payload)
+      return apiClient
+        .post(updateItemsUrl, payload)
         .then((resp) => {
           const { lineItems } = resp.data.data;
 
-          const lineItemsBackendData = _.map(
-            lineItems,
-            (val) => ({
-              ...val,
-            }),
-          );
+          const lineItemsBackendData = _.map(lineItems, (val) => ({
+            ...val,
+          }));
 
           this.setState((prev) => ({
             currentLineItems: lineItemsBackendData,
@@ -696,7 +830,16 @@ class AddItemsPage extends Component {
           }));
           return resp;
         })
-        .catch(() => Promise.reject(new Error(this.props.translate('react.stockMovement.error.saveRequisitionItems.label', 'Could not save requisition items'))));
+        .catch(() =>
+          Promise.reject(
+            new Error(
+              this.props.translate(
+                "react.stockMovement.error.saveRequisitionItems.label",
+                "Could not save requisition items",
+              ),
+            ),
+          ),
+        );
     }
 
     return Promise.resolve();
@@ -708,9 +851,17 @@ class AddItemsPage extends Component {
    * @public
    */
   save(formValues) {
-    const lineItems = _.filter(formValues.lineItems, (item) => !_.isEmpty(item));
+    const lineItems = _.filter(
+      formValues.lineItems,
+      (item) => !_.isEmpty(item),
+    );
 
-    if (_.some(lineItems, (item) => !item.quantityRequested || item.quantityRequested === '0')) {
+    if (
+      _.some(
+        lineItems,
+        (item) => !item.quantityRequested || item.quantityRequested === "0",
+      )
+    ) {
       this.confirmSave(() => this.saveItems(lineItems));
     } else {
       this.saveItems(lineItems);
@@ -724,27 +875,34 @@ class AddItemsPage extends Component {
    */
   saveAndExit(formValues) {
     const errors = this.validate(formValues).lineItems;
-    if (errors.length && errors.every((obj) => typeof obj === 'object' && _.isEmpty(obj))) {
-      this.saveRequisitionItemsInCurrentStep(formValues.lineItems)
-        .then(() => {
-          window.location = STOCK_MOVEMENT_URL.show(formValues.stockMovementId);
-        });
+    if (
+      errors.length &&
+      errors.every((obj) => typeof obj === "object" && _.isEmpty(obj))
+    ) {
+      this.saveRequisitionItemsInCurrentStep(formValues.lineItems).then(() => {
+        window.location = STOCK_MOVEMENT_URL.show(formValues.stockMovementId);
+      });
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmExit.label', 'Confirm save'),
+        title: this.props.translate(
+          "react.stockMovement.confirmExit.label",
+          "Confirm save",
+        ),
         message: this.props.translate(
-          'react.stockMovement.confirmExit.message',
-          'Validation errors occurred. Are you sure you want to exit and lose unsaved data?',
+          "react.stockMovement.confirmExit.message",
+          "Validation errors occurred. Are you sure you want to exit and lose unsaved data?",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
+            label: this.props.translate("react.default.yes.label", "Yes"),
             onClick: () => {
-              window.location = STOCK_MOVEMENT_URL.show(formValues.stockMovementId);
+              window.location = STOCK_MOVEMENT_URL.show(
+                formValues.stockMovementId,
+              );
             },
           },
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
           },
         ],
       });
@@ -762,7 +920,13 @@ class AddItemsPage extends Component {
     this.saveRequisitionItemsInCurrentStep(lineItems)
       .then(() => {
         this.props.hideSpinner();
-        Alert.success(this.props.translate('react.stockMovement.alert.saveSuccess.label', 'Changes saved successfully'), { timeout: 3000 });
+        Alert.success(
+          this.props.translate(
+            "react.stockMovement.alert.saveSuccess.label",
+            "Changes saved successfully",
+          ),
+          { timeout: 3000 },
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -773,18 +937,21 @@ class AddItemsPage extends Component {
    */
   refresh() {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.message.confirmRefresh.label', 'Confirm refresh'),
+      title: this.props.translate(
+        "react.stockMovement.message.confirmRefresh.label",
+        "Confirm refresh",
+      ),
       message: this.props.translate(
-        'react.stockMovement.confirmRefresh.message',
-        'Are you sure you want to refresh? Your progress since last save will be lost.',
+        "react.stockMovement.confirmRefresh.message",
+        "Are you sure you want to refresh? Your progress since last save will be lost.",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: () => this.fetchAllData(),
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -798,11 +965,12 @@ class AddItemsPage extends Component {
   removeItem(itemId) {
     const removeItemsUrl = `/api/stockMovementItems/${itemId}/removeItem`;
 
-    return apiClient.delete(removeItemsUrl)
-      .catch(() => {
-        this.props.hideSpinner();
-        return Promise.reject(new Error('react.stockMovement.error.deleteRequisitionItem.label'));
-      });
+    return apiClient.delete(removeItemsUrl).catch(() => {
+      this.props.hideSpinner();
+      return Promise.reject(
+        new Error("react.stockMovement.error.deleteRequisitionItem.label"),
+      );
+    });
   }
 
   /**
@@ -812,7 +980,8 @@ class AddItemsPage extends Component {
   removeAll() {
     const removeItemsUrl = `/api/stockMovements/${this.state.values.stockMovementId}/removeAllItems`;
 
-    return apiClient.delete(removeItemsUrl)
+    return apiClient
+      .delete(removeItemsUrl)
       .then(() => {
         this.setState((prev) => ({
           totalCount: 1,
@@ -825,7 +994,9 @@ class AddItemsPage extends Component {
       })
       .catch(() => {
         this.fetchLineItems();
-        return Promise.reject(new Error('react.stockMovement.error.deleteRequisitionItem.label'));
+        return Promise.reject(
+          new Error("react.stockMovement.error.deleteRequisitionItem.label"),
+        );
       });
   }
 
@@ -837,9 +1008,9 @@ class AddItemsPage extends Component {
    */
   transitionToNextStep() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/status`;
-    const payload = { status: 'CHECKING' };
+    const payload = { status: "CHECKING" };
 
-    if (this.state.values.statusCode === 'CREATED') {
+    if (this.state.values.statusCode === "CREATED") {
       return apiClient.post(url, payload);
     }
     return Promise.resolve();
@@ -864,7 +1035,10 @@ class AddItemsPage extends Component {
    * @public
    */
   exportTemplate(formValues) {
-    const lineItems = _.filter(formValues.lineItems, (item) => !_.isEmpty(item));
+    const lineItems = _.filter(
+      formValues.lineItems,
+      (item) => !_.isEmpty(item),
+    );
 
     this.saveItemsAndExportTemplate(formValues, lineItems);
   }
@@ -884,15 +1058,19 @@ class AddItemsPage extends Component {
 
     const { movementNumber, stockMovementId } = formValues;
     const url = `/stockMovement/exportCsv/${stockMovementId}`;
-    this.saveRequisitionItemsInCurrentStep(lineItems)
-      .then(() => {
-        apiClient.get(url, { responseType: 'blob' })
-          .then((response) => {
-            fileDownload(response.data, `ItemList${movementNumber ? `-${movementNumber}` : ''}.csv`, 'text/csv');
-            this.props.hideSpinner();
-          })
-          .catch(() => this.props.hideSpinner());
-      });
+    this.saveRequisitionItemsInCurrentStep(lineItems).then(() => {
+      apiClient
+        .get(url, { responseType: "blob" })
+        .then((response) => {
+          fileDownload(
+            response.data,
+            `ItemList${movementNumber ? `-${movementNumber}` : ""}.csv`,
+            "text/csv",
+          );
+          this.props.hideSpinner();
+        })
+        .catch(() => this.props.hideSpinner());
+    });
   }
 
   /**
@@ -906,16 +1084,17 @@ class AddItemsPage extends Component {
     const file = event.target.files[0];
     const { stockMovementId } = this.state.values;
 
-    formData.append('importFile', file.slice(0, file.size, 'text/csv'));
+    formData.append("importFile", file.slice(0, file.size, "text/csv"));
     const config = {
       headers: {
-        'content-type': 'multipart/form-data',
+        "content-type": "multipart/form-data",
       },
     };
 
     const url = `/stockMovement/importCsv/${stockMovementId}`;
 
-    return apiClient.post(url, formData, config)
+    return apiClient
+      .post(url, formData, config)
       .then(() => {
         this.fetchLineItems();
         if (_.isNil(_.last(this.state.values.lineItems).product)) {
@@ -940,18 +1119,31 @@ class AddItemsPage extends Component {
    */
   previousPage(values, invalid) {
     if (!invalid) {
-      this.saveRequisitionItemsInCurrentStep(values.lineItems)
-        .then(() => this.props.previousPage(values));
+      this.saveRequisitionItemsInCurrentStep(values.lineItems).then(() =>
+        this.props.previousPage(values),
+      );
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmPreviousPage.label', 'Validation error'),
-        message: this.props.translate('react.stockMovement.confirmPreviousPage.message.label', 'Cannot save due to validation error on page'),
+        title: this.props.translate(
+          "react.stockMovement.confirmPreviousPage.label",
+          "Validation error",
+        ),
+        message: this.props.translate(
+          "react.stockMovement.confirmPreviousPage.message.label",
+          "Cannot save due to validation error on page",
+        ),
         buttons: [
           {
-            label: this.props.translate('react.stockMovement.confirmPreviousPage.correctError.label', 'Correct error'),
+            label: this.props.translate(
+              "react.stockMovement.confirmPreviousPage.correctError.label",
+              "Correct error",
+            ),
           },
           {
-            label: this.props.translate('react.stockMovement.confirmPreviousPage.continue.label', 'Continue (lose unsaved work)'),
+            label: this.props.translate(
+              "react.stockMovement.confirmPreviousPage.continue.label",
+              "Continue (lose unsaved work)",
+            ),
             onClick: () => this.props.previousPage(values),
           },
         ],
@@ -969,12 +1161,7 @@ class AddItemsPage extends Component {
           setColumnValue,
         }}
         initialValues={this.state.values}
-        render={({
-          handleSubmit,
-          values,
-          invalid,
-          form: { mutators },
-        }) => (
+        render={({ handleSubmit, values, invalid, form: { mutators } }) => (
           <div className="d-flex flex-column">
             <span className="buttons-container">
               <label
@@ -983,15 +1170,18 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-download pr-2" />
-                  <Translate id="react.default.button.importTemplate.label" defaultMessage="Import template" />
+                  <Translate
+                    id="react.default.button.importTemplate.label"
+                    defaultMessage="Import template"
+                  />
                 </span>
                 <input
                   id="csvInput"
                   type="file"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   onChange={this.importTemplate}
                   onClick={(event) => {
-                  // eslint-disable-next-line no-param-reassign
+                    // eslint-disable-next-line no-param-reassign
                     event.target.value = null;
                   }}
                   accept=".csv"
@@ -1004,7 +1194,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-upload pr-2" />
-                  <Translate id="react.default.button.exportTemplate.label" defaultMessage="Export template" />
+                  <Translate
+                    id="react.default.button.exportTemplate.label"
+                    defaultMessage="Export template"
+                  />
                 </span>
               </button>
               <button
@@ -1014,7 +1207,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-refresh pr-2" />
-                  <Translate id="react.default.button.refresh.label" defaultMessage="Reload" />
+                  <Translate
+                    id="react.default.button.refresh.label"
+                    defaultMessage="Reload"
+                  />
                 </span>
               </button>
               <button
@@ -1025,7 +1221,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-save pr-2" />
-                  <Translate id="react.default.button.save.label" defaultMessage="Save" />
+                  <Translate
+                    id="react.default.button.save.label"
+                    defaultMessage="Save"
+                  />
                 </span>
               </button>
               <button
@@ -1036,18 +1235,26 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-sign-out pr-2" />
-                  <Translate id="react.default.button.saveAndExit.label" defaultMessage="Save and exit" />
+                  <Translate
+                    id="react.default.button.saveAndExit.label"
+                    defaultMessage="Save and exit"
+                  />
                 </span>
               </button>
               <button
                 type="button"
                 disabled={invalid}
-                onClick={() => this.removeAll().then(() => this.fetchAndSetLineItems())}
+                onClick={() =>
+                  this.removeAll().then(() => this.fetchAndSetLineItems())
+                }
                 className="float-right mb-1 btn btn-outline-danger align-self-end btn-xs"
               >
                 <span>
                   <i className="fa fa-remove pr-2" />
-                  <Translate id="react.default.button.deleteAll.label" defaultMessage="Delete all" />
+                  <Translate
+                    id="react.default.button.deleteAll.label"
+                    defaultMessage="Delete all"
+                  />
                 </span>
               </button>
             </span>
@@ -1071,9 +1278,11 @@ class AddItemsPage extends Component {
                     updateRow: this.updateRow,
                     values,
                     isFirstPageLoaded: this.state.isFirstPageLoaded,
-                    setRecipientValue: (val) => mutators.setColumnValue('lineItems', 'recipient', val),
+                    setRecipientValue: (val) =>
+                      mutators.setColumnValue("lineItems", "recipient", val),
                     translate: this.props.translate,
-                  }))}
+                  }),
+                )}
               </div>
               <div className="submit-buttons">
                 <button
@@ -1082,7 +1291,10 @@ class AddItemsPage extends Component {
                   onClick={() => this.previousPage(values, invalid)}
                   className="btn btn-outline-primary btn-form btn-xs"
                 >
-                  <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+                  <Translate
+                    id="react.default.button.previous.label"
+                    defaultMessage="Previous"
+                  />
                 </button>
                 <button
                   type="submit"
@@ -1093,11 +1305,17 @@ class AddItemsPage extends Component {
                   }}
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                   disabled={
-                    !_.some(values.lineItems, (item) =>
-                      item.product && _.parseInt(item.quantityRequested))
+                    !_.some(
+                      values.lineItems,
+                      (item) =>
+                        item.product && _.parseInt(item.quantityRequested),
+                    )
                   }
                 >
-                  <Translate id="react.default.button.next.label" defaultMessage="Next" />
+                  <Translate
+                    id="react.default.button.next.label"
+                    defaultMessage="Next"
+                  />
                 </button>
               </div>
             </form>
@@ -1111,15 +1329,18 @@ class AddItemsPage extends Component {
 const mapStateToProps = (state) => ({
   recipients: state.users.data,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   minimumExpirationDate: state.session.minimumExpirationDate,
   isPaginated: state.session.isPaginated,
   pageSize: state.session.pageSize,
 });
 
-export default (connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchUsers,
-})(AddItemsPage));
+export default connect(mapStateToProps, {
+  showSpinner,
+  hideSpinner,
+  fetchUsers,
+})(AddItemsPage);
 
 AddItemsPage.propTypes = {
   /** Initial component's data */

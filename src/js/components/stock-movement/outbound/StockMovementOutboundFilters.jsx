@@ -1,11 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import { fetchRequisitionStatusCodes } from 'actions';
-import FilterForm from 'components/Filter/FilterForm';
-import { debounceLocationsFetch, debouncePeopleFetch, debounceUsersFetch } from 'utils/option-utils';
+import { fetchRequisitionStatusCodes } from "actions";
+import FilterForm from "components/Filter/FilterForm";
+import {
+  debounceLocationsFetch,
+  debouncePeopleFetch,
+  debounceUsersFetch,
+} from "utils/option-utils";
 
 const StockMovementOutboundFilters = ({
   setFilterParams,
@@ -44,7 +48,7 @@ const StockMovementOutboundFilters = ({
         searchFieldDefaultPlaceholder="Search by requisition number, name etc."
         filterFields={filterFields}
         defaultValues={defaultValues}
-        ignoreClearFilters={['origin', 'direction', 'sourceType']}
+        ignoreClearFilters={["origin", "direction", "sourceType"]}
         updateFilterParams={(values) => setFilterParams({ ...values })}
         hidden={false}
         formProps={{
@@ -67,7 +71,10 @@ const mapDispatchToProps = {
   fetchStatuses: fetchRequisitionStatusCodes,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(StockMovementOutboundFilters);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(StockMovementOutboundFilters);
 
 StockMovementOutboundFilters.propTypes = {
   setFilterParams: PropTypes.func.isRequired,

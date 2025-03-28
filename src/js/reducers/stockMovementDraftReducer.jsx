@@ -1,9 +1,9 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 import {
   ADD_STOCK_MOVEMENT_DRAFT,
   REMOVE_STOCK_MOVEMENT_DRAFT,
-} from 'actions/types';
+} from "actions/types";
 
 export default function (state = {}, action) {
   switch (action.type) {

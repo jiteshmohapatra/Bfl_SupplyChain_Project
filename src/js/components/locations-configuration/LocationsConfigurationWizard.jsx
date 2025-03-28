@@ -1,24 +1,24 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations } from 'actions';
-import Forecasting from 'components/locations-configuration/Forecasting';
-import LocationAddress from 'components/locations-configuration/LocationAddress';
-import LocationDetails from 'components/locations-configuration/LocationDetails';
-import ZoneAndBinLocations from 'components/locations-configuration/ZoneAndBinLocations';
-import Wizard from 'components/wizard/Wizard';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchTranslations } from "actions";
+import Forecasting from "components/locations-configuration/Forecasting";
+import LocationAddress from "components/locations-configuration/LocationAddress";
+import LocationDetails from "components/locations-configuration/LocationDetails";
+import ZoneAndBinLocations from "components/locations-configuration/ZoneAndBinLocations";
+import Wizard from "components/wizard/Wizard";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 const SUPPORT_LINKS = {
-  locationDetails: 'Location Details',
-  locationAddress: 'Address',
-  zoneAndBinLocations: 'Zone and Bin Locations',
-  forecasting: 'Forecasting',
+  locationDetails: "Location Details",
+  locationAddress: "Address",
+  zoneAndBinLocations: "Zone and Bin Locations",
+  forecasting: "Forecasting",
 };
 
 class LocationsConfigurationWizard extends Component {
@@ -34,21 +34,33 @@ class LocationsConfigurationWizard extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'locationsConfiguration');
+    this.props.fetchTranslations("", "locationsConfiguration");
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'locationsConfiguration');
+      this.props.fetchTranslations(nextProps.locale, "locationsConfiguration");
     }
   }
 
   get stepList() {
     return [
-      this.props.translate('react.locationsConfiguration.locationDetails.label', 'Details'),
-      this.props.translate('react.locationsConfiguration.address.label', 'Address'),
-      this.props.translate('react.locationsConfiguration.zoneAndBin.label', 'Zone and Bin Locations'),
-      this.props.translate('react.locationsConfiguration.forecasting.label', 'Forecasting'),
+      this.props.translate(
+        "react.locationsConfiguration.locationDetails.label",
+        "Details",
+      ),
+      this.props.translate(
+        "react.locationsConfiguration.address.label",
+        "Address",
+      ),
+      this.props.translate(
+        "react.locationsConfiguration.zoneAndBin.label",
+        "Zone and Bin Locations",
+      ),
+      this.props.translate(
+        "react.locationsConfiguration.forecasting.label",
+        "Forecasting",
+      ),
     ];
   }
 
@@ -58,7 +70,12 @@ class LocationsConfigurationWizard extends Component {
 
   render() {
     const { values, currentPage } = this.state;
-    const pageList = [LocationDetails, LocationAddress, ZoneAndBinLocations, Forecasting];
+    const pageList = [
+      LocationDetails,
+      LocationAddress,
+      ZoneAndBinLocations,
+      Forecasting,
+    ];
     const { history } = this.props;
 
     return (
@@ -70,7 +87,8 @@ class LocationsConfigurationWizard extends Component {
         prevPage={currentPage === 1 ? 1 : currentPage - 1}
         updateWizardValues={this.updateWizardValues}
         additionalProps={{
-          history, supportLinks: SUPPORT_LINKS,
+          history,
+          supportLinks: SUPPORT_LINKS,
         }}
       />
     );

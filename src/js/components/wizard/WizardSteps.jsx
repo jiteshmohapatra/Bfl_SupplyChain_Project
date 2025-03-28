@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import 'components/wizard/WizardSteps.scss';
+import "components/wizard/WizardSteps.scss";
 
 const WizardSteps = (props) => (
   <div className="steps-main-box">
@@ -11,23 +11,25 @@ const WizardSteps = (props) => (
       {_.map(props.steps, (step, index) => (
         <div
           key={index}
-          className={`step-container ${props.currentStep === index + 1 ? 'active' : ''}`}
+          className={`step-container ${props.currentStep === index + 1 ? "active" : ""}`}
           data-testid="wizard-step"
-          data-stepstate={props.currentStep === index + 1 ? 'active' : 'inactive'}
+          data-stepstate={
+            props.currentStep === index + 1 ? "active" : "inactive"
+          }
         >
           <div
-            className={props.showStepNumber ? 'circle filled' : 'circle'}
+            className={props.showStepNumber ? "circle filled" : "circle"}
             onClick={() => props.onClick(index + 1)}
             onKeyPress={() => props.onClick(index + 1)}
             role="button"
             tabIndex="0"
             disabled={!props.stepsClickable}
           >
-            {props.showStepNumber && <span className="number">{index + 1}</span>}
+            {props.showStepNumber && (
+              <span className="number">{index + 1}</span>
+            )}
           </div>
-          <div className="step-name">
-            {step}
-          </div>
+          <div className="step-name">{step}</div>
         </div>
       ))}
     </div>

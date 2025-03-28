@@ -1,34 +1,37 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Controller, useWatch } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import { Controller, useWatch } from "react-hook-form";
+import { useSelector } from "react-redux";
 
-import DateField from 'components/form-elements/v2/DateField';
-import SelectField from 'components/form-elements/v2/SelectField';
-import Switch from 'components/form-elements/v2/Switch';
-import TextInput from 'components/form-elements/v2/TextInput';
-import Subsection from 'components/Layout/v2/Subsection';
-import { INVENTORY_ITEM_URL } from 'consts/applicationUrls';
-import { debounceOrganizationsFetch, debounceProductsFetch } from 'utils/option-utils';
-import { FormErrorPropType } from 'utils/propTypes';
+import DateField from "components/form-elements/v2/DateField";
+import SelectField from "components/form-elements/v2/SelectField";
+import Switch from "components/form-elements/v2/Switch";
+import TextInput from "components/form-elements/v2/TextInput";
+import Subsection from "components/Layout/v2/Subsection";
+import { INVENTORY_ITEM_URL } from "consts/applicationUrls";
+import {
+  debounceOrganizationsFetch,
+  debounceProductsFetch,
+} from "utils/option-utils";
+import { FormErrorPropType } from "utils/propTypes";
 
 const BasicDetails = ({ control, errors }) => {
-  const {
-    debounceTime,
-    minSearchLength,
-  } = useSelector((state) => ({
+  const { debounceTime, minSearchLength } = useSelector((state) => ({
     debounceTime: state.session.searchConfig.debounceTime,
     minSearchLength: state.session.searchConfig.minSearchLength,
   }));
 
   // Watch product's input changes live, in order to display a "View Product" link
   // with a proper product id
-  const product = useWatch({ control, name: 'basicDetails.product' });
+  const product = useWatch({ control, name: "basicDetails.product" });
 
   return (
     <Subsection
-      title={{ label: 'react.productSupplier.form.subsection.basicDetails', defaultMessage: 'Basic Details' }}
+      title={{
+        label: "react.productSupplier.form.subsection.basicDetails",
+        defaultMessage: "Basic Details",
+      }}
       collapsable={false}
     >
       <div className="row">
@@ -38,13 +41,17 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <TextInput
-                title={{ id: 'react.productSupplier.form.code.title', defaultMessage: 'Source Code' }}
+                title={{
+                  id: "react.productSupplier.form.code.title",
+                  defaultMessage: "Source Code",
+                }}
                 errorMessage={errors.code?.message}
                 tooltip={{
-                  id: 'react.productSupplier.form.code.tooltip',
-                  defaultMessage: 'Unique code that identifies this record. '
-                    + 'Auto-generated based on the product and supplier codes, '
-                    + 'but can be manually overwritten',
+                  id: "react.productSupplier.form.code.tooltip",
+                  defaultMessage:
+                    "Unique code that identifies this record. " +
+                    "Auto-generated based on the product and supplier codes, " +
+                    "but can be manually overwritten",
                 }}
                 placeholder="Leave blank to autogenerate"
                 {...field}
@@ -58,7 +65,10 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <SelectField
-                title={{ id: 'react.productSupplier.form.product.title', defaultMessage: 'Product Name' }}
+                title={{
+                  id: "react.productSupplier.form.product.title",
+                  defaultMessage: "Product Name",
+                }}
                 productSelect
                 placeholder="Search for a product"
                 required
@@ -66,14 +76,23 @@ const BasicDetails = ({ control, errors }) => {
                 showSelectedOptionColor
                 hasErrors={Boolean(errors.product?.message)}
                 errorMessage={errors.product?.message}
-                button={product
-                  ? {
-                    id: 'react.productSupplier.form.viewProduct.title',
-                    defaultMessage: 'View Product',
-                    onClick: (id) => window.open(INVENTORY_ITEM_URL.showStockCard(id), '_blank'),
-                  }
-                  : null}
-                loadOptions={debounceProductsFetch(debounceTime, minSearchLength)}
+                button={
+                  product
+                    ? {
+                        id: "react.productSupplier.form.viewProduct.title",
+                        defaultMessage: "View Product",
+                        onClick: (id) =>
+                          window.open(
+                            INVENTORY_ITEM_URL.showStockCard(id),
+                            "_blank",
+                          ),
+                      }
+                    : null
+                }
+                loadOptions={debounceProductsFetch(
+                  debounceTime,
+                  minSearchLength,
+                )}
                 {...field}
               />
             )}
@@ -85,11 +104,15 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <TextInput
-                title={{ id: 'react.productSupplier.form.legacyCode.title', defaultMessage: 'Legacy Code' }}
+                title={{
+                  id: "react.productSupplier.form.legacyCode.title",
+                  defaultMessage: "Legacy Code",
+                }}
                 errorMessage={errors.productCode?.message}
                 tooltip={{
-                  id: 'react.productSupplier.form.legacyCode.tooltip',
-                  defaultMessage: 'Reference to this record in a previous or parallel purchasing system',
+                  id: "react.productSupplier.form.legacyCode.tooltip",
+                  defaultMessage:
+                    "Reference to this record in a previous or parallel purchasing system",
                 }}
                 {...field}
               />
@@ -102,14 +125,23 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <SelectField
-                title={{ id: 'react.productSupplier.form.supplier.title', defaultMessage: 'Supplier' }}
+                title={{
+                  id: "react.productSupplier.form.supplier.title",
+                  defaultMessage: "Supplier",
+                }}
                 placeholder="Select Supplier"
                 required
                 hasErrors={Boolean(errors.supplier?.message)}
                 errorMessage={errors.supplier?.message}
-                tooltip={{ id: 'react.productSupplier.form.supplier.tooltip', defaultMessage: 'The company that supplies the product' }}
+                tooltip={{
+                  id: "react.productSupplier.form.supplier.tooltip",
+                  defaultMessage: "The company that supplies the product",
+                }}
                 async
-                loadOptions={debounceOrganizationsFetch(debounceTime, minSearchLength)}
+                loadOptions={debounceOrganizationsFetch(
+                  debounceTime,
+                  minSearchLength,
+                )}
                 {...field}
               />
             )}
@@ -121,11 +153,15 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <TextInput
-                title={{ id: 'react.productSupplier.form.supplierCode.title', defaultMessage: 'Supplier Code' }}
+                title={{
+                  id: "react.productSupplier.form.supplierCode.title",
+                  defaultMessage: "Supplier Code",
+                }}
                 errorMessage={errors.supplierCode?.message}
                 tooltip={{
-                  id: 'react.productSupplier.form.supplierCode.tooltip',
-                  defaultMessage: 'The SKU used by the vendor to identify the product',
+                  id: "react.productSupplier.form.supplierCode.tooltip",
+                  defaultMessage:
+                    "The SKU used by the vendor to identify the product",
                 }}
                 {...field}
               />
@@ -138,12 +174,16 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <TextInput
-                title={{ id: 'react.productSupplier.column.name.label', defaultMessage: '(Source) Name' }}
+                title={{
+                  id: "react.productSupplier.column.name.label",
+                  defaultMessage: "(Source) Name",
+                }}
                 required
                 errorMessage={errors.name?.message}
                 tooltip={{
-                  id: 'react.productSupplier.form.name.tooltip',
-                  defaultMessage: 'The name the supplier calls the product in their catalogue',
+                  id: "react.productSupplier.form.name.tooltip",
+                  defaultMessage:
+                    "The name the supplier calls the product in their catalogue",
                 }}
                 {...field}
               />
@@ -156,7 +196,10 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <DateField
-                title={{ id: 'react.productSupplier.form.dateCreated.title', defaultMessage: 'Source Creation Date' }}
+                title={{
+                  id: "react.productSupplier.form.dateCreated.title",
+                  defaultMessage: "Source Creation Date",
+                }}
                 errorMessage={errors.dateCreated?.message}
                 {...field}
                 disabled
@@ -170,7 +213,10 @@ const BasicDetails = ({ control, errors }) => {
             control={control}
             render={({ field }) => (
               <DateField
-                title={{ id: 'react.productSupplier.form.lastUpdated.title', defaultMessage: 'Last Update' }}
+                title={{
+                  id: "react.productSupplier.form.lastUpdated.title",
+                  defaultMessage: "Last Update",
+                }}
                 errorMessage={errors.lastUpdated?.message}
                 {...field}
                 disabled
@@ -187,12 +233,12 @@ const BasicDetails = ({ control, errors }) => {
                 className="basic-details-active-switch"
                 titles={{
                   checked: {
-                    id: 'react.productSupplier.form.active.title',
-                    defaultMessage: 'Active',
+                    id: "react.productSupplier.form.active.title",
+                    defaultMessage: "Active",
                   },
                   unchecked: {
-                    id: 'react.productSupplier.form.inactive.title',
-                    defaultMessage: 'Inactive',
+                    id: "react.productSupplier.form.inactive.title",
+                    defaultMessage: "Inactive",
                   },
                 }}
                 {...field}

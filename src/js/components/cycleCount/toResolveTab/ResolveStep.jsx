@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import ConfirmStepHeader from 'components/cycleCount/ConfirmStepHeader';
-import ResolveStepHeader from 'components/cycleCount/toResolveTab/ResolveStepHeader';
-import ResolveStepTable from 'components/cycleCount/toResolveTab/ResolveStepTable';
-import useResolveStep from 'hooks/cycleCount/useResolveStep';
-import PageWrapper from 'wrappers/PageWrapper';
+import ConfirmStepHeader from "components/cycleCount/ConfirmStepHeader";
+import ResolveStepHeader from "components/cycleCount/toResolveTab/ResolveStepHeader";
+import ResolveStepTable from "components/cycleCount/toResolveTab/ResolveStepTable";
+import useResolveStep from "hooks/cycleCount/useResolveStep";
+import PageWrapper from "wrappers/PageWrapper";
 
-import 'components/cycleCount/cycleCount.scss';
+import "components/cycleCount/cycleCount.scss";
 
 const ResolveStep = () => {
   const {
@@ -54,30 +54,29 @@ const ResolveStep = () => {
           setIsSaveDisabled={setIsSaveDisabled}
         />
       )}
-      {tableData
-        .map(({ cycleCountItems, id }) => (
-          <ResolveStepTable
-            key={id}
-            id={id}
-            product={getProduct(cycleCountItems)}
-            dateCounted={getDateCounted(cycleCountItems)}
-            dateRecounted={getRecountedDate(id)}
-            tableData={cycleCountItems}
-            tableMeta={tableMeta}
-            addEmptyRow={addEmptyRow}
-            removeRow={removeRow}
-            setRecountedDate={setRecountedDate(id)}
-            assignRecountedBy={assignRecountedBy}
-            validationErrors={validationErrors}
-            shouldHaveRootCause={shouldHaveRootCause}
-            isStepEditable={isStepEditable}
-            recountedBy={getRecountedBy(id)}
-            countedBy={getCountedBy(id)}
-            isFormValid={isFormValid}
-            triggerValidation={triggerValidation}
-            refreshFocusCounter={refreshFocusCounter}
-          />
-        ))}
+      {tableData.map(({ cycleCountItems, id }) => (
+        <ResolveStepTable
+          key={id}
+          id={id}
+          product={getProduct(cycleCountItems)}
+          dateCounted={getDateCounted(cycleCountItems)}
+          dateRecounted={getRecountedDate(id)}
+          tableData={cycleCountItems}
+          tableMeta={tableMeta}
+          addEmptyRow={addEmptyRow}
+          removeRow={removeRow}
+          setRecountedDate={setRecountedDate(id)}
+          assignRecountedBy={assignRecountedBy}
+          validationErrors={validationErrors}
+          shouldHaveRootCause={shouldHaveRootCause}
+          isStepEditable={isStepEditable}
+          recountedBy={getRecountedBy(id)}
+          countedBy={getCountedBy(id)}
+          isFormValid={isFormValid}
+          triggerValidation={triggerValidation}
+          refreshFocusCounter={refreshFocusCounter}
+        />
+      ))}
     </PageWrapper>
   );
 };

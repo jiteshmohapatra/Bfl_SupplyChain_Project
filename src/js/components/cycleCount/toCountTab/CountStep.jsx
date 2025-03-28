@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import ConfirmStepHeader from 'components/cycleCount/ConfirmStepHeader';
-import CountStepHeader from 'components/cycleCount/toCountTab/CountStepHeader';
-import CountStepTable from 'components/cycleCount/toCountTab/CountStepTable';
-import useCountStep from 'hooks/cycleCount/useCountStep';
-import PageWrapper from 'wrappers/PageWrapper';
+import ConfirmStepHeader from "components/cycleCount/ConfirmStepHeader";
+import CountStepHeader from "components/cycleCount/toCountTab/CountStepHeader";
+import CountStepTable from "components/cycleCount/toCountTab/CountStepTable";
+import useCountStep from "hooks/cycleCount/useCountStep";
+import PageWrapper from "wrappers/PageWrapper";
 
-import 'components/cycleCount/cycleCount.scss';
+import "components/cycleCount/cycleCount.scss";
 
 const CountStep = () => {
   const {
@@ -49,28 +49,27 @@ const CountStep = () => {
           setIsSaveDisabled={setIsSaveDisabled}
         />
       )}
-      {tableData
-        .map(({ cycleCountItems, id }) => (
-          <CountStepTable
-            key={id}
-            id={id}
-            product={cycleCountItems[0]?.product}
-            dateCounted={getCountedDate(id)}
-            tableData={cycleCountItems}
-            tableMeta={tableMeta}
-            addEmptyRow={addEmptyRow}
-            removeRow={removeRow}
-            setCountedDate={setCountedDate(id)}
-            assignCountedBy={assignCountedBy}
-            validationErrors={validationErrors}
-            isStepEditable={isStepEditable}
-            countedBy={getCountedBy(id)}
-            defaultCountedBy={getDefaultCountedBy(id)}
-            isFormValid={isFormValid}
-            triggerValidation={triggerValidation}
-            refreshFocusCounter={refreshFocusCounter}
-          />
-        ))}
+      {tableData.map(({ cycleCountItems, id }) => (
+        <CountStepTable
+          key={id}
+          id={id}
+          product={cycleCountItems[0]?.product}
+          dateCounted={getCountedDate(id)}
+          tableData={cycleCountItems}
+          tableMeta={tableMeta}
+          addEmptyRow={addEmptyRow}
+          removeRow={removeRow}
+          setCountedDate={setCountedDate(id)}
+          assignCountedBy={assignCountedBy}
+          validationErrors={validationErrors}
+          isStepEditable={isStepEditable}
+          countedBy={getCountedBy(id)}
+          defaultCountedBy={getDefaultCountedBy(id)}
+          isFormValid={isFormValid}
+          triggerValidation={triggerValidation}
+          refreshFocusCounter={refreshFocusCounter}
+        />
+      ))}
     </PageWrapper>
   );
 };

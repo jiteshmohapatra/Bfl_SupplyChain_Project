@@ -1,6 +1,10 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-import { FETCH_BUYERS, FETCH_ORGANIZATIONS, FETCH_SUPPLIERS } from 'actions/types';
+import {
+  FETCH_BUYERS,
+  FETCH_ORGANIZATIONS,
+  FETCH_SUPPLIERS,
+} from "actions/types";
 
 const initialState = {
   data: [],
@@ -13,9 +17,14 @@ export default function (state = initialState, action) {
   switch (action.type) {
     case FETCH_ORGANIZATIONS:
       if (action.payload.data !== undefined) {
-        const organizations = _.map(action.payload.data.data, (organization) => (
-          { value: organization.id, id: organization.id, label: organization.name }
-        ));
+        const organizations = _.map(
+          action.payload.data.data,
+          (organization) => ({
+            value: organization.id,
+            id: organization.id,
+            label: organization.name,
+          }),
+        );
         return { ...state, data: organizations, fetched: true };
       }
       return state;

@@ -1,68 +1,67 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import Alert from 'react-s-alert';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import { LOCATION } from 'api/urls';
-import TextField from 'components/form-elements/TextField';
-import apiClient, { mapToEmptyString } from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import { LOCATION } from "api/urls";
+import TextField from "components/form-elements/TextField";
+import apiClient, { mapToEmptyString } from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import 'components/locations-configuration/LocationAddress.scss';
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "components/locations-configuration/LocationAddress.scss";
 
 const FIELDS = {
   address: {
     type: TextField,
-    label: 'address.address.label',
-    defaultMessage: 'Street address',
+    label: "address.address.label",
+    defaultMessage: "Street address",
   },
   address2: {
     type: TextField,
-    label: 'address.address2.label',
-    defaultMessage: 'Street address 2',
+    label: "address.address2.label",
+    defaultMessage: "Street address 2",
   },
   city: {
     type: TextField,
-    label: 'address.city.label',
-    defaultMessage: 'City',
+    label: "address.city.label",
+    defaultMessage: "City",
   },
   stateOrProvince: {
     type: TextField,
-    label: 'address.stateOrProvince.label',
-    defaultMessage: 'State/Province',
+    label: "address.stateOrProvince.label",
+    defaultMessage: "State/Province",
   },
   postalCode: {
     type: TextField,
-    label: 'address.postalCode.label',
-    defaultMessage: 'Postal code',
+    label: "address.postalCode.label",
+    defaultMessage: "Postal code",
   },
   country: {
     type: TextField,
-    label: 'address.country.label',
-    defaultMessage: 'Country',
+    label: "address.country.label",
+    defaultMessage: "Country",
   },
   description: {
     type: TextField,
-    label: 'address.description.label',
-    defaultMessage: 'Description',
+    label: "address.description.label",
+    defaultMessage: "Description",
   },
-
 };
 
-const validate = (values) => Object.keys(FIELDS)
-  .reduce((acc, fieldName) => {
+const validate = (values) =>
+  Object.keys(FIELDS).reduce((acc, fieldName) => {
     if (values[fieldName] && values[fieldName].length > 255) {
       return {
         ...acc,
-        [fieldName]: 'react.default.error.tooLongInput.label',
+        [fieldName]: "react.default.error.tooLongInput.label",
       };
     }
     return acc;
@@ -85,16 +84,27 @@ class LocationAddress extends Component {
 
   fetchLocation() {
     const url = `/api/locations/${this.props.match.params.locationId}`;
-    apiClient.get(url).then((response) => {
-      const location = response.data.data;
-      this.setState((prev) => ({
-        values: {
-          ...prev.values,
-          address: location.address,
-        },
-      }));
-    })
-      .catch(() => Promise.reject(new Error(this.props.translate('react.locationsConfiguration.error.fetchingLocation', 'Could not load location data'))));
+    apiClient
+      .get(url)
+      .then((response) => {
+        const location = response.data.data;
+        this.setState((prev) => ({
+          values: {
+            ...prev.values,
+            address: location.address,
+          },
+        }));
+      })
+      .catch(() =>
+        Promise.reject(
+          new Error(
+            this.props.translate(
+              "react.locationsConfiguration.error.fetchingLocation",
+              "Could not load location data",
+            ),
+          ),
+        ),
+      );
   }
 
   saveAddressOfLocation(values, callback) {
@@ -105,7 +115,8 @@ class LocationAddress extends Component {
     // it will be null be default
     // We can't send empty address, because address.address is not nullable field
     const addressPayload = !_.isEmpty(payload) ? { address: payload } : {};
-    apiClient.post(LOCATION(this.state.locationId), addressPayload)
+    apiClient
+      .post(LOCATION(this.state.locationId), addressPayload)
       .then(() => {
         this.props.hideSpinner();
         callback({
@@ -116,13 +127,26 @@ class LocationAddress extends Component {
       })
       .catch(() => {
         this.props.hideSpinner();
-        return Promise.reject(new Error(this.props.translate('react.locationsConfiguration.error.addAddress.label', 'Could not add address')));
+        return Promise.reject(
+          new Error(
+            this.props.translate(
+              "react.locationsConfiguration.error.addAddress.label",
+              "Could not add address",
+            ),
+          ),
+        );
       });
   }
 
   nextPage(values) {
     this.saveAddressOfLocation(values, (val) => {
-      Alert.success(this.props.translate('react.locationsConfiguration.alert.addressSaveCompleted.label', 'Address was succesfully added to the location!'), { timeout: 3000 });
+      Alert.success(
+        this.props.translate(
+          "react.locationsConfiguration.alert.addressSaveCompleted.label",
+          "Address was succesfully added to the location!",
+        ),
+        { timeout: 3000 },
+      );
       this.props.nextPage(val);
     });
   }
@@ -138,7 +162,7 @@ class LocationAddress extends Component {
           <Form
             onSubmit={(values) => this.nextPage(values)}
             validate={validate}
-            initialValues={_.get(this.state.values, 'address')}
+            initialValues={_.get(this.state.values, "address")}
             render={({ values, handleSubmit }) => (
               <form onSubmit={handleSubmit} className="w-100">
                 <div className="classic-form with-description location-address">
@@ -152,17 +176,29 @@ class LocationAddress extends Component {
                     />
                   </div>
 
-                  {_.map(
-                    FIELDS,
-                    (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName),
+                  {_.map(FIELDS, (fieldConfig, fieldName) =>
+                    renderFormField(fieldConfig, fieldName),
                   )}
                 </div>
                 <div className="submit-buttons">
-                  <button type="button" onClick={() => this.previousPage(values)} className="btn btn-outline-primary float-left btn-xs">
-                    <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+                  <button
+                    type="button"
+                    onClick={() => this.previousPage(values)}
+                    className="btn btn-outline-primary float-left btn-xs"
+                  >
+                    <Translate
+                      id="react.default.button.previous.label"
+                      defaultMessage="Previous"
+                    />
                   </button>
-                  <button type="submit" className="btn btn-outline-primary float-right btn-xs">
-                    <Translate id="react.default.button.next.label" defaultMessage="Next" />
+                  <button
+                    type="submit"
+                    className="btn btn-outline-primary float-right btn-xs"
+                  >
+                    <Translate
+                      id="react.default.button.next.label"
+                      defaultMessage="Next"
+                    />
                   </button>
                 </div>
               </form>
@@ -183,7 +219,9 @@ const mapDispatchToProps = {
   hideSpinner,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LocationAddress));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(LocationAddress),
+);
 
 LocationAddress.propTypes = {
   initialValues: PropTypes.shape({

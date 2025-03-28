@@ -3,14 +3,17 @@ import {
   CLOSE_INFO_BAR,
   HIDE_INFO_BAR,
   SHOW_INFO_BAR,
-} from 'actions/types';
-import { InfoBar } from 'consts/infoBar';
+} from "actions/types";
+import { InfoBar } from "consts/infoBar";
 
 /**
  * Initial state for Info Bar Visibility reducer
  * @type {{ [BAR_NAME]: boolean }}
  */
-const initialState = Object.keys(InfoBar).reduce((acc, bar) => ({ ...acc, [bar]: false }), {});
+const initialState = Object.keys(InfoBar).reduce(
+  (acc, bar) => ({ ...acc, [bar]: false }),
+  {},
+);
 
 /**
  * The purpose of this reducer is to control the visibility of the InfoBar across different pages

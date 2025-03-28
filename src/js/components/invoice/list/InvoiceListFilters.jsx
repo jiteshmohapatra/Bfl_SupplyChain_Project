@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import FilterForm from 'components/Filter/FilterForm';
-import filterFields from 'components/invoice/list/FilterFields';
-import useInvoiceFilters from 'hooks/list-pages/invoice/useInvoiceFilters';
-import { debouncePeopleFetch } from 'utils/option-utils';
+import FilterForm from "components/Filter/FilterForm";
+import filterFields from "components/invoice/list/FilterFields";
+import useInvoiceFilters from "hooks/list-pages/invoice/useInvoiceFilters";
+import { debouncePeopleFetch } from "utils/option-utils";
 
 const InvoiceListFilters = ({
   setFilterParams,
@@ -17,7 +17,9 @@ const InvoiceListFilters = ({
   suppliers,
   typeCodes,
 }) => {
-  const { defaultValues, setFilterValues } = useInvoiceFilters({ setFilterParams });
+  const { defaultValues, setFilterValues } = useInvoiceFilters({
+    setFilterParams,
+  });
 
   const debouncedPeopleFetch = useCallback(
     debouncePeopleFetch(debounceTime, minSearchLength),
@@ -41,7 +43,7 @@ const InvoiceListFilters = ({
         searchFieldDefaultPlaceholder="Search by invoice number..."
         searchFieldId="invoiceNumber"
         hidden={false}
-        ignoreClearFilters={['buyerOrganization']}
+        ignoreClearFilters={["buyerOrganization"]}
       />
     </div>
   );
@@ -64,21 +66,27 @@ InvoiceListFilters.propTypes = {
   debounceTime: PropTypes.number.isRequired,
   minSearchLength: PropTypes.number.isRequired,
   currentLocation: PropTypes.shape({}).isRequired,
-  statuses: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    variant: PropTypes.string.isRequired,
-  })).isRequired,
-  suppliers: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-  })).isRequired,
-  typeCodes: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
+  statuses: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      variant: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+  suppliers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+  typeCodes: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 };

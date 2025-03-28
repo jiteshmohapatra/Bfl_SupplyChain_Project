@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { FieldArray } from 'react-final-form-arrays';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { FieldArray } from "react-final-form-arrays";
 
-import TableBody from 'components/form-elements/TableBody';
-import TableRow from 'components/form-elements/TableRow';
+import TableBody from "components/form-elements/TableBody";
+import TableRow from "components/form-elements/TableRow";
 
 class TableRowWithSubfields extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class TableRowWithSubfields extends Component {
 
   shouldComponentUpdate(nextProps) {
     return !_.isEqualWith(this.props, nextProps, (objValue, othValue) => {
-      if (typeof objValue === 'function' || typeof othValue === 'function') {
+      if (typeof objValue === "function" || typeof othValue === "function") {
         return true;
       }
 
@@ -36,7 +36,10 @@ class TableRowWithSubfields extends Component {
 
   copyDown(index, fieldName) {
     const field = _.get(this.fieldRefs, `[${index}].${fieldName}`);
-    const valueToCopy = _.get(this.fieldRefs, `[${index - 1}].${fieldName}.value`);
+    const valueToCopy = _.get(
+      this.fieldRefs,
+      `[${index - 1}].${fieldName}.value`,
+    );
 
     if (field && valueToCopy && !field.disabled) {
       field.value = valueToCopy;
@@ -46,17 +49,21 @@ class TableRowWithSubfields extends Component {
 
   render() {
     const {
-      fieldsConfig, index, field, properties, rowValues = {},
+      fieldsConfig,
+      index,
+      field,
+      properties,
+      rowValues = {},
     } = this.props;
     const dynamicAttr = fieldsConfig.getDynamicRowAttr
-      ? fieldsConfig.getDynamicRowAttr({ ...properties, index, rowValues }) : {};
+      ? fieldsConfig.getDynamicRowAttr({ ...properties, index, rowValues })
+      : {};
     const { subfieldKey } = fieldsConfig;
 
     return (
       <div>
         <TableRow {...this.props} />
-        { !dynamicAttr.hideSubfields
-          && (
+        {!dynamicAttr.hideSubfields && (
           <FieldArray
             name={`${field}.${subfieldKey}`}
             component={TableBody}
@@ -76,7 +83,7 @@ class TableRowWithSubfields extends Component {
               this.fieldRefs[elIndex][fieldName] = el;
             }}
           />
-          )}
+        )}
       </div>
     );
   }

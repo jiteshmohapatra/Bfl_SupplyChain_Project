@@ -1,25 +1,25 @@
 /* eslint-disable react/prop-types */
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import moment from 'moment';
-import DatePicker from 'react-datepicker';
-import { Portal } from 'react-overlays';
-import { connect } from 'react-redux';
+import moment from "moment";
+import DatePicker from "react-datepicker";
+import { Portal } from "react-overlays";
+import { connect } from "react-redux";
 
-import BaseField from 'components/form-elements/BaseField';
-import DateFormat from 'consts/dateFormat';
-import { formatDate, getDateFormat, getLocaleCode } from 'utils/translation-utils';
+import BaseField from "components/form-elements/BaseField";
+import DateFormat from "consts/dateFormat";
+import {
+  formatDate,
+  getDateFormat,
+  getLocaleCode,
+} from "utils/translation-utils";
 
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 const CalendarContainer = ({ children }) => {
-  const el = document.getElementById('root');
+  const el = document.getElementById("root");
 
-  return (
-    <Portal container={el}>
-      {children}
-    </Portal>
-  );
+  return <Portal container={el}>{children}</Portal>;
 };
 
 class DateField extends Component {
@@ -31,9 +31,20 @@ class DateField extends Component {
   }
 
   renderInput({
-    value, dateFormat = 'MM/DD/YYYY', timeFormat = 'HH:mm', className = '',
-    arrowLeft, arrowUp, arrowRight, arrowDown, fieldRef, onTabPress, localizeDate,
-    localizedDateFormat = DateFormat.COMMON, showLocalizedPlaceholder, ...attributes
+    value,
+    dateFormat = "MM/DD/YYYY",
+    timeFormat = "HH:mm",
+    className = "",
+    arrowLeft,
+    arrowUp,
+    arrowRight,
+    arrowDown,
+    fieldRef,
+    onTabPress,
+    localizeDate,
+    localizedDateFormat = DateFormat.COMMON,
+    showLocalizedPlaceholder,
+    ...attributes
   }) {
     const onChangeRaw = (e) => {
       attributes.onChange(e.target.value);
@@ -56,7 +67,8 @@ class DateField extends Component {
     };
 
     const onChange = (date) => {
-      const val = !date || typeof date === 'string' ? date : date.format(dateFormat);
+      const val =
+        !date || typeof date === "string" ? date : date.format(dateFormat);
       attributes.onChange(val);
     };
 
@@ -74,9 +86,16 @@ class DateField extends Component {
           className={`form-control form-control-xs ${className}`}
           {...attributes}
           placeholderText={getPlaceholder()}
-          selected={moment(value, dateFormat).isValid() ? moment(value, dateFormat) : null}
-          highlightDates={[!moment(value, dateFormat).isValid()
-            ? moment(new Date(), dateFormat) : {}]}
+          selected={
+            moment(value, dateFormat).isValid()
+              ? moment(value, dateFormat)
+              : null
+          }
+          highlightDates={[
+            !moment(value, dateFormat).isValid()
+              ? moment(new Date(), dateFormat)
+              : {},
+          ]}
           onChange={(date) => onChange(date)}
           onChangeRaw={onChangeRaw}
           onSelect={() => {
@@ -90,35 +109,35 @@ class DateField extends Component {
           }}
           onKeyDown={(event) => {
             switch (event.keyCode) {
-              case 37: /* arrow left */
+              case 37 /* arrow left */:
                 if (arrowLeft && arrowLeft()) {
                   event.preventDefault();
                   this.dateInput.cancelFocusInput();
                   this.dateInput.setOpen(false);
                 }
                 break;
-              case 38: /* arrow up */
+              case 38 /* arrow up */:
                 if (arrowUp && arrowUp()) {
                   event.preventDefault();
                   this.dateInput.cancelFocusInput();
                   this.dateInput.setOpen(false);
                 }
                 break;
-              case 39: /* arrow right */
+              case 39 /* arrow right */:
                 if (arrowRight && arrowRight()) {
                   event.preventDefault();
                   this.dateInput.cancelFocusInput();
                   this.dateInput.setOpen(false);
                 }
                 break;
-              case 40: /* arrow down */
+              case 40 /* arrow down */:
                 if (arrowDown && arrowDown()) {
                   event.preventDefault();
                   this.dateInput.cancelFocusInput();
                   this.dateInput.setOpen(false);
                 }
                 break;
-              case 9: /* Tab key */
+              case 9 /* Tab key */:
                 if (onTabPress) {
                   onTabPress(event);
                 }
@@ -148,12 +167,7 @@ class DateField extends Component {
   }
 
   render() {
-    return (
-      <BaseField
-        {...this.props}
-        renderInput={this.renderInput}
-      />
-    );
+    return <BaseField {...this.props} renderInput={this.renderInput} />;
   }
 }
 

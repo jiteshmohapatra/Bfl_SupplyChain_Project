@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { FieldArray } from 'react-final-form-arrays';
+import PropTypes from "prop-types";
+import { FieldArray } from "react-final-form-arrays";
 
-import FieldArrayComponent from 'components/form-elements/FieldArrayComponent';
+import FieldArrayComponent from "components/form-elements/FieldArrayComponent";
 
 const ArrayField = (props) => {
   const { fieldName, fieldConfig, ...otherProps } = props;

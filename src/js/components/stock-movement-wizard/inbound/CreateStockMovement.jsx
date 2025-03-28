@@ -1,46 +1,49 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-import { hideSpinner, showSpinner } from 'actions';
-import DateField from 'components/form-elements/DateField';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import apiClient from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { debounceLocationsFetch, debouncePeopleFetch } from 'utils/option-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import DateField from "components/form-elements/DateField";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import apiClient from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import {
+  debounceLocationsFetch,
+  debouncePeopleFetch,
+} from "utils/option-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 function validate(values) {
   const errors = {};
   if (!values.description) {
-    errors.description = 'react.default.error.requiredField.label';
+    errors.description = "react.default.error.requiredField.label";
   }
   if (!values.origin) {
-    errors.origin = 'react.default.error.requiredField.label';
+    errors.origin = "react.default.error.requiredField.label";
   }
   if (!values.destination) {
-    errors.destination = 'react.default.error.requiredField.label';
+    errors.destination = "react.default.error.requiredField.label";
   }
   if (!values.requestedBy) {
-    errors.requestedBy = 'react.default.error.requiredField.label';
+    errors.requestedBy = "react.default.error.requiredField.label";
   }
   if (!values.dateRequested) {
-    errors.dateRequested = 'react.default.error.requiredField.label';
+    errors.dateRequested = "react.default.error.requiredField.label";
   } else {
-    const dateRequested = moment(values.dateRequested, 'MM/DD/YYYY');
+    const dateRequested = moment(values.dateRequested, "MM/DD/YYYY");
     if (moment().diff(dateRequested) < 0) {
-      errors.dateRequested = 'react.stockMovement.error.futureDate.label';
+      errors.dateRequested = "react.stockMovement.error.futureDate.label";
     }
   }
   return errors;
@@ -49,8 +52,8 @@ function validate(values) {
 const FIELDS = {
   description: {
     type: TextField,
-    label: 'react.stockMovement.description.label',
-    defaultMessage: 'Description',
+    label: "react.stockMovement.description.label",
+    defaultMessage: "Description",
     attributes: {
       required: true,
       autoFocus: true,
@@ -58,8 +61,8 @@ const FIELDS = {
   },
   origin: {
     type: SelectField,
-    label: 'react.stockMovement.origin.label',
-    defaultMessage: 'Origin',
+    label: "react.stockMovement.origin.label",
+    defaultMessage: "Origin",
     attributes: {
       required: true,
       async: true,
@@ -81,8 +84,8 @@ const FIELDS = {
   },
   destination: {
     type: SelectField,
-    label: 'react.stockMovement.destination.label',
-    defaultMessage: 'Destination',
+    label: "react.stockMovement.destination.label",
+    defaultMessage: "Destination",
     attributes: {
       required: true,
       async: true,
@@ -104,21 +107,21 @@ const FIELDS = {
     }),
   },
   stocklist: {
-    label: 'react.stockMovement.stocklist.label',
-    defaultMessage: 'Stocklist',
+    label: "react.stockMovement.stocklist.label",
+    defaultMessage: "Stocklist",
     type: SelectField,
     getDynamicAttr: ({ origin, destination, stocklists }) => ({
       disabled: !(origin && destination && origin.id && destination.id),
       options: stocklists,
       showValueTooltip: true,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     }),
   },
   requestedBy: {
     type: SelectField,
-    label: 'react.stockMovement.requestedBy.label',
-    defaultMessage: 'Requested by',
+    label: "react.stockMovement.requestedBy.label",
+    defaultMessage: "Requested by",
     attributes: {
       async: true,
       required: true,
@@ -127,7 +130,7 @@ const FIELDS = {
       autoload: false,
       cache: false,
       options: [],
-      labelKey: 'name',
+      labelKey: "name",
       filterOptions: (options) => options,
     },
     getDynamicAttr: (props) => ({
@@ -136,12 +139,12 @@ const FIELDS = {
   },
   dateRequested: {
     type: DateField,
-    label: 'react.stockMovement.dateRequested.label',
-    defaultMessage: 'Date requested',
+    label: "react.stockMovement.dateRequested.label",
+    defaultMessage: "Date requested",
     attributes: {
       required: true,
       localizeDate: true,
-      autoComplete: 'off',
+      autoComplete: "off",
     },
   },
 };
@@ -170,13 +173,19 @@ class CreateStockMovement extends Component {
 
   componentDidMount() {
     if (this.state.values.origin && this.state.values.destination) {
-      this.fetchStockLists(this.state.values.origin, this.state.values.destination);
+      this.fetchStockLists(
+        this.state.values.origin,
+        this.state.values.destination,
+      );
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.match.params.stockMovementId && this.state.setInitialValues
-      && nextProps.location.id) {
+    if (
+      !this.props.match.params.stockMovementId &&
+      this.state.setInitialValues &&
+      nextProps.location.id
+    ) {
       this.setInitialValues(nextProps.location);
     }
   }
@@ -198,16 +207,22 @@ class CreateStockMovement extends Component {
     const { origin, destination, stocklist } = this.props.initialValues;
 
     const originLocs = newValues.origin && origin;
-    const isOldSupplier = origin && origin.type === 'SUPPLIER';
-    const isNewSupplier = newValues.origin && newValues.type === 'SUPPLIER';
-    const checkOrigin = originLocs && (!isOldSupplier || (isOldSupplier && !isNewSupplier))
-      ? newValues.origin.id !== origin.id : false;
+    const isOldSupplier = origin && origin.type === "SUPPLIER";
+    const isNewSupplier = newValues.origin && newValues.type === "SUPPLIER";
+    const checkOrigin =
+      originLocs && (!isOldSupplier || (isOldSupplier && !isNewSupplier))
+        ? newValues.origin.id !== origin.id
+        : false;
 
-    const checkDest = stocklist && newValues.destination && destination
-      ? newValues.destination.id !== destination.id : false;
-    const checkStockList = newValues.stockMovementId ? _.get(newValues.stocklist, 'id', null) !== _.get(stocklist, 'id', null) : false;
+    const checkDest =
+      stocklist && newValues.destination && destination
+        ? newValues.destination.id !== destination.id
+        : false;
+    const checkStockList = newValues.stockMovementId
+      ? _.get(newValues.stocklist, "id", null) !== _.get(stocklist, "id", null)
+      : false;
 
-    return (checkOrigin || checkDest || checkStockList);
+    return checkOrigin || checkDest || checkStockList;
   }
 
   /**
@@ -221,15 +236,20 @@ class CreateStockMovement extends Component {
     this.props.showSpinner();
     const url = `/api/stocklists?origin=${origin.id}&destination=${destination.id}`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
-        const stocklists = _.map(response.data.data, (stocklist) => (
-          {
-            id: stocklist.id, name: stocklist.name, value: stocklist.id, label: stocklist.name,
-          }
-        ));
+        const stocklists = _.map(response.data.data, (stocklist) => ({
+          id: stocklist.id,
+          name: stocklist.name,
+          value: stocklist.id,
+          label: stocklist.name,
+        }));
 
-        const stocklistChanged = !_.find(stocklists, (item) => item.value.id === _.get(this.state.values, 'stocklist.id'));
+        const stocklistChanged = !_.find(
+          stocklists,
+          (item) => item.value.id === _.get(this.state.values, "stocklist.id"),
+        );
 
         if (stocklistChanged && clearStocklist) {
           clearStocklist();
@@ -246,28 +266,34 @@ class CreateStockMovement extends Component {
    * @public
    */
   saveStockMovement(values) {
-    if (values.origin && values.destination && values.requestedBy
-      && values.dateRequested && values.description) {
+    if (
+      values.origin &&
+      values.destination &&
+      values.requestedBy &&
+      values.dateRequested &&
+      values.description
+    ) {
       this.props.showSpinner();
 
-      let stockMovementUrl = '';
+      let stockMovementUrl = "";
       if (values.stockMovementId) {
         stockMovementUrl = `/api/stockMovements/${values.stockMovementId}/updateRequisition`;
       } else {
-        stockMovementUrl = '/api/stockMovements';
+        stockMovementUrl = "/api/stockMovements";
       }
 
       const payload = {
-        name: '',
+        name: "",
         description: values.description,
         dateRequested: values.dateRequested,
         origin: { id: values.origin.id },
         destination: { id: values.destination.id },
         requestedBy: { id: values.requestedBy.id },
-        stocklist: { id: _.get(values.stocklist, 'id') || '' },
+        stocklist: { id: _.get(values.stocklist, "id") || "" },
       };
 
-      apiClient.post(stockMovementUrl, payload)
+      apiClient
+        .post(stockMovementUrl, payload)
         .then((response) => {
           if (response.data) {
             const resp = response.data.data;
@@ -284,17 +310,28 @@ class CreateStockMovement extends Component {
         })
         .catch(() => {
           this.props.hideSpinner();
-          return Promise.reject(new Error(this.props.translate('react.stockMovement.error.createStockMovement.label', 'Could not create stock movement')));
+          return Promise.reject(
+            new Error(
+              this.props.translate(
+                "react.stockMovement.error.createStockMovement.label",
+                "Could not create stock movement",
+              ),
+            ),
+          );
         });
     }
   }
 
   resetToInitialValues() {
-    this.setState({
-      values: {},
-    }, () => this.setState({
-      values: this.props.initialValues,
-    }));
+    this.setState(
+      {
+        values: {},
+      },
+      () =>
+        this.setState({
+          values: this.props.initialValues,
+        }),
+    );
   }
 
   /**
@@ -308,18 +345,21 @@ class CreateStockMovement extends Component {
       this.saveStockMovement(values);
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.message.confirmChange.label', 'Confirm change'),
+        title: this.props.translate(
+          "react.stockMovement.message.confirmChange.label",
+          "Confirm change",
+        ),
         message: this.props.translate(
-          'react.stockMovement.confirmChange.message',
-          'Do you want to change stock movement data? Changing origin, destination or stock list can cause loss of your current work',
+          "react.stockMovement.confirmChange.message",
+          "Do you want to change stock movement data? Changing origin, destination or stock list can cause loss of your current work",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
             onClick: () => this.resetToInitialValues(),
           },
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
+            label: this.props.translate("react.default.yes.label", "Yes"),
             onClick: () => this.saveStockMovement(values),
           },
         ],
@@ -335,18 +375,21 @@ class CreateStockMovement extends Component {
         initialValues={this.state.values}
         mutators={{
           clearStocklist: (args, state, utils) => {
-            utils.changeValue(state, 'stocklist', () => null);
+            utils.changeValue(state, "stocklist", () => null);
           },
         }}
         render={({ form: { mutators }, handleSubmit, values }) => (
           <form onSubmit={handleSubmit}>
             <div className="classic-form with-description">
-              {_.map(
-                FIELDS,
-                (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName, {
+              {_.map(FIELDS, (fieldConfig, fieldName) =>
+                renderFormField(fieldConfig, fieldName, {
                   stocklists: this.state.stocklists,
                   fetchStockLists: (origin, destination) =>
-                    this.fetchStockLists(origin, destination, mutators.clearStocklist),
+                    this.fetchStockLists(
+                      origin,
+                      destination,
+                      mutators.clearStocklist,
+                    ),
                   origin: values.origin,
                   destination: values.destination,
                   isSuperuser: this.props.isSuperuser,
@@ -356,8 +399,14 @@ class CreateStockMovement extends Component {
               )}
             </div>
             <div className="submit-buttons">
-              <button type="submit" className="btn btn-outline-primary float-right btn-xs">
-                <Translate id="react.default.button.next.label" defaultMessage="Next" />
+              <button
+                type="submit"
+                className="btn btn-outline-primary float-right btn-xs"
+              >
+                <Translate
+                  id="react.default.button.next.label"
+                  defaultMessage="Next"
+                />
               </button>
             </div>
           </form>
@@ -376,9 +425,12 @@ const mapStateToProps = (state) => ({
   user: state.session.user,
 });
 
-export default withRouter(connect(mapStateToProps, {
-  showSpinner, hideSpinner,
-})(CreateStockMovement));
+export default withRouter(
+  connect(mapStateToProps, {
+    showSpinner,
+    hideSpinner,
+  })(CreateStockMovement),
+);
 
 CreateStockMovement.propTypes = {
   /** React router's object which contains information about url varaiables and params */

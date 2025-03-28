@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import FilterForm from 'components/Filter/FilterForm';
+import FilterForm from "components/Filter/FilterForm";
 
 const ProductsListFilters = ({
   setFilterParams,

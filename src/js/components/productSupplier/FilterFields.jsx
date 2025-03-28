@@ -1,6 +1,6 @@
-import CheckboxField from 'components/form-elements/CheckboxField';
-import DateFilter from 'components/form-elements/DateFilter/DateFilter';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
+import CheckboxField from "components/form-elements/CheckboxField";
+import DateFilter from "components/form-elements/DateFilter/DateFilter";
+import FilterSelectField from "components/form-elements/FilterSelectField";
 
 export default {
   product: {
@@ -10,18 +10,16 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'displayName',
+      valueKey: "id",
+      labelKey: "displayName",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.productSupplier.filters.product.placeholder.label',
-      defaultPlaceholder: 'Product',
+      placeholder: "react.productSupplier.filters.product.placeholder.label",
+      defaultPlaceholder: "Product",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedProductsFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedProductsFetch }) => ({
       loadOptions: debouncedProductsFetch,
     }),
   },
@@ -32,18 +30,17 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.productSupplier.filters.supplier.placeholder.label=Supplier\n',
-      defaultPlaceholder: 'Supplier',
+      placeholder:
+        "react.productSupplier.filters.supplier.placeholder.label=Supplier\n",
+      defaultPlaceholder: "Supplier",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedOrganizationsFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedOrganizationsFetch }) => ({
       loadOptions: debouncedOrganizationsFetch,
     }),
   },
@@ -51,10 +48,11 @@ export default {
     type: FilterSelectField,
     attributes: {
       multi: true,
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.productSupplier.filters.defaultPreferenceType.placeholder.label',
-      defaultPlaceholder: 'Default Preference Type',
+      placeholder:
+        "react.productSupplier.filters.defaultPreferenceType.placeholder.label",
+      defaultPlaceholder: "Default Preference Type",
       showLabelTooltip: true,
       closeMenuOnSelect: false,
     },
@@ -65,18 +63,18 @@ export default {
   createdFrom: {
     type: DateFilter,
     attributes: {
-      label: 'react.productSupplier.filters.createdFrom.placeholder.label',
-      defaultMessage: 'Date created from',
-      dateFormat: 'MM/DD/YYYY',
+      label: "react.productSupplier.filters.createdFrom.placeholder.label",
+      defaultMessage: "Date created from",
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
     },
   },
   createdTo: {
     type: DateFilter,
     attributes: {
-      label: 'react.productSupplier.filters.createdTo.placeholder.label',
-      defaultMessage: 'Date created to',
-      dateFormat: 'MM/DD/YYYY',
+      label: "react.productSupplier.filters.createdTo.placeholder.label",
+      defaultMessage: "Date created to",
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
     },
   },
@@ -84,8 +82,8 @@ export default {
     type: CheckboxField,
     attributes: {
       withLabel: true,
-      label: 'react.productSupplier.filters.active.placeholder.label',
-      defaultMessage: 'Include inactive',
+      label: "react.productSupplier.filters.active.placeholder.label",
+      defaultMessage: "Include inactive",
       filterElement: true,
     },
   },

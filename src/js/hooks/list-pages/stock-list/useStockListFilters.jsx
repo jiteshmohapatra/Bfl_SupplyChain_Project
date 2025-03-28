@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import queryString from 'query-string';
-import { useHistory } from 'react-router-dom';
+import queryString from "query-string";
+import { useHistory } from "react-router-dom";
 
-import filterFields from 'components/stock-list/FilterFields';
-import useCommonFiltersCleaner from 'hooks/list-pages/useCommonFiltersCleaner';
-import apiClient from 'utils/apiClient';
-import { transformFilterParams } from 'utils/list-utils';
-import { fetchLocationById } from 'utils/option-utils';
+import filterFields from "components/stock-list/FilterFields";
+import useCommonFiltersCleaner from "hooks/list-pages/useCommonFiltersCleaner";
+import apiClient from "utils/apiClient";
+import { transformFilterParams } from "utils/list-utils";
+import { fetchLocationById } from "utils/option-utils";
 
 const useStockListFilters = () => {
   const [filterParams, setFilterParams] = useState({});
@@ -18,11 +18,10 @@ const useStockListFilters = () => {
   const history = useHistory();
 
   useEffect(() => {
-    apiClient.get('/api/locations?presentation=toBaseJson')
-      .then((response) => {
-        const { data } = response.data;
-        setLocations(data);
-      });
+    apiClient.get("/api/locations?presentation=toBaseJson").then((response) => {
+      const { data } = response.data;
+      setLocations(data);
+    });
   }, []);
 
   const clearFilterValues = () => {
@@ -32,8 +31,10 @@ const useStockListFilters = () => {
 
   const initializeDefaultFilterValues = async () => {
     // INITIALIZE EMPTY FILTER OBJECT
-    const defaultValues = Object.keys(filterFields)
-      .reduce((acc, key) => ({ ...acc, [key]: '' }), {});
+    const defaultValues = Object.keys(filterFields).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      {},
+    );
 
     const queryProps = queryString.parse(history.location.search);
 
@@ -45,7 +46,10 @@ const useStockListFilters = () => {
       const fetchedLocations = originLocationsIds.map(fetchLocationById);
       const paramLocations = await Promise.all(fetchedLocations);
       defaultValues.origin = paramLocations.map(({ id, name }) => ({
-        id, name, value: id, label: name,
+        id,
+        name,
+        value: id,
+        label: name,
       }));
     }
     if (queryProps.destination) {
@@ -55,24 +59,31 @@ const useStockListFilters = () => {
       const fetchedLocations = destinationLocationsIds.map(fetchLocationById);
       const paramLocations = await Promise.all(fetchedLocations);
       defaultValues.destination = paramLocations.map(({ id, name }) => ({
-        id, name, value: id, label: name,
+        id,
+        name,
+        value: id,
+        label: name,
       }));
     }
     if (queryProps.isPublished) {
-      defaultValues.isPublished = queryProps.isPublished === 'true';
+      defaultValues.isPublished = queryProps.isPublished === "true";
     }
     setDefaultFilterValues(defaultValues);
     setFiltersInitialized(true);
   };
 
   // Custom hook for changing location/filters rebuilding logic
-  useCommonFiltersCleaner({ clearFilterValues, initializeDefaultFilterValues, filtersInitialized });
+  useCommonFiltersCleaner({
+    clearFilterValues,
+    initializeDefaultFilterValues,
+    filtersInitialized,
+  });
 
   const setFilterValues = (values) => {
     const filterAccessors = {
-      destination: { name: 'destination', accessor: 'id' },
-      origin: { name: 'origin', accessor: 'id' },
-      isPublished: { name: 'isPublished' },
+      destination: { name: "destination", accessor: "id" },
+      origin: { name: "origin", accessor: "id" },
+      isPublished: { name: "isPublished" },
     };
 
     const transformedParams = transformFilterParams(values, filterAccessors);
@@ -85,7 +96,10 @@ const useStockListFilters = () => {
   };
 
   return {
-    defaultFilterValues, setFilterValues, locations, filterParams,
+    defaultFilterValues,
+    setFilterValues,
+    locations,
+    filterParams,
   };
 };
 

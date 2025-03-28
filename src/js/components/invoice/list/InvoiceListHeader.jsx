@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { withRouter } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 const InvoiceListHeader = () => (
   <div className="d-flex list-page-header">

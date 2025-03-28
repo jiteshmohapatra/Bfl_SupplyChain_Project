@@ -1,22 +1,22 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import update from 'immutability-helper';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { getTranslate } from 'react-localize-redux';
-import Modal from 'react-modal';
-import connect from 'react-redux/es/connect/connect';
-import { Tooltip } from 'react-tippy';
+import update from "immutability-helper";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { getTranslate } from "react-localize-redux";
+import Modal from "react-modal";
+import connect from "react-redux/es/connect/connect";
+import { Tooltip } from "react-tippy";
 
-import DateFormat from 'consts/dateFormat';
-import Input from 'utils/Input';
-import Select from 'utils/Select';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import DateFormat from "consts/dateFormat";
+import Input from "utils/Input";
+import Select from "utils/Select";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import 'react-tippy/dist/tippy.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "react-tippy/dist/tippy.css";
 
 /**
  * Modal window where user can split put-away's line. It has details of the line
@@ -45,17 +45,20 @@ class SplitLineModal extends Component {
     const putAwayQty = this.calculatePutAwayQty();
     if (putAwayQty < this.props.putawayItem.quantity) {
       confirmAlert({
-        title: this.props.translate('react.putAway.message.confirmSplitLine.label', 'Confirm split line'),
+        title: this.props.translate(
+          "react.putAway.message.confirmSplitLine.label",
+          "Confirm split line",
+        ),
         message: this.props.translate(
-          'react.putAway.confirmSplitLine.label',
-          'There is still stock in the receiving bin. Do you want to putaway the rest of this line?',
+          "react.putAway.confirmSplitLine.label",
+          "There is still stock in the receiving bin. Do you want to putaway the rest of this line?",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
+            label: this.props.translate("react.default.yes.label", "Yes"),
           },
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
             onClick: () => this.save(),
           },
         ],
@@ -68,19 +71,19 @@ class SplitLineModal extends Component {
   getErrorMessage() {
     if (this.isQuantityGreaterThanOriginalPutaway()) {
       return this.props.translate(
-        'react.putAway.sumOfAll.label',
-        'Sum of all split items quantities cannot be greater than original putaway item quantity',
+        "react.putAway.sumOfAll.label",
+        "Sum of all split items quantities cannot be greater than original putaway item quantity",
       );
     }
 
     if (this.isNegativeQuantity()) {
       return this.props.translate(
-        'react.putAway.negativeSumOfAll.label',
-        'Items quantity cannot be less than 1',
+        "react.putAway.negativeSumOfAll.label",
+        "Items quantity cannot be less than 1",
       );
     }
 
-    return '';
+    return "";
   }
 
   /**
@@ -88,13 +91,15 @@ class SplitLineModal extends Component {
    * @public
    */
   save() {
-    this.props.saveSplitItems(_.map(this.state.splitItems, (item) => {
-      if (!item.quantity || item.quantity === '0') {
-        return { ...item, delete: true };
-      }
+    this.props.saveSplitItems(
+      _.map(this.state.splitItems, (item) => {
+        if (!item.quantity || item.quantity === "0") {
+          return { ...item, delete: true };
+        }
 
-      return item;
-    }));
+        return item;
+      }),
+    );
 
     this.closeModal();
   }
@@ -113,23 +118,29 @@ class SplitLineModal extends Component {
         quantity: this.props.putawayItem.quantity,
         putawayFacility: {
           id: this.props.putawayItem.putawayFacility
-            ? this.props.putawayItem.putawayFacility.id : null,
+            ? this.props.putawayItem.putawayFacility.id
+            : null,
         },
         putawayLocation: {
           id: this.props.putawayItem.putawayLocation
-            ? this.props.putawayItem.putawayLocation.id : null,
+            ? this.props.putawayItem.putawayLocation.id
+            : null,
           name: this.props.putawayItem.putawayLocation
-            ? this.props.putawayItem.putawayLocation.name : null,
+            ? this.props.putawayItem.putawayLocation.name
+            : null,
           zoneId: this.props.putawayItem.putawayLocation
-            ? this.props.putawayItem.putawayLocation.zoneId : null,
+            ? this.props.putawayItem.putawayLocation.zoneId
+            : null,
           zoneName: this.props.putawayItem.putawayLocation
-            ? this.props.putawayItem.putawayLocation.zoneName : null,
+            ? this.props.putawayItem.putawayLocation.zoneName
+            : null,
         },
         product: { id: this.props.putawayItem.product.id },
         inventoryItem: { id: this.props.putawayItem.inventoryItem.id },
         currentLocation: {
           id: this.props.putawayItem.currentLocation
-            ? this.props.putawayItem.currentLocation.id : null,
+            ? this.props.putawayItem.currentLocation.id
+            : null,
         },
       });
     }
@@ -153,7 +164,10 @@ class SplitLineModal extends Component {
    */
 
   isNegativeQuantity() {
-    return _.some(this.state.splitItems, (items) => _.toInteger(items.quantity) <= 0);
+    return _.some(
+      this.state.splitItems,
+      (items) => _.toInteger(items.quantity) <= 0,
+    );
   }
 
   isQuantityGreaterThanOriginalPutaway() {
@@ -162,7 +176,9 @@ class SplitLineModal extends Component {
   }
 
   isValid() {
-    return !this.isNegativeQuantity() && !this.isQuantityGreaterThanOriginalPutaway();
+    return (
+      !this.isNegativeQuantity() && !this.isQuantityGreaterThanOriginalPutaway()
+    );
   }
 
   /**
@@ -170,8 +186,12 @@ class SplitLineModal extends Component {
    * @public
    */
   calculatePutAwayQty() {
-    return _.reduce(this.state.splitItems, (sum, val) =>
-      (sum + (!val.delete && val.quantity ? _.toInteger(val.quantity) : 0)), 0);
+    return _.reduce(
+      this.state.splitItems,
+      (sum, val) =>
+        sum + (!val.delete && val.quantity ? _.toInteger(val.quantity) : 0),
+      0,
+    );
   }
 
   /**
@@ -181,7 +201,8 @@ class SplitLineModal extends Component {
    */
   isBinSelected() {
     return _.every(this.state.splitItems, (splitItem) =>
-      _.get(splitItem, 'putawayLocation.id'));
+      _.get(splitItem, "putawayLocation.id"),
+    );
   }
 
   render() {
@@ -192,7 +213,10 @@ class SplitLineModal extends Component {
           className="btn btn-outline-success btn-xs mr-1 mb-1"
           onClick={() => this.openModal()}
         >
-          <Translate id="react.putAway.splitLine.label" defaultMessage="Split line" />
+          <Translate
+            id="react.putAway.splitLine.label"
+            defaultMessage="Split line"
+          />
         </button>
         <Modal
           isOpen={this.state.showModal}
@@ -209,35 +233,42 @@ class SplitLineModal extends Component {
                 duration="250"
                 hideDelay="50"
                 className="text-overflow-ellipsis"
-                disabled={this.props.putawayItem.product?.name
-                  === this.props.putawayItem.product?.displayNameOrDefaultName}
+                disabled={
+                  this.props.putawayItem.product?.name ===
+                  this.props.putawayItem.product?.displayNameOrDefaultName
+                }
                 html={this.props.putawayItem.product?.name}
               >
-                {' '}
+                {" "}
                 {this.props.putawayItem.product.displayNameOrDefaultName}
               </Tooltip>
             </h3>
             <div className="font-weight-bold">
-              <Translate id="react.putAway.expiry.label" defaultMessage="Expiry" />
+              <Translate
+                id="react.putAway.expiry.label"
+                defaultMessage="Expiry"
+              />
               :
-              {
-                this.props.putawayItem.inventoryItem.expirationDate
-                  ? this.props.formatLocalizedDate(
+              {this.props.putawayItem.inventoryItem.expirationDate
+                ? this.props.formatLocalizedDate(
                     this.props.putawayItem.inventoryItem.expirationDate,
                     DateFormat.COMMON,
                   )
-                  : this.props.putawayItem.inventoryItem.expirationDate
-              }
+                : this.props.putawayItem.inventoryItem.expirationDate}
             </div>
             <div className="font-weight-bold">
-              <Translate id="react.putAway.totalQty.label" defaultMessage="Total QTY" />
-              :
-              {this.props.putawayItem.quantity}
+              <Translate
+                id="react.putAway.totalQty.label"
+                defaultMessage="Total QTY"
+              />
+              :{this.props.putawayItem.quantity}
             </div>
             <div className="font-weight-bold">
-              <Translate id="react.putAway.putAwayQty.label" defaultMessage="Putaway QTY" />
-              :
-              {this.calculatePutAwayQty()}
+              <Translate
+                id="react.putAway.putAwayQty.label"
+                defaultMessage="Putaway QTY"
+              />
+              :{this.calculatePutAwayQty()}
             </div>
           </div>
           <hr />
@@ -246,111 +277,155 @@ class SplitLineModal extends Component {
             <table className="table table-striped text-center border">
               <thead>
                 <tr>
-                  <th aria-label="Putaway Bin" className="py-1"><Translate id="react.putAway.putAwayBin.label" defaultMessage="Putaway Bin" /></th>
-                  <th aria-label="Quantity" className="py-1"><Translate id="react.putAway.quantity.label" defaultMessage="Quantity" /></th>
-                  <th aria-label="Delete" className="py-1"><Translate id="react.default.button.delete.label" defaultMessage="Delete" /></th>
+                  <th aria-label="Putaway Bin" className="py-1">
+                    <Translate
+                      id="react.putAway.putAwayBin.label"
+                      defaultMessage="Putaway Bin"
+                    />
+                  </th>
+                  <th aria-label="Quantity" className="py-1">
+                    <Translate
+                      id="react.putAway.quantity.label"
+                      defaultMessage="Quantity"
+                    />
+                  </th>
+                  <th aria-label="Delete" className="py-1">
+                    <Translate
+                      id="react.default.button.delete.label"
+                      defaultMessage="Delete"
+                    />
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                { _.map(this.state.splitItems, (item, index) => (
-                  !item.delete
-                && (
-                <tr
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                >
-                  <td className={`py-1 ${!_.get(item, 'putawayLocation.id') ? 'has-error align-middle' : 'align-middle'}`}>
-                    <Select
-                      options={this.props.bins}
-                      valueKey="id"
-                      labelKey="name"
-                      value={item.putawayLocation}
-                      onChange={(value) => this.setState((prev) => ({
-                        splitItems: update(prev.splitItems, {
-                          [index]: {
-                            putawayLocation: { $set: value },
-                          },
-                        }),
-                      }))}
-                      className="select-xs"
-                    />
-                  </td>
-                  <td className="py-1 align-middle">
-                    <Tooltip
-                      html={this.getErrorMessage()}
-                      disabled={!this.isQuantityGreaterThanOriginalPutaway() && item.quantity > 0}
-                      theme="transparent"
-                      arrow="true"
-                      delay="150"
-                      duration="250"
-                      hideDelay="50"
-                    >
-                      <div className={this.isQuantityGreaterThanOriginalPutaway() || item.quantity <= 0 ? 'has-error' : ''}>
-                        <Input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(value) => this.setState((prev) => ({
-                            splitItems: update(prev.splitItems, {
-                              [index]: { quantity: { $set: value } },
-                            }),
-                          }))}
-                        />
-                      </div>
-                    </Tooltip>
-                  </td>
-                  <td width="120px" className="py-1">
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger btn-xs"
-                      onClick={() => {
-                        if (this.state.splitItems[index].id) {
-                          this.setState((prev) => ({
-                            splitItems: update(prev.splitItems, {
-                              [index]: { delete: { $set: true } },
-                            }),
-                          }));
-                        } else {
-                          this.setState((prev) => ({
-                            splitItems: update(prev.splitItems, {
-                              $splice: [
-                                [index, 1],
-                              ],
-                            }),
-                          }));
-                        }
-                      }}
-                    >
-                      <Translate id="react.default.button.delete.label" defaultMessage="Delete" />
-                    </button>
-                  </td>
-                </tr>
-                )
-                ))}
+                {_.map(
+                  this.state.splitItems,
+                  (item, index) =>
+                    !item.delete && (
+                      <tr
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
+                      >
+                        <td
+                          className={`py-1 ${!_.get(item, "putawayLocation.id") ? "has-error align-middle" : "align-middle"}`}
+                        >
+                          <Select
+                            options={this.props.bins}
+                            valueKey="id"
+                            labelKey="name"
+                            value={item.putawayLocation}
+                            onChange={(value) =>
+                              this.setState((prev) => ({
+                                splitItems: update(prev.splitItems, {
+                                  [index]: {
+                                    putawayLocation: { $set: value },
+                                  },
+                                }),
+                              }))
+                            }
+                            className="select-xs"
+                          />
+                        </td>
+                        <td className="py-1 align-middle">
+                          <Tooltip
+                            html={this.getErrorMessage()}
+                            disabled={
+                              !this.isQuantityGreaterThanOriginalPutaway() &&
+                              item.quantity > 0
+                            }
+                            theme="transparent"
+                            arrow="true"
+                            delay="150"
+                            duration="250"
+                            hideDelay="50"
+                          >
+                            <div
+                              className={
+                                this.isQuantityGreaterThanOriginalPutaway() ||
+                                item.quantity <= 0
+                                  ? "has-error"
+                                  : ""
+                              }
+                            >
+                              <Input
+                                type="number"
+                                value={item.quantity}
+                                onChange={(value) =>
+                                  this.setState((prev) => ({
+                                    splitItems: update(prev.splitItems, {
+                                      [index]: { quantity: { $set: value } },
+                                    }),
+                                  }))
+                                }
+                              />
+                            </div>
+                          </Tooltip>
+                        </td>
+                        <td width="120px" className="py-1">
+                          <button
+                            type="button"
+                            className="btn btn-outline-danger btn-xs"
+                            onClick={() => {
+                              if (this.state.splitItems[index].id) {
+                                this.setState((prev) => ({
+                                  splitItems: update(prev.splitItems, {
+                                    [index]: { delete: { $set: true } },
+                                  }),
+                                }));
+                              } else {
+                                this.setState((prev) => ({
+                                  splitItems: update(prev.splitItems, {
+                                    $splice: [[index, 1]],
+                                  }),
+                                }));
+                              }
+                            }}
+                          >
+                            <Translate
+                              id="react.default.button.delete.label"
+                              defaultMessage="Delete"
+                            />
+                          </button>
+                        </td>
+                      </tr>
+                    ),
+                )}
               </tbody>
             </table>
             <button
               type="button"
               className="btn btn-outline-success btn-xs"
-              onClick={() => this.setState((prev) => ({
-                splitItems: update(prev.splitItems, {
-                  $push: [{
-                    quantity: '',
-                    putawayFacility: {
-                      id: this.props.putawayItem.putawayFacility
-                        ? this.props.putawayItem.putawayFacility.id : null,
-                    },
-                    putawayLocation: { id: null },
-                    product: { id: this.props.putawayItem.product.id },
-                    inventoryItem: { id: this.props.putawayItem.inventoryItem.id },
-                    currentLocation: {
-                      id: this.props.putawayItem.currentLocation
-                        ? this.props.putawayItem.currentLocation.id : null,
-                    },
-                  }],
-                }),
-              }))}
+              onClick={() =>
+                this.setState((prev) => ({
+                  splitItems: update(prev.splitItems, {
+                    $push: [
+                      {
+                        quantity: "",
+                        putawayFacility: {
+                          id: this.props.putawayItem.putawayFacility
+                            ? this.props.putawayItem.putawayFacility.id
+                            : null,
+                        },
+                        putawayLocation: { id: null },
+                        product: { id: this.props.putawayItem.product.id },
+                        inventoryItem: {
+                          id: this.props.putawayItem.inventoryItem.id,
+                        },
+                        currentLocation: {
+                          id: this.props.putawayItem.currentLocation
+                            ? this.props.putawayItem.currentLocation.id
+                            : null,
+                        },
+                      },
+                    ],
+                  }),
+                }))
+              }
             >
-              <Translate id="react.default.button.addLine.label" defaultMessage="Add line" />
+              <Translate
+                id="react.default.button.addLine.label"
+                defaultMessage="Add line"
+              />
             </button>
           </div>
 
@@ -362,14 +437,20 @@ class SplitLineModal extends Component {
               disabled={!this.isValid() || !this.isBinSelected()}
               onClick={() => this.onSave()}
             >
-              <Translate id="react.default.button.save.label" defaultMessage="Save" />
+              <Translate
+                id="react.default.button.save.label"
+                defaultMessage="Save"
+              />
             </button>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
               onClick={() => this.closeModal()}
             >
-              <Translate id="react.default.button.cancel.label" defaultMessage="Cancel" />
+              <Translate
+                id="react.default.button.cancel.label"
+                defaultMessage="Cancel"
+              />
             </button>
           </div>
         </Modal>
@@ -403,10 +484,7 @@ SplitLineModal.propTypes = {
       expirationDate: PropTypes.string,
     }),
     /** Item's quantity to put away. Can be either string or number. */
-    quantity: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    quantity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     /** Facility of put-away's item */
     putawayFacility: PropTypes.shape({
       id: PropTypes.string,

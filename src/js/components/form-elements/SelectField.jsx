@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import BaseField from 'components/form-elements/BaseField';
-import Select from 'utils/Select';
+import BaseField from "components/form-elements/BaseField";
+import Select from "utils/Select";
 
 const SelectField = (props) => {
   // eslint-disable-next-line react/prop-types
@@ -14,12 +14,7 @@ const SelectField = (props) => {
     />
   );
 
-  return (
-    <BaseField
-      {...props}
-      renderInput={renderInput}
-    />
-  );
+  return <BaseField {...props} renderInput={renderInput} />;
 };
 
 export default SelectField;

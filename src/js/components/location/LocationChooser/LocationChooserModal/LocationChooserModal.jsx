@@ -1,23 +1,24 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiCloseLine } from 'react-icons/ri';
-import Modal from 'react-modal';
-import {
-  Tab, TabList, TabPanel, Tabs,
-} from 'react-tabs';
+import PropTypes from "prop-types";
+import { RiCloseLine } from "react-icons/ri";
+import Modal from "react-modal";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 
-import LocationButton
-  from 'components/location/LocationChooser/LocationChooserModal/LocationButton';
-import Spinner from 'components/spinner/Spinner';
-import Translate from 'utils/Translate';
+import LocationButton from "components/location/LocationChooser/LocationChooserModal/LocationButton";
+import Spinner from "components/spinner/Spinner";
+import Translate from "utils/Translate";
 
-import 'components/location/LocationChooser/LocationChooserModal/LocationChooserModal.scss';
+import "components/location/LocationChooser/LocationChooserModal/LocationChooserModal.scss";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const LocationChooserModal = ({
-  locations, onClose, isLoading, isOpen, onSelectLocation,
+  locations,
+  onClose,
+  isLoading,
+  isOpen,
+  onSelectLocation,
 }) => {
   const renderGroupedLocations = (groupedLocations) => (
     <div
@@ -25,52 +26,51 @@ const LocationChooserModal = ({
       className="location-chooser__modal__group d-flex flex-column mb-4"
     >
       <h3 className="location-chooser__modal__group-title mb-3">
-        {groupedLocations.group !== 'NO_GROUP'
-          ? groupedLocations.group
-          : (
-            <Translate
-              id="react.dashboard.noLocationGroup.label"
-              defaultMessage="No location group"
-            />
-          )}
+        {groupedLocations.group !== "NO_GROUP" ? (
+          groupedLocations.group
+        ) : (
+          <Translate
+            id="react.dashboard.noLocationGroup.label"
+            defaultMessage="No location group"
+          />
+        )}
       </h3>
       <div className="location-chooser__modal__group-container d-flex flex-wrap flex-row">
-        {groupedLocations.locations.map((location) =>
-          (
-            <LocationButton
-              key={`${location.name}-location`}
-              onClick={onSelectLocation}
-              location={location}
-            />
-          ))}
+        {groupedLocations.locations.map((location) => (
+          <LocationButton
+            key={`${location.name}-location`}
+            onClick={onSelectLocation}
+            location={location}
+          />
+        ))}
       </div>
     </div>
   );
 
   const renderOrganizationTabs = (locationGroups) => (
     <Tabs className="react-tabs">
-      <TabList data-testid="location-organization-list" className="react-tabs__tab-list m-0 list-unstyled scrollbar">
+      <TabList
+        data-testid="location-organization-list"
+        className="react-tabs__tab-list m-0 list-unstyled scrollbar"
+      >
         {locations.map(({ organization }) => (
           <Tab
             key={`${organization}-org-tab`}
             className="react-tabs__tab border-0 rounded-0 px-3 py-2"
           >
-            {organization !== 'NO_ORGANIZATION'
-              ? organization
-              : (
-                <Translate
-                  id="react.dashboard.noOrganization.label"
-                  defaultMessage="No organization"
-                />
-              )}
+            {organization !== "NO_ORGANIZATION" ? (
+              organization
+            ) : (
+              <Translate
+                id="react.dashboard.noOrganization.label"
+                defaultMessage="No organization"
+              />
+            )}
           </Tab>
         ))}
       </TabList>
       <div>
-        {locationGroups.map(({
-          organization,
-          groups,
-        }) => (
+        {locationGroups.map(({ organization, groups }) => (
           <TabPanel
             data-testid="location-list"
             className="react-tabs__tab-panel scrollbar w-100"
@@ -91,9 +91,7 @@ const LocationChooserModal = ({
       portalClassName="location-chooser__modal"
     >
       <div data-testid="location-chooser-modal">
-        <header
-          className="location-chooser__modal__header d-flex flex-row justify-content-between align-items-center"
-        >
+        <header className="location-chooser__modal__header d-flex flex-row justify-content-between align-items-center">
           <h1 className="location-chooser__modal__header__title m-0">
             <Translate
               id="react.dashboard.chooseLocation.label"
@@ -109,9 +107,7 @@ const LocationChooserModal = ({
             <RiCloseLine />
           </button>
         </header>
-        <section
-          className="location-chooser__modal__content d-flex flex-grow-1 justify-content-center"
-        >
+        <section className="location-chooser__modal__content d-flex flex-grow-1 justify-content-center">
           {isLoading ? <Spinner /> : renderOrganizationTabs(locations)}
         </section>
       </div>
@@ -128,13 +124,17 @@ LocationChooserModal.propTypes = {
   isLoading: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   onSelectLocation: PropTypes.func,
-  locations: PropTypes.arrayOf(PropTypes.shape({
-    organization: PropTypes.string,
-    groups: PropTypes.arrayOf(PropTypes.shape({
-      group: PropTypes.string,
-      locations: PropTypes.arrayOf(PropTypes.shape({})),
-    })),
-  })).isRequired,
+  locations: PropTypes.arrayOf(
+    PropTypes.shape({
+      organization: PropTypes.string,
+      groups: PropTypes.arrayOf(
+        PropTypes.shape({
+          group: PropTypes.string,
+          locations: PropTypes.arrayOf(PropTypes.shape({})),
+        }),
+      ),
+    }),
+  ).isRequired,
 };
 
 export default LocationChooserModal;

@@ -1,4 +1,7 @@
-import { FILTER_FORM_PARAMS_BUILT, REBUILD_FILTER_FORM_PARAMS } from 'actions/types';
+import {
+  FILTER_FORM_PARAMS_BUILT,
+  REBUILD_FILTER_FORM_PARAMS,
+} from "actions/types";
 
 const initialState = {
   shouldRebuildParams: false,

@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const MenuSection = ({ section, active }) => (
-  <li className={`nav-item d-flex dropdown justify-content-start justify-content-md-center align-items-center ${active && 'active-section'}`}>
+  <li
+    className={`nav-item d-flex dropdown justify-content-start justify-content-md-center align-items-center ${active && "active-section"}`}
+  >
     <a role="menuitem" className="nav-link" href={section.href}>
       {section.label}
     </a>

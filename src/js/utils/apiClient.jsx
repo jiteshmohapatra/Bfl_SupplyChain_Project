@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import React from 'react';
+import React from "react";
 
-import axios, { AxiosError } from 'axios';
-import _ from 'lodash';
-import { confirmAlert } from 'react-confirm-alert';
+import axios, { AxiosError } from "axios";
+import _ from "lodash";
+import { confirmAlert } from "react-confirm-alert";
 
-import notification from 'components/Layout/notifications/notification';
-import LoginModal from 'components/LoginModal';
-import NotificationType from 'consts/notificationTypes';
+import notification from "components/Layout/notifications/notification";
+import LoginModal from "components/LoginModal";
+import NotificationType from "consts/notificationTypes";
 
 export const justRejectRequestError = (error) => Promise.reject(error);
 
@@ -16,12 +16,14 @@ export const apiClientCustomResponseHandler = axios.create({});
 
 export function parseResponse(data) {
   if (_.isArray(data)) {
-    return _.map(data, (value) => (parseResponse(value)));
+    return _.map(data, (value) => parseResponse(value));
   }
 
   if (_.isPlainObject(data)) {
     const obj = {};
-    _.forEach(data, (value, key) => { _.set(obj, key, parseResponse(value)); });
+    _.forEach(data, (value, key) => {
+      _.set(obj, key, parseResponse(value));
+    });
     return obj;
   }
 
@@ -62,12 +64,14 @@ export function flattenRequest(data) {
 export const handleSuccess = (response) => response;
 
 export const handleError = (error) => {
-  const errorMessage = _.get(error, 'response.data.errorMessage', '');
-  const errorMessages = _.get(error, 'response.data.errorMessages', []).join(', ');
+  const errorMessage = _.get(error, "response.data.errorMessage", "");
+  const errorMessages = _.get(error, "response.data.errorMessages", []).join(
+    ", ",
+  );
   switch (error.response.status) {
     case 400: {
       notification(NotificationType.ERROR_OUTLINED)({
-        message: 'Bad request',
+        message: "Bad request",
         details: errorMessages || errorMessage,
       });
       break;
@@ -75,24 +79,24 @@ export const handleError = (error) => {
 
     case 401:
       confirmAlert({
-        customUI: (props) => (<LoginModal {...props} />),
+        customUI: (props) => <LoginModal {...props} />,
       });
       break;
     case 403:
       notification(NotificationType.WARNING)({
-        message: 'Access denied',
+        message: "Access denied",
         details: errorMessage || errorMessages,
       });
       break;
     case 404:
       notification(NotificationType.ERROR_OUTLINED)({
-        message: 'Not found',
+        message: "Not found",
         details: errorMessage || errorMessages,
       });
       break;
     case 500:
       notification(NotificationType.ERROR_FILLED)({
-        message: 'Internal server error',
+        message: "Internal server error",
         details: errorMessage || errorMessages,
       });
       break;
@@ -114,24 +118,30 @@ export const handleError = (error) => {
 };
 
 // TODO: This is temporary cleaner. Once migration is complete it should be removed
-const cleanUrlFromContextPath = (url) => url.replace('/openboxes', '');
+const cleanUrlFromContextPath = (url) => url.replace("/openboxes", "");
 
 export const urlInterceptor = (config) => {
   const contextPath = window.CONTEXT_PATH;
-  const cleanedUrl = _.trimStart(config.url ? cleanUrlFromContextPath(config.url) : '', '/');
+  const cleanedUrl = _.trimStart(
+    config.url ? cleanUrlFromContextPath(config.url) : "",
+    "/",
+  );
 
   if (!contextPath) {
     return { ...config, url: `/${cleanedUrl}` };
   }
 
-  const cleanedContextPath = _.trimEnd(contextPath, '/');
+  const cleanedContextPath = _.trimEnd(contextPath, "/");
   const url = `${cleanedContextPath}/${cleanedUrl}`;
   return { ...config, url };
 };
 
 export const handleValidationErrors = (setState) => (error) => {
   if (error.response.status === 400) {
-    const alertMessage = _.join(_.get(error, 'response.data.errorMessages', ''), ' ');
+    const alertMessage = _.join(
+      _.get(error, "response.data.errorMessages", ""),
+      " ",
+    );
     setState({ alertMessage, showAlert: true });
 
     return Promise.reject(error);
@@ -140,8 +150,8 @@ export const handleValidationErrors = (setState) => (error) => {
   return handleError(error);
 };
 
-export const mapToEmptyString = (values, valuesToSkip = []) => Object.keys(values)
-  .reduce((acc, curr) => {
+export const mapToEmptyString = (values, valuesToSkip = []) =>
+  Object.keys(values).reduce((acc, curr) => {
     if (values[curr] in valuesToSkip) {
       return acc;
     }
@@ -162,7 +172,7 @@ export const mapToEmptyString = (values, valuesToSkip = []) => Object.keys(value
     }
     return {
       ...acc,
-      [curr]: '',
+      [curr]: "",
     };
   }, {});
 

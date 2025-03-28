@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
 
-import { hideSpinner, showSpinner } from 'actions';
-import productSupplierApi from 'api/services/ProductSupplierApi';
+import { hideSpinner, showSpinner } from "actions";
+import productSupplierApi from "api/services/ProductSupplierApi";
 
 const useProductSupplierData = () => {
   const { productSupplierId } = useParams();
@@ -14,7 +14,8 @@ const useProductSupplierData = () => {
   const fetchProductSupplier = async (id) => {
     try {
       dispatch(showSpinner());
-      const fetchedProductSupplier = await productSupplierApi.getProductSupplier(id);
+      const fetchedProductSupplier =
+        await productSupplierApi.getProductSupplier(id);
       setProductSupplier(fetchedProductSupplier?.data?.data);
     } finally {
       dispatch(hideSpinner());

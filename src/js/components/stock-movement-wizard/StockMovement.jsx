@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import AddItemsPage from 'components/stock-movement-wizard/outbound/AddItemsPage';
-import CreateStockMovement from 'components/stock-movement-wizard/outbound/CreateStockMovement';
-import EditPage from 'components/stock-movement-wizard/outbound/EditPage';
-import PackingPage from 'components/stock-movement-wizard/outbound/PackingPage';
-import PickPage from 'components/stock-movement-wizard/outbound/PickPage';
-import SendMovementPage from 'components/stock-movement-wizard/outbound/SendMovementPage';
-import Wizard from 'components/wizard/Wizard';
-import DateFormat from 'consts/dateFormat';
-import apiClient from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import AddItemsPage from "components/stock-movement-wizard/outbound/AddItemsPage";
+import CreateStockMovement from "components/stock-movement-wizard/outbound/CreateStockMovement";
+import EditPage from "components/stock-movement-wizard/outbound/EditPage";
+import PackingPage from "components/stock-movement-wizard/outbound/PackingPage";
+import PickPage from "components/stock-movement-wizard/outbound/PickPage";
+import SendMovementPage from "components/stock-movement-wizard/outbound/SendMovementPage";
+import Wizard from "components/wizard/Wizard";
+import DateFormat from "consts/dateFormat";
+import apiClient from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 // TODO: check docs for SM wizard and Wizard related components
 
@@ -35,7 +35,7 @@ class StockMovements extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'stockMovement');
+    this.props.fetchTranslations("", "stockMovement");
 
     if (this.props.stockMovementTranslationsFetched) {
       this.dataFetched = true;
@@ -46,7 +46,7 @@ class StockMovements extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'stockMovement');
+      this.props.fetchTranslations(nextProps.locale, "stockMovement");
     }
 
     if (nextProps.stockMovementTranslationsFetched && !this.dataFetched) {
@@ -63,18 +63,22 @@ class StockMovements extends Component {
   get stepList() {
     let stepList = [];
     if (this.props.hasPackingSupport) {
-      stepList = [this.props.translate('react.stockMovement.create.label', 'Create'),
-        this.props.translate('react.stockMovement.addItems.label', 'Add items'),
-        this.props.translate('react.stockMovement.edit.label', 'Edit'),
-        this.props.translate('react.stockMovement.pick.label', 'Pick'),
-        this.props.translate('react.stockMovement.pack.label', 'Pack'),
-        this.props.translate('react.stockMovement.send.label', 'Send')];
+      stepList = [
+        this.props.translate("react.stockMovement.create.label", "Create"),
+        this.props.translate("react.stockMovement.addItems.label", "Add items"),
+        this.props.translate("react.stockMovement.edit.label", "Edit"),
+        this.props.translate("react.stockMovement.pick.label", "Pick"),
+        this.props.translate("react.stockMovement.pack.label", "Pack"),
+        this.props.translate("react.stockMovement.send.label", "Send"),
+      ];
     } else {
-      stepList = [this.props.translate('react.stockMovement.create.label', 'Create'),
-        this.props.translate('react.stockMovement.addItems.label', 'Add items'),
-        this.props.translate('react.stockMovement.edit.label', 'Edit'),
-        this.props.translate('react.stockMovement.pick.label', 'Pick'),
-        this.props.translate('react.stockMovement.send.label', 'Send')];
+      stepList = [
+        this.props.translate("react.stockMovement.create.label", "Create"),
+        this.props.translate("react.stockMovement.addItems.label", "Add items"),
+        this.props.translate("react.stockMovement.edit.label", "Edit"),
+        this.props.translate("react.stockMovement.pick.label", "Pick"),
+        this.props.translate("react.stockMovement.send.label", "Send"),
+      ];
     }
     return stepList;
   }
@@ -118,47 +122,65 @@ class StockMovements extends Component {
     }
     return [
       {
-        text: this.props.translate('react.stockMovement.label', 'Stock Movement'),
-        color: '#000000',
-        delimeter: ' | ',
+        text: this.props.translate(
+          "react.stockMovement.label",
+          "Stock Movement",
+        ),
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: values.movementNumber,
-        color: '#000000',
-        delimeter: ' - ',
+        color: "#000000",
+        delimeter: " - ",
       },
       {
         text: values.origin.name,
-        color: '#004d40',
-        delimeter: ` ${this.props.translate('react.default.to.label', 'to')} `,
+        color: "#004d40",
+        delimeter: ` ${this.props.translate("react.default.to.label", "to")} `,
       },
       {
         text: values.destination.name,
-        color: '#01579b',
-        delimeter: ', ',
+        color: "#01579b",
+        delimeter: ", ",
       },
       {
-        text: this.props.formatLocalizedDate(values.dateRequested, DateFormat.COMMON),
-        color: '#4a148c',
-        delimeter: ', ',
+        text: this.props.formatLocalizedDate(
+          values.dateRequested,
+          DateFormat.COMMON,
+        ),
+        color: "#4a148c",
+        delimeter: ", ",
       },
       {
         text: values.description,
-        color: '#770838',
-        delimeter: '',
+        color: "#770838",
+        delimeter: "",
       },
     ];
   }
 
   get additionalWizardTitle() {
     const { currentPage, values } = this.state;
-    const shipped = values.shipped ? this.props.translate('react.stockMovement.status.shipped.label', 'SHIPPED') : '';
-    const received = values.received ? this.props.translate('react.stockMovement.status.received.label', 'RECEIVED') : '';
-    if ((this.props.hasPackingSupport && currentPage === 6)
-      || (!this.props.hasPackingSupport && currentPage === 5)) {
+    const shipped = values.shipped
+      ? this.props.translate(
+          "react.stockMovement.status.shipped.label",
+          "SHIPPED",
+        )
+      : "";
+    const received = values.received
+      ? this.props.translate(
+          "react.stockMovement.status.received.label",
+          "RECEIVED",
+        )
+      : "";
+    if (
+      (this.props.hasPackingSupport && currentPage === 6) ||
+      (!this.props.hasPackingSupport && currentPage === 5)
+    ) {
       return (
         <span className="shipment-status float-right">
-          {`${shipped || received || this.props.translate('react.stockMovement.status.pending.label', 'PENDING')}`}
+          {`${shipped || received || this.props.translate("react.stockMovement.status.pending.label", "PENDING")}`}
         </span>
       );
     }
@@ -180,7 +202,8 @@ class StockMovements extends Component {
       this.props.showSpinner();
       const url = `/api/stockMovements/${this.props.match.params.stockMovementId}`;
 
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const resp = response.data.data;
           const originType = resp.origin.locationType;
@@ -214,22 +237,22 @@ class StockMovements extends Component {
 
           let currentPage = 1;
           switch (values.statusCode) {
-            case 'NEW':
+            case "NEW":
               break;
-            case 'CREATED':
-            case 'REQUESTING':
+            case "CREATED":
+            case "REQUESTING":
               currentPage = 2;
               break;
-            case 'REQUESTED':
-            case 'VALIDATING':
+            case "REQUESTED":
+            case "VALIDATING":
               currentPage = 3;
               break;
-            case 'VALIDATED':
-            case 'PICKING':
+            case "VALIDATED":
+            case "PICKING":
               currentPage = 4;
               break;
-            case 'PICKED':
-            case 'PACKING':
+            case "PICKED":
+            case "PACKING":
               currentPage = 5;
               break;
             default:
@@ -266,7 +289,8 @@ class StockMovements extends Component {
 
 const mapStateToProps = (state) => ({
   locale: state.session.activeLanguage,
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
   hasPackingSupport: state.session.currentLocation.hasPackingSupport,
   currentLocation: state.session.currentLocation,
@@ -274,7 +298,9 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(StockMovements);
 
 StockMovements.propTypes = {

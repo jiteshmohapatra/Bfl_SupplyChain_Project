@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-import { Tooltip } from 'react-tippy';
+import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { Tooltip } from "react-tippy";
 
-import { debounceProductsFetch } from 'utils/option-utils';
-import renderHandlingIcons from 'utils/product-handling-icons';
-import Select from 'utils/Select';
+import { debounceProductsFetch } from "utils/option-utils";
+import renderHandlingIcons from "utils/product-handling-icons";
+import Select from "utils/Select";
 
-const productOptionLabel = ({
-  productCode, displayName, displayNames, name,
-}) => (`${productCode} - ${displayName || displayNames?.default || name}`);
+const productOptionLabel = ({ productCode, displayName, displayNames, name }) =>
+  `${productCode} - ${displayName || displayNames?.default || name}`;
 
 const Option = (option) => (
   <Tooltip
@@ -19,9 +18,12 @@ const Option = (option) => (
     disabled={!(option.displayName || option.displayNames?.default)}
     position="top-start"
   >
-    <strong style={{ color: option.color || 'black' }} className="d-flex align-items-center">
+    <strong
+      style={{ color: option.color || "black" }}
+      className="d-flex align-items-center"
+    >
       {option.label || productOptionLabel(option)}
-        &nbsp;
+      &nbsp;
       {renderHandlingIcons(option.handlingIcons)}
     </strong>
   </Tooltip>
@@ -29,7 +31,10 @@ const Option = (option) => (
 
 const SelectedValue = (option) => (
   <span className="d-flex align-items-center">
-    <span style={{ color: option.showSelectedOptionColor && option.color }} className="text-truncate">
+    <span
+      style={{ color: option.showSelectedOptionColor && option.color }}
+      className="text-truncate"
+    >
       {option.label || productOptionLabel(option)}
     </span>
     {renderHandlingIcons(option?.handlingIcons)}
@@ -46,10 +51,8 @@ const ProductSelect = ({
   const selectRef = useRef(null);
   const [isExactMatch, setIsExactMatch] = useState(false);
   const [loadedOptions, setLoadedOptions] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const {
-    debounceTime, minSearchLength,
-  } = useSelector((state) => ({
+  const [searchTerm, setSearchTerm] = useState("");
+  const { debounceTime, minSearchLength } = useSelector((state) => ({
     debounceTime: state.session.searchConfig.debounceTime,
     minSearchLength: state.session.searchConfig.minSearchLength,
   }));
@@ -69,7 +72,9 @@ const ProductSelect = ({
 
   useEffect(() => {
     if (isExactMatch && loadedOptions.length && searchTerm) {
-      const exactMatches = loadedOptions.filter((product) => product.exactMatch);
+      const exactMatches = loadedOptions.filter(
+        (product) => product.exactMatch,
+      );
       let exactMatchProduct = null;
 
       if (exactMatches.length === 1) {
@@ -77,8 +82,9 @@ const ProductSelect = ({
       } else if (exactMatches.length > 1) {
         // if there are more than one exact match
         // then select one that matches productCode with search string
-        const matchedByProductCode = exactMatches
-          .find(({ productCode }) => productCode === searchTerm);
+        const matchedByProductCode = exactMatches.find(
+          ({ productCode }) => productCode === searchTerm,
+        );
         if (matchedByProductCode) exactMatchProduct = matchedByProductCode;
       }
 
@@ -89,7 +95,10 @@ const ProductSelect = ({
         /* There are cases when we want to call this callback right after the state change.
          * Wrapping this callback inside a setTimeout puts it in an event que just like the setState
          * unlike the regular code which is being executed immediately. */
-        setTimeout(() => onExactProductSelected({ product: exactMatchProduct }), 0);
+        setTimeout(
+          () => onExactProductSelected({ product: exactMatchProduct }),
+          0,
+        );
       }
       setIsExactMatch(false);
       setLoadedOptions([]);
@@ -115,9 +124,9 @@ const ProductSelect = ({
       loadOptions={props.loadOptions || loadProductOptions}
       onMenuClose={() => {
         setLoadedOptions([]);
-        setSearchTerm('');
+        setSearchTerm("");
       }}
-      filterOption={(item) => (item)}
+      filterOption={(item) => item}
       onEnterPress={onEnterPress}
       optionRenderer={Option}
       valueRenderer={SelectedValue}
@@ -126,7 +135,7 @@ const ProductSelect = ({
 };
 
 ProductSelect.defaultProps = {
-  className: 'text-left',
+  className: "text-left",
   openOnClick: true,
   autoload: true,
   cache: false,

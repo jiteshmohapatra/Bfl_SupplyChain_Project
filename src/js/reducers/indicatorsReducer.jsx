@@ -1,6 +1,6 @@
-import update from 'immutability-helper';
-import _ from 'lodash';
-import { arrayMove } from 'react-sortable-hoc';
+import update from "immutability-helper";
+import _ from "lodash";
+import { arrayMove } from "react-sortable-hoc";
 
 import {
   FETCH_CONFIG,
@@ -9,10 +9,14 @@ import {
   FETCH_NUMBERS,
   REMOVE_FROM_INDICATORS,
   REORDER_INDICATORS,
-  RESET_INDICATORS, SET_ACTIVE_CONFIG,
-} from 'actions/types';
-import { loadNumbersOptions } from 'consts/dataFormat/customGraphConfig';
-import { loadGraphColors, loadGraphOptions } from 'consts/dataFormat/graphConfig';
+  RESET_INDICATORS,
+  SET_ACTIVE_CONFIG,
+} from "actions/types";
+import { loadNumbersOptions } from "consts/dataFormat/customGraphConfig";
+import {
+  loadGraphColors,
+  loadGraphOptions,
+} from "consts/dataFormat/graphConfig";
 
 function arrayArchive(array = [], index) {
   let newArray = update(array, { $splice: [[index, 1]] });
@@ -39,7 +43,7 @@ const initialState = {
   data: [],
   numberData: [],
   config: {},
-  activeConfig: sessionStorage.getItem('dashboardKey') || 'personal',
+  activeConfig: sessionStorage.getItem("dashboardKey") || "personal",
 };
 
 export default function (state = initialState, action) {
@@ -47,10 +51,15 @@ export default function (state = initialState, action) {
     case FETCH_GRAPHS: {
       const { payload } = action;
       // Data formatting
-      if (payload.type === 'numbers' || payload.type === 'numberTable') {
+      if (payload.type === "numbers" || payload.type === "numberTable") {
         payload.options = loadNumbersOptions(payload);
       }
-      if (payload.type === 'bar' || payload.type === 'doughnut' || payload.type === 'horizontalBar' || payload.type === 'line') {
+      if (
+        payload.type === "bar" ||
+        payload.type === "doughnut" ||
+        payload.type === "horizontalBar" ||
+        payload.type === "line"
+      ) {
         payload.data.datasets = loadGraphColors(payload);
         payload.options = loadGraphOptions(payload);
       }
@@ -88,7 +97,7 @@ export default function (state = initialState, action) {
         numberData: [],
       };
     case REORDER_INDICATORS: {
-      if (action.payload.type === 'graph') {
+      if (action.payload.type === "graph") {
         return {
           ...state,
           data: arrayMove(
@@ -98,7 +107,7 @@ export default function (state = initialState, action) {
           ),
         };
       }
-      if (action.payload.type === 'number') {
+      if (action.payload.type === "number") {
         return {
           ...state,
           numberData: arrayMove(
@@ -111,13 +120,13 @@ export default function (state = initialState, action) {
       return state;
     }
     case REMOVE_FROM_INDICATORS: {
-      if (action.payload.type === 'graph') {
+      if (action.payload.type === "graph") {
         return {
           ...state,
           data: arrayArchive(state.data, action.payload.index),
         };
       }
-      if (action.payload.type === 'number') {
+      if (action.payload.type === "number") {
         return {
           ...state,
           numberData: arrayArchive(state.numberData, action.payload.index),

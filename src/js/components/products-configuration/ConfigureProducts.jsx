@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import ReactHtmlParser from 'react-html-parser';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import ReactHtmlParser from "react-html-parser";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions/index';
-import VerticalTabs from 'components/Layout/VerticalTabs';
-import ImportProducts from 'components/products-configuration/ImportProducts';
-import { PRODUCT_URL } from 'consts/applicationUrls';
-import apiClient from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions/index";
+import VerticalTabs from "components/Layout/VerticalTabs";
+import ImportProducts from "components/products-configuration/ImportProducts";
+import { PRODUCT_URL } from "consts/applicationUrls";
+import apiClient from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const INITIAL_STATE = {
   productOptions: {},
@@ -31,9 +31,10 @@ class ConfigureProducts extends Component {
   componentDidMount() {
     this.props.showSpinner();
 
-    const url = '/api/productsConfiguration/productOptions';
+    const url = "/api/productsConfiguration/productOptions";
 
-    apiClient.get(url)
+    apiClient
+      .get(url)
       .then((response) => {
         const productOptions = response.data.data;
 
@@ -49,29 +50,56 @@ class ConfigureProducts extends Component {
       return (
         <div className="d-flex flex-column align-items-center p-5">
           <h3>
-            <Translate id="react.productsConfiguration.importSuccess.label" defaultMessage="Import Complete!" />
+            <Translate
+              id="react.productsConfiguration.importSuccess.label"
+              defaultMessage="Import Complete!"
+            />
           </h3>
           <div className="my-3">
             <Translate id="react.productsConfiguration.importSuccessDetails.label" />
           </div>
           <div className="my-3">
             <Translate id="react.productsConfiguration.productListInfo1.label" />
-&nbsp;
-            <a className="font-weight-bold" target="_blank" rel="noopener noreferrer" href="https://openboxes.helpscoutdocs.com/article/27-product-configuration-basics">
-              <Translate id="react.productsConfiguration.basics.label" defaultMessage="Products Configuration Basics" />
+            &nbsp;
+            <a
+              className="font-weight-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://openboxes.helpscoutdocs.com/article/27-product-configuration-basics"
+            >
+              <Translate
+                id="react.productsConfiguration.basics.label"
+                defaultMessage="Products Configuration Basics"
+              />
             </a>
-&nbsp;
+            &nbsp;
             <Translate id="react.productsConfiguration.and.label" />
-&nbsp;
-            <a className="font-weight-bold" target="_blank" rel="noopener noreferrer" href="https://openboxes.helpscoutdocs.com/article/37-create-a-product">
-              <Translate id="react.productsConfiguration.createProduct.label" defaultMessage="Create a Product" />
+            &nbsp;
+            <a
+              className="font-weight-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://openboxes.helpscoutdocs.com/article/37-create-a-product"
+            >
+              <Translate
+                id="react.productsConfiguration.createProduct.label"
+                defaultMessage="Create a Product"
+              />
             </a>
             .&nbsp;
             <Translate id="react.productsConfiguration.productListInfo2.label" />
           </div>
           <div>
-            <a className="btn btn-primary" target="_blank" rel="noopener noreferrer" href={PRODUCT_URL.list()}>
-              <Translate id="react.productsConfiguration.viewProducts.label" defaultMessage="View Products List" />
+            <a
+              className="btn btn-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={PRODUCT_URL.list()}
+            >
+              <Translate
+                id="react.productsConfiguration.viewProducts.label"
+                defaultMessage="View Products List"
+              />
             </a>
           </div>
         </div>
@@ -88,7 +116,10 @@ class ConfigureProducts extends Component {
             className="btn btn-primary"
             onClick={() => this.importProduct(productName)}
           >
-            <Translate id="react.productsConfiguration.importProducts.label" defaultMessage="Import Products List" />
+            <Translate
+              id="react.productsConfiguration.importProducts.label"
+              defaultMessage="Import Products List"
+            />
           </button>
         </div>
       </div>
@@ -101,7 +132,9 @@ class ConfigureProducts extends Component {
       tabs[product.title] = this.getProductImportContent(product, productName);
     });
 
-    tabs[`${this.props.translate('react.productsConfiguration.importFromExcel.label', 'Import from Excel')}`] = <ImportProducts />;
+    tabs[
+      `${this.props.translate("react.productsConfiguration.importFromExcel.label", "Import from Excel")}`
+    ] = <ImportProducts />;
 
     return tabs;
   }
@@ -110,7 +143,8 @@ class ConfigureProducts extends Component {
     this.props.showSpinner();
     const url = `/api/productsConfiguration/importProducts?productOption=${productName}`;
 
-    apiClient.post(url)
+    apiClient
+      .post(url)
       .then(() => {
         this.props.hideSpinner();
         this.setState({ importSuccessful: true });
@@ -135,8 +169,15 @@ class ConfigureProducts extends Component {
           <VerticalTabs tabs={tabs} />
         </div>
         <div className="submit-buttons">
-          <button type="button" onClick={this.prevPage} className="btn btn-outline-primary float-left btn-xs">
-            <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+          <button
+            type="button"
+            onClick={this.prevPage}
+            className="btn btn-outline-primary float-left btn-xs"
+          >
+            <Translate
+              id="react.default.button.previous.label"
+              defaultMessage="Previous"
+            />
           </button>
         </div>
       </div>
@@ -148,7 +189,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(ConfigureProducts);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  ConfigureProducts,
+);
 
 ConfigureProducts.propTypes = {
   goToPage: PropTypes.func.isRequired,

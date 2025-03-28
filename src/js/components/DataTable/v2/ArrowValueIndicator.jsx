@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiArrowDownLine, RiArrowUpLine } from 'react-icons/all';
+import PropTypes from "prop-types";
+import { RiArrowDownLine, RiArrowUpLine } from "react-icons/all";
 
-import ArrowValueIndicatorVariant from 'consts/arrowValueIndicatorVariant';
-import useTranslate from 'hooks/useTranslate';
+import ArrowValueIndicatorVariant from "consts/arrowValueIndicatorVariant";
+import useTranslate from "hooks/useTranslate";
 
 const ArrowValueIndicator = ({ value, variant, showAbsoluteValue }) => {
   const translate = useTranslate();
@@ -18,7 +18,9 @@ const ArrowValueIndicator = ({ value, variant, showAbsoluteValue }) => {
     return (
       <div>
         <RiArrowUpLine size={18} className="arrow-value-indicator--positive" />
-        <span className="value-indicator value-indicator--positive">{valueToDisplay.toString()}</span>
+        <span className="value-indicator value-indicator--positive">
+          {valueToDisplay.toString()}
+        </span>
       </div>
     );
   }
@@ -26,8 +28,13 @@ const ArrowValueIndicator = ({ value, variant, showAbsoluteValue }) => {
   if (variant === ArrowValueIndicatorVariant.NEGATIVE) {
     return (
       <div>
-        <RiArrowDownLine size={18} className="arrow-value-indicator--negative" />
-        <span className="value-indicator value-indicator--negative">{valueToDisplay.toString()}</span>
+        <RiArrowDownLine
+          size={18}
+          className="arrow-value-indicator--negative"
+        />
+        <span className="value-indicator value-indicator--negative">
+          {valueToDisplay.toString()}
+        </span>
       </div>
     );
   }
@@ -35,7 +42,7 @@ const ArrowValueIndicator = ({ value, variant, showAbsoluteValue }) => {
   if (variant === ArrowValueIndicatorVariant.EQUAL) {
     return (
       <div className="px-2 py-1 value-indicator value-indicator--equal">
-        {translate('react.cycleCount.table.equal.label', 'EQUAL')}
+        {translate("react.cycleCount.table.equal.label", "EQUAL")}
       </div>
     );
   }
@@ -54,13 +61,8 @@ const ArrowValueIndicator = ({ value, variant, showAbsoluteValue }) => {
 export default ArrowValueIndicator;
 
 ArrowValueIndicator.propTypes = {
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
-  variant: PropTypes.oneOf(
-    Object.keys(ArrowValueIndicatorVariant),
-  ).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  variant: PropTypes.oneOf(Object.keys(ArrowValueIndicatorVariant)).isRequired,
   showAbsoluteValue: PropTypes.bool,
 };
 

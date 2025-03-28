@@ -1,9 +1,5 @@
-import React from 'react';
+import React from "react";
 
-const CycleCountToApprove = () => (
-  <div>
-    to approve
-  </div>
-);
+const CycleCountToApprove = () => <div>to approve</div>;
 
 export default CycleCountToApprove;

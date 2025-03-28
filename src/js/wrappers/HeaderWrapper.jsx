@@ -1,11 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const HeaderWrapper = ({ children, className }) => (
-  <div className={`d-flex list-page-header ${className}`}>
-    {children}
-  </div>
+  <div className={`d-flex list-page-header ${className}`}>{children}</div>
 );
 
 export default HeaderWrapper;
@@ -16,5 +14,5 @@ HeaderWrapper.propTypes = {
 };
 
 HeaderWrapper.defaultProps = {
-  className: '',
+  className: "",
 };

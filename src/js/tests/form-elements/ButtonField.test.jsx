@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import renderer from 'react-test-renderer';
+import renderer from "react-test-renderer";
 
-import ButtonField from 'components/form-elements/ButtonField';
-import { renderFormField } from 'utils/form-utils';
+import ButtonField from "components/form-elements/ButtonField";
+import { renderFormField } from "utils/form-utils";
 
-jest.mock('react-localize-redux', () => ({
+jest.mock("react-localize-redux", () => ({
   Translate: (props) => {
     const { id } = props;
 
@@ -13,27 +13,31 @@ jest.mock('react-localize-redux', () => ({
   },
 }));
 
-jest.mock('react-tippy');
+jest.mock("react-tippy");
 
-describe('ButtonField component is correctly rendering', () => {
-  it('string label', () => {
+describe("ButtonField component is correctly rendering", () => {
+  it("string label", () => {
     const fieldConfig = {
       type: ButtonField,
-      buttonLabel: 'button label',
+      buttonLabel: "button label",
     };
 
-    const rendered = renderer.create(renderFormField(fieldConfig, 'test-field'));
+    const rendered = renderer.create(
+      renderFormField(fieldConfig, "test-field"),
+    );
 
     expect(rendered.toJSON()).toMatchSnapshot();
   });
 
-  it('component label', () => {
+  it("component label", () => {
     const fieldConfig = {
       type: ButtonField,
       buttonLabel: () => <span>test label</span>,
     };
 
-    const rendered = renderer.create(renderFormField(fieldConfig, 'test-field'));
+    const rendered = renderer.create(
+      renderFormField(fieldConfig, "test-field"),
+    );
 
     expect(rendered.toJSON()).toMatchSnapshot();
   });

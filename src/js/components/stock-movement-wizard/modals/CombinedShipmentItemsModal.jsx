@@ -1,37 +1,37 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import update from 'immutability-helper';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import update from "immutability-helper";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import TextField from 'components/form-elements/TextField';
-import ProductSelect from 'components/product-select/ProductSelect';
-import { ORDER_URL } from 'consts/applicationUrls';
-import apiClient from 'utils/apiClient';
-import Checkbox from 'utils/Checkbox';
-import { formatProductSupplierSubtext } from 'utils/form-values-utils';
-import { debounceProductsInOrders } from 'utils/option-utils';
-import Select from 'utils/Select';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import TextField from "components/form-elements/TextField";
+import ProductSelect from "components/product-select/ProductSelect";
+import { ORDER_URL } from "consts/applicationUrls";
+import apiClient from "utils/apiClient";
+import Checkbox from "utils/Checkbox";
+import { formatProductSupplierSubtext } from "utils/form-values-utils";
+import { debounceProductsInOrders } from "utils/option-utils";
+import Select from "utils/Select";
+import { translateWithDefaultMessage } from "utils/Translate";
 
 const FIELDS = {
   orderItems: {
     type: ArrayField,
     arrowsNavigation: true,
-    maxTableHeight: 'calc(100vh - 500px)',
+    maxTableHeight: "calc(100vh - 500px)",
     fields: {
       checked: {
-        fieldKey: '',
-        label: 'react.stockMovement.selectAll.label',
-        defaultMessage: 'Select All',
-        flexWidth: '0.4',
-        headerAlign: 'right',
+        fieldKey: "",
+        label: "react.stockMovement.selectAll.label",
+        defaultMessage: "Select All",
+        flexWidth: "0.4",
+        headerAlign: "right",
         getDynamicAttr: ({ selectAllItems, allItemsSelected }) => ({
           headerHtml: () => (
             <input
@@ -44,12 +44,14 @@ const FIELDS = {
         }),
         type: ({
           // eslint-disable-next-line react/prop-types
-          rowIndex, fieldValue, selectRow,
+          rowIndex,
+          fieldValue,
+          selectRow,
         }) => (
           <Checkbox
             id={rowIndex.toString()}
             disabled={false}
-            style={{ marginLeft: '1.1rem' }}
+            style={{ marginLeft: "1.1rem" }}
             value={fieldValue.checked}
             onChange={(value) => selectRow(value, rowIndex)}
           />
@@ -57,14 +59,12 @@ const FIELDS = {
       },
       orderNumber: {
         type: LabelField,
-        label: 'react.stockMovement.orderNumber.label',
-        defaultMessage: 'PO Number',
-        flexWidth: '1',
-        fieldKey: '',
-        getDynamicAttr: ({
-          fieldValue,
-        }) => ({
-          url: fieldValue?.orderId ? ORDER_URL.show(fieldValue.orderId) : '',
+        label: "react.stockMovement.orderNumber.label",
+        defaultMessage: "PO Number",
+        flexWidth: "1",
+        fieldKey: "",
+        getDynamicAttr: ({ fieldValue }) => ({
+          url: fieldValue?.orderId ? ORDER_URL.show(fieldValue.orderId) : "",
         }),
         attributes: {
           formatValue: (fieldValue) => fieldValue && fieldValue.orderNumber,
@@ -72,17 +72,17 @@ const FIELDS = {
       },
       productCode: {
         type: LabelField,
-        label: 'react.stockMovement.productCode.label',
-        defaultMessage: 'Product Code',
-        flexWidth: '1',
+        label: "react.stockMovement.productCode.label",
+        defaultMessage: "Product Code",
+        flexWidth: "1",
       },
       productName: {
         type: LabelField,
-        label: 'react.stockMovement.productName.label',
-        defaultMessage: 'Product name',
-        flexWidth: '3',
+        label: "react.stockMovement.productName.label",
+        defaultMessage: "Product name",
+        flexWidth: "3",
         attributes: {
-          className: 'text-left ml-1',
+          className: "text-left ml-1",
         },
         getDynamicAttr: ({ values, rowIndex }) => {
           const orderItem = values.orderItems[rowIndex];
@@ -93,57 +93,57 @@ const FIELDS = {
           return {
             color: orderItem?.color,
             showValueTooltip: true,
-            tooltipValue: [orderItem?.productName, productSupplierName].join(' ')?.trim(),
+            tooltipValue: [orderItem?.productName, productSupplierName]
+              .join(" ")
+              ?.trim(),
             formatValue: () => orderItem?.displayName || orderItem?.productName,
           };
         },
       },
       supplierCode: {
         type: LabelField,
-        label: 'react.stockMovement.supplierCode.label',
-        defaultMessage: 'Supplier code',
-        flexWidth: '1',
+        label: "react.stockMovement.supplierCode.label",
+        defaultMessage: "Supplier code",
+        flexWidth: "1",
       },
       budgetCode: {
         type: LabelField,
-        label: 'react.stockMovement.budgetCode.label',
-        defaultMessage: 'Budget Code',
-        flexWidth: '1',
+        label: "react.stockMovement.budgetCode.label",
+        defaultMessage: "Budget Code",
+        flexWidth: "1",
       },
       recipient: {
         type: LabelField,
-        label: 'react.stockMovement.recipient.label',
-        defaultMessage: 'Recipient',
-        flexWidth: '1.5',
+        label: "react.stockMovement.recipient.label",
+        defaultMessage: "Recipient",
+        flexWidth: "1.5",
         attributes: {
           showValueTooltip: true,
         },
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.stockMovement.quantityAvailable.label',
-        defaultMessage: 'Quantity Available',
-        flexWidth: '1',
+        label: "react.stockMovement.quantityAvailable.label",
+        defaultMessage: "Quantity Available",
+        flexWidth: "1",
       },
       quantityToShip: {
         type: TextField,
-        label: 'react.stockMovement.quantityToShip.label',
-        defaultMessage: 'Quantity to Ship',
-        flexWidth: '1',
+        label: "react.stockMovement.quantityToShip.label",
+        defaultMessage: "Quantity to Ship",
+        flexWidth: "1",
         attributes: {
-          type: 'number',
+          type: "number",
         },
-        getDynamicAttr: ({
-          updateRow, values, rowIndex,
-        }) => ({
+        getDynamicAttr: ({ updateRow, values, rowIndex }) => ({
           onChange: () => updateRow(values, rowIndex),
         }),
       },
       uom: {
         type: LabelField,
-        label: 'react.stockMovement.uom.label',
-        defaultMessage: 'UoM',
-        flexWidth: '1',
+        label: "react.stockMovement.uom.label",
+        defaultMessage: "UoM",
+        flexWidth: "1",
       },
     },
   },
@@ -155,13 +155,13 @@ function validate(values) {
 
   _.forEach(values.orderItems, (item, key) => {
     if (
-      item.checked
-      && (
-        (_.toInteger(item.quantityToShip) > item.quantityAvailable)
-        || _.toInteger(item.quantityToShip) < 0
-      )
+      item.checked &&
+      (_.toInteger(item.quantityToShip) > item.quantityAvailable ||
+        _.toInteger(item.quantityToShip) < 0)
     ) {
-      errors.orderItems[key] = { quantityToShip: 'react.combinedShipments.errors.quantityToShip.label' };
+      errors.orderItems[key] = {
+        quantityToShip: "react.combinedShipments.errors.quantityToShip.label",
+      };
     }
   });
 
@@ -171,7 +171,7 @@ function validate(values) {
 const INITIAL_STATE = {
   orderNumberOptions: [],
   selectedOrders: [],
-  selectedProductId: '',
+  selectedProductId: "",
   selectedOrderItems: [],
   formValues: { orderItems: [] },
   sortOrder: 0,
@@ -219,7 +219,8 @@ class CombinedShipmentItemsModal extends Component {
     };
     const url = `/api/combinedShipmentItems/addToShipment/${shipment}`;
 
-    apiClient.post(url, payload)
+    apiClient
+      .post(url, payload)
       .then(() => {
         this.setState(INITIAL_STATE, () => {
           this.props.hideSpinner();
@@ -240,7 +241,9 @@ class CombinedShipmentItemsModal extends Component {
   getOrderNumberOptions() {
     const { vendor, destination } = this.props;
     const url = `/api/orderNumberOptions?vendor=${vendor}&destination=${destination}`;
-    apiClient.get(url).then((resp) => this.setState({ orderNumberOptions: resp.data.data }));
+    apiClient
+      .get(url)
+      .then((resp) => this.setState({ orderNumberOptions: resp.data.data }));
   }
 
   setSelectedOrders(selectedOrders) {
@@ -248,31 +251,39 @@ class CombinedShipmentItemsModal extends Component {
   }
 
   setSelectedProduct(selectedProduct) {
-    this.setState({
-      selectedProductId: selectedProduct ? selectedProduct.id : '',
-    }, () => this.fetchOrderItems());
+    this.setState(
+      {
+        selectedProductId: selectedProduct ? selectedProduct.id : "",
+      },
+      () => this.fetchOrderItems(),
+    );
   }
 
   fetchOrderItems() {
-    const { selectedOrders, selectedProductId, selectedOrderItems } = this.state;
+    const { selectedOrders, selectedProductId, selectedOrderItems } =
+      this.state;
     const { vendor, destination } = this.props;
-    const url = '/api/combinedShipmentItems/findOrderItems';
+    const url = "/api/combinedShipmentItems/findOrderItems";
     const payload = {
       orderIds: _.map(selectedOrders, (o) => o.id),
       productId: selectedProductId,
       vendor,
       destination,
     };
-    return apiClient.post(url, payload).then((resp) => this.setState({
-      formValues: {
-        orderItems: _.map(resp.data.orderItems, (item) => ({
-          ...item,
-          checked: !!selectedOrderItems[item.orderItemId],
-          quantityToShip: selectedOrderItems[item.orderItemId] ? selectedOrderItems[item.orderItemId].quantityToShip : '',
-          sortOrder: this.getSortOrder(),
-        })),
-      },
-    }));
+    return apiClient.post(url, payload).then((resp) =>
+      this.setState({
+        formValues: {
+          orderItems: _.map(resp.data.orderItems, (item) => ({
+            ...item,
+            checked: !!selectedOrderItems[item.orderItemId],
+            quantityToShip: selectedOrderItems[item.orderItemId]
+              ? selectedOrderItems[item.orderItemId].quantityToShip
+              : "",
+            sortOrder: this.getSortOrder(),
+          })),
+        },
+      }),
+    );
   }
 
   selectRow(value, rowIndex) {
@@ -284,8 +295,8 @@ class CombinedShipmentItemsModal extends Component {
             return {
               ...item,
               checked: value,
-              quantityToShip: value ? item.quantityAvailable : '',
-              sortOrder: value ? item.sortOrder : '',
+              quantityToShip: value ? item.quantityAvailable : "",
+              sortOrder: value ? item.sortOrder : "",
             };
           }
           return { ...item };
@@ -304,8 +315,10 @@ class CombinedShipmentItemsModal extends Component {
         selectedOrderItems: {
           ...selectedOrderItems,
           [formValues.orderItems[rowIndex].orderItemId]: {
-            quantityToShip: value ? formValues.orderItems[rowIndex].quantityAvailable : '',
-            sortOrder: value ? formValues.orderItems[rowIndex].sortOrder : '',
+            quantityToShip: value
+              ? formValues.orderItems[rowIndex].quantityAvailable
+              : "",
+            sortOrder: value ? formValues.orderItems[rowIndex].sortOrder : "",
           },
         },
       };
@@ -323,7 +336,10 @@ class CombinedShipmentItemsModal extends Component {
       }),
       selectedOrderItems: {
         ...selectedOrderItems,
-        [item.orderItemId]: { quantityToShip: item.quantityToShip, sortOrder: item.sortOrder },
+        [item.orderItemId]: {
+          quantityToShip: item.quantityToShip,
+          sortOrder: item.sortOrder,
+        },
       },
     });
   }
@@ -335,16 +351,19 @@ class CombinedShipmentItemsModal extends Component {
   selectAllItems() {
     const allItemsSelected = this.allItemsSelected();
     const { orderItems } = this.state.formValues;
-    this.setState({
-      formValues: {
-        orderItems: orderItems.map((item) => ({
-          ...item,
-          checked: !allItemsSelected,
-          quantityToShip: !allItemsSelected ? item.quantityAvailable : '',
-          sortOrder: !allItemsSelected ? item.sortOrder : '',
-        })),
+    this.setState(
+      {
+        formValues: {
+          orderItems: orderItems.map((item) => ({
+            ...item,
+            checked: !allItemsSelected,
+            quantityToShip: !allItemsSelected ? item.quantityAvailable : "",
+            sortOrder: !allItemsSelected ? item.sortOrder : "",
+          })),
+        },
       },
-    }, () => this.updateAllSelectedItems());
+      () => this.updateAllSelectedItems(),
+    );
   }
 
   updateAllSelectedItems() {
@@ -367,12 +386,9 @@ class CombinedShipmentItemsModal extends Component {
   }
 
   render() {
-    const {
-      orderNumberOptions, selectedOrders, formValues,
-    } = this.state;
-    const {
-      btnOpenText, btnOpenDefaultText, translate, btnOpenDisabled,
-    } = this.props;
+    const { orderNumberOptions, selectedOrders, formValues } = this.state;
+    const { btnOpenText, btnOpenDefaultText, translate, btnOpenDisabled } =
+      this.props;
 
     return (
       <ModalWrapper
@@ -399,7 +415,10 @@ class CombinedShipmentItemsModal extends Component {
         <div className="d-flex mb-3 justify-content-start align-items-center w-100 combined-shipment-filter">
           <Select
             fieldName="orderNumber"
-            placeholder={translate('react.combinedShipments.selectOrders.label', 'Select orders...')}
+            placeholder={translate(
+              "react.combinedShipments.selectOrders.label",
+              "Select orders...",
+            )}
             value={selectedOrders}
             multi
             options={orderNumberOptions}
@@ -413,7 +432,10 @@ class CombinedShipmentItemsModal extends Component {
           &nbsp;
           <ProductSelect
             showSelectedOptionColor
-            placeholder={translate('react.combinedShipments.selectProduct.label', 'Select product...')}
+            placeholder={translate(
+              "react.combinedShipments.selectProduct.label",
+              "Select product...",
+            )}
             loadOptions={this.debounceProductsInOrders}
             onChange={(value) => this.setSelectedProduct(value)}
           />
@@ -429,7 +451,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(CombinedShipmentItemsModal);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  CombinedShipmentItemsModal,
+);
 
 CombinedShipmentItemsModal.propTypes = {
   vendor: PropTypes.string.isRequired,
@@ -449,7 +473,7 @@ CombinedShipmentItemsModal.propTypes = {
 };
 
 CombinedShipmentItemsModal.defaultProps = {
-  btnOpenText: '',
-  btnOpenDefaultText: '',
+  btnOpenText: "",
+  btnOpenDefaultText: "",
   btnOpenDisabled: false,
 };

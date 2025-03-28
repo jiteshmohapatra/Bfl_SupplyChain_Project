@@ -1,19 +1,22 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiPrinterLine, RiSave2Line } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiPrinterLine, RiSave2Line } from "react-icons/ri";
 
-import Button from 'components/form-elements/Button';
-import { CYCLE_COUNT } from 'consts/applicationUrls';
-import { TO_RESOLVE_TAB } from 'consts/cycleCount';
-import FileFormat from 'consts/fileFormat';
-import useTranslate from 'hooks/useTranslate';
-import RedirectButton from 'utils/RedirectButton';
-import Translate from 'utils/Translate';
-import CustomTooltip from 'wrappers/CustomTooltip';
+import Button from "components/form-elements/Button";
+import { CYCLE_COUNT } from "consts/applicationUrls";
+import { TO_RESOLVE_TAB } from "consts/cycleCount";
+import FileFormat from "consts/fileFormat";
+import useTranslate from "hooks/useTranslate";
+import RedirectButton from "utils/RedirectButton";
+import Translate from "utils/Translate";
+import CustomTooltip from "wrappers/CustomTooltip";
 
 const ResolveStepHeader = ({
-  next, save, printRecountForm, refreshCountItems,
+  next,
+  save,
+  printRecountForm,
+  refreshCountItems,
 }) => {
   const translate = useTranslate();
 
@@ -34,14 +37,27 @@ const ResolveStepHeader = ({
             variant="primary-outline"
             StartIcon={<RiPrinterLine size={18} />}
           />
-          <div className="dropdown-menu dropdown-menu-right nav-item padding-8" aria-labelledby="dropdownMenuButton">
-            <a href="#" className="dropdown-item" onClick={() => printRecountForm(FileFormat.PDF)} role="button">
+          <div
+            className="dropdown-menu dropdown-menu-right nav-item padding-8"
+            aria-labelledby="dropdownMenuButton"
+          >
+            <a
+              href="#"
+              className="dropdown-item"
+              onClick={() => printRecountForm(FileFormat.PDF)}
+              role="button"
+            >
               <Translate
                 id="react.cycleCount.printRecountFormPdf.label"
                 defaultMessage="Print Recount Form PDF"
               />
             </a>
-            <a href="#" className="dropdown-item" onClick={() => printRecountForm(FileFormat.XLS)} role="button">
+            <a
+              href="#"
+              className="dropdown-item"
+              onClick={() => printRecountForm(FileFormat.XLS)}
+              role="button"
+            >
               <Translate
                 id="react.cycleCount.exportRecountSheet.label"
                 defaultMessage="Export Recount Sheet"
@@ -51,8 +67,8 @@ const ResolveStepHeader = ({
         </div>
         <CustomTooltip
           content={translate(
-            'react.cycleCount.table.refreshQuantitiesTooltip.label',
-            'Fix missing or transaction error on this product and Refresh to see updated discrepancies.',
+            "react.cycleCount.table.refreshQuantitiesTooltip.label",
+            "Fix missing or transaction error on this product and Refresh to see updated discrepancies.",
           )}
         >
           <Button

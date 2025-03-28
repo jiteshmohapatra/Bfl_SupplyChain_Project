@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const ListTableTitleWrapper = ({ children, className }) => (
-  <div className={`title-text p-3 d-flex justify-content-between align-items-center ${className}`}>
+  <div
+    className={`title-text p-3 d-flex justify-content-between align-items-center ${className}`}
+  >
     {children}
   </div>
 );
@@ -16,5 +18,5 @@ ListTableTitleWrapper.propTypes = {
 };
 
 ListTableTitleWrapper.defaultProps = {
-  className: '',
+  className: "",
 };

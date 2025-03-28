@@ -1,16 +1,13 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import CustomTooltip from 'wrappers/CustomTooltip';
+import CustomTooltip from "wrappers/CustomTooltip";
 
-import './utils.scss';
+import "./utils.scss";
 
 const Badge = ({ label, variant, tooltip }) => (
-  <CustomTooltip
-    content={label}
-    show={tooltip}
-  >
+  <CustomTooltip content={label} show={tooltip}>
     <span className={`badge ${variant}`}>{label}</span>
   </CustomTooltip>
 );

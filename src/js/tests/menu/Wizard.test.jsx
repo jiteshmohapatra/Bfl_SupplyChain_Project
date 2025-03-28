@@ -1,61 +1,57 @@
-import React from 'react';
+import React from "react";
 
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
-import renderer from 'react-test-renderer';
+import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
+import renderer from "react-test-renderer";
 
-import CreateInvoicePage from 'components/invoice/create/CreateInvoicePage';
-import Wizard from 'components/wizard/Wizard';
-import WizardPage from 'components/wizard/WizardPage';
-import WizardSteps from 'components/wizard/WizardSteps';
-import WizardTitle from 'components/wizard/WizardTitle';
+import CreateInvoicePage from "components/invoice/create/CreateInvoicePage";
+import Wizard from "components/wizard/Wizard";
+import WizardPage from "components/wizard/WizardPage";
+import WizardSteps from "components/wizard/WizardSteps";
+import WizardTitle from "components/wizard/WizardTitle";
 
-import store from '../../store';
+import store from "../../store";
 
 let renderedWizard;
 let renderedWizardPage;
 let renderedWizardSteps;
 let renderedWizardTitle;
 
-describe('wizard component', () => {
+describe("wizard component", () => {
   beforeEach(() => {
     const props = {
-      title: [{ title: '' }],
+      title: [{ title: "" }],
       currentPage: 1,
       prevPage: 1,
       pageList: [CreateInvoicePage],
-      stepList: ['Create', 'Add items', 'Confirm'],
+      stepList: ["Create", "Add items", "Confirm"],
     };
     renderedWizard = renderer.create(
       <Router>
-        <Provider
-          store={store}
-        >
+        <Provider store={store}>
           <Wizard {...props} />
         </Provider>
       </Router>,
     );
   });
 
-  it('should match snapshot', () => {
-    expect(renderedWizard.toJSON())
-      .toMatchSnapshot();
+  it("should match snapshot", () => {
+    expect(renderedWizard.toJSON()).toMatchSnapshot();
   });
 
-  it('should render component correctly', () => {
-    expect(renderedWizard.root.findByProps({ 'data-testid': 'content-wrap' }))
-      .toBeTruthy();
+  it("should render component correctly", () => {
+    expect(
+      renderedWizard.root.findByProps({ "data-testid": "content-wrap" }),
+    ).toBeTruthy();
   });
 });
 
-describe('wizardPage component', () => {
+describe("wizardPage component", () => {
   beforeEach(() => {
     renderedWizardPage = renderer.create(
       <Router>
-        <Provider
-          store={store}
-        >
+        <Provider store={store}>
           <WizardPage
             pageList={[CreateInvoicePage]}
             nextPage={CreateInvoicePage}
@@ -68,82 +64,84 @@ describe('wizardPage component', () => {
     );
   });
 
-  it('should match snapshot', () => {
-    expect(renderedWizardPage.toJSON())
-      .toMatchSnapshot();
+  it("should match snapshot", () => {
+    expect(renderedWizardPage.toJSON()).toMatchSnapshot();
   });
 
-  it('should render component correctly', () => {
-    expect(renderedWizardPage.root.findByProps({ 'data-testid': 'wizardPage' }))
-      .toBeTruthy();
+  it("should render component correctly", () => {
+    expect(
+      renderedWizardPage.root.findByProps({ "data-testid": "wizardPage" }),
+    ).toBeTruthy();
   });
 });
 
-describe('wizardSteps component', () => {
+describe("wizardSteps component", () => {
   beforeEach(() => {
     renderedWizardSteps = renderer.create(
       <Router>
-        <Provider
-          store={store}
-        >
-          <WizardSteps steps={['firstTestStep', 'secondTestStep']} currentStep={1} />
+        <Provider store={store}>
+          <WizardSteps
+            steps={["firstTestStep", "secondTestStep"]}
+            currentStep={1}
+          />
         </Provider>
       </Router>,
     );
   });
 
-  it('should match snapshot', () => {
-    expect(renderedWizardSteps.toJSON())
-      .toMatchSnapshot();
+  it("should match snapshot", () => {
+    expect(renderedWizardSteps.toJSON()).toMatchSnapshot();
   });
 
-  it('should have an active element', () => {
-    expect(renderedWizardSteps.root.findByProps({ 'data-stepstate': 'active' }))
-      .toBeTruthy();
+  it("should have an active element", () => {
+    expect(
+      renderedWizardSteps.root.findByProps({ "data-stepstate": "active" }),
+    ).toBeTruthy();
   });
 
-  it('should have an inactive element', () => {
-    expect(renderedWizardSteps.root.findByProps({ 'data-stepstate': 'inactive' }))
-      .toBeTruthy();
+  it("should have an inactive element", () => {
+    expect(
+      renderedWizardSteps.root.findByProps({ "data-stepstate": "inactive" }),
+    ).toBeTruthy();
   });
 });
 
-describe('wizardTitle component', () => {
+describe("wizardTitle component", () => {
   beforeEach(() => {
     renderedWizardTitle = renderer.create(
       <Router>
         <Provider store={store}>
-          <WizardTitle
-            title={[{ title: '' }]}
-          />
+          <WizardTitle title={[{ title: "" }]} />
         </Provider>
       </Router>,
     );
   });
 
-  it('should match snapshot', () => {
-    expect(renderedWizardTitle.toJSON())
-      .toMatchSnapshot();
+  it("should match snapshot", () => {
+    expect(renderedWizardTitle.toJSON()).toMatchSnapshot();
   });
 
-  it('should render component correctly', () => {
-    expect(renderedWizardTitle.root.findByProps({ 'data-testid': 'wizardTitle' }))
-      .toBeTruthy();
+  it("should render component correctly", () => {
+    expect(
+      renderedWizardTitle.root.findByProps({ "data-testid": "wizardTitle" }),
+    ).toBeTruthy();
   });
 
-  it('should display text correctly', () => {
+  it("should display text correctly", () => {
     render(
       <Router>
         <Provider store={store}>
-          <WizardTitle title={[{
-            title: '',
-            text: 'test',
-          }]}
+          <WizardTitle
+            title={[
+              {
+                title: "",
+                text: "test",
+              },
+            ]}
           />
         </Provider>
       </Router>,
     );
-    expect(screen.getByText('test'))
-      .toBeTruthy();
+    expect(screen.getByText("test")).toBeTruthy();
   });
 });

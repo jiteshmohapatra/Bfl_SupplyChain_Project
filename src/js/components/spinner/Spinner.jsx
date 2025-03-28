@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const Spinner = () => (
   <div className="d-flex w-100 h-100 justify-content-center align-items-center">

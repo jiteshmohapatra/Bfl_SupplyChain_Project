@@ -1,22 +1,22 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { useSelector } from "react-redux";
 
-import DateField from 'components/form-elements/v2/DateField';
-import SelectField from 'components/form-elements/v2/SelectField';
-import TextInput from 'components/form-elements/v2/TextInput';
-import Subsection from 'components/Layout/v2/Subsection';
-import StockMovementDirection from 'consts/StockMovementDirection';
-import { debounceLocationsFetch, debouncePeopleFetch } from 'utils/option-utils';
-import { FormErrorPropType } from 'utils/propTypes';
+import DateField from "components/form-elements/v2/DateField";
+import SelectField from "components/form-elements/v2/SelectField";
+import TextInput from "components/form-elements/v2/TextInput";
+import Subsection from "components/Layout/v2/Subsection";
+import StockMovementDirection from "consts/StockMovementDirection";
+import {
+  debounceLocationsFetch,
+  debouncePeopleFetch,
+} from "utils/option-utils";
+import { FormErrorPropType } from "utils/propTypes";
 
 const OutboundImportBasicDetails = ({ control, errors }) => {
-  const {
-    debounceTime,
-    minSearchLength,
-  } = useSelector((state) => ({
+  const { debounceTime, minSearchLength } = useSelector((state) => ({
     debounceTime: state.session.searchConfig.debounceTime,
     minSearchLength: state.session.searchConfig.minSearchLength,
   }));
@@ -34,7 +34,10 @@ const OutboundImportBasicDetails = ({ control, errors }) => {
 
   return (
     <Subsection
-      title={{ label: 'react.outboundImport.form.basicDetails.label', defaultMessage: 'Basic details' }}
+      title={{
+        label: "react.outboundImport.form.basicDetails.label",
+        defaultMessage: "Basic details",
+      }}
       collapsable={false}
     >
       <div className="row">
@@ -45,8 +48,8 @@ const OutboundImportBasicDetails = ({ control, errors }) => {
             render={({ field }) => (
               <TextInput
                 title={{
-                  id: 'react.outboundImport.form.description.title',
-                  defaultMessage: 'Description',
+                  id: "react.outboundImport.form.description.title",
+                  defaultMessage: "Description",
                 }}
                 errorMessage={errors.description?.message}
                 required
@@ -62,8 +65,8 @@ const OutboundImportBasicDetails = ({ control, errors }) => {
             render={({ field }) => (
               <SelectField
                 title={{
-                  id: 'react.outboundImport.form.origin.title',
-                  defaultMessage: 'Origin',
+                  id: "react.outboundImport.form.origin.title",
+                  defaultMessage: "Origin",
                 }}
                 placeholder="Select Origin"
                 required
@@ -83,8 +86,8 @@ const OutboundImportBasicDetails = ({ control, errors }) => {
             render={({ field }) => (
               <SelectField
                 title={{
-                  id: 'react.outboundImport.form.destination.title',
-                  defaultMessage: 'Destination',
+                  id: "react.outboundImport.form.destination.title",
+                  defaultMessage: "Destination",
                 }}
                 placeholder="Select Destination"
                 required
@@ -104,8 +107,8 @@ const OutboundImportBasicDetails = ({ control, errors }) => {
             render={({ field }) => (
               <SelectField
                 title={{
-                  id: 'react.outboundImport.form.requestedBy.title',
-                  defaultMessage: 'Requested By',
+                  id: "react.outboundImport.form.requestedBy.title",
+                  defaultMessage: "Requested By",
                 }}
                 required
                 hasErrors={Boolean(errors.requestedBy?.message)}
@@ -124,12 +127,12 @@ const OutboundImportBasicDetails = ({ control, errors }) => {
             render={({ field }) => (
               <DateField
                 title={{
-                  id: 'react.outboundImport.form.dateRequested.title',
-                  defaultMessage: 'Date Requested',
+                  id: "react.outboundImport.form.dateRequested.title",
+                  defaultMessage: "Date Requested",
                 }}
                 placeholder={{
-                  id: 'react.default.dateInput.placeholder.label',
-                  default: 'Select a date',
+                  id: "react.default.dateInput.placeholder.label",
+                  default: "Select a date",
                 }}
                 errorMessage={errors.dateRequested?.message}
                 required

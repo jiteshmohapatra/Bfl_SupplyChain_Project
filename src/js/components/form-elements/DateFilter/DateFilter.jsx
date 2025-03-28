@@ -1,25 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import DatePicker from 'react-datepicker';
-import { RiCalendarLine, RiCloseLine } from 'react-icons/ri';
-import { useSelector } from 'react-redux';
+import moment from "moment";
+import PropTypes from "prop-types";
+import DatePicker from "react-datepicker";
+import { RiCalendarLine, RiCloseLine } from "react-icons/ri";
+import { useSelector } from "react-redux";
 
-import BaseField from 'components/form-elements/BaseField';
-import DateFormat from 'consts/dateFormat';
-import Translate from 'utils/Translate';
-import { formatDate, getLocaleCode } from 'utils/translation-utils';
+import BaseField from "components/form-elements/BaseField";
+import DateFormat from "consts/dateFormat";
+import Translate from "utils/Translate";
+import { formatDate, getLocaleCode } from "utils/translation-utils";
 
-import 'react-datepicker/dist/react-datepicker.css';
-import 'components/form-elements/DateFilter/DateFilter.scss';
+import "react-datepicker/dist/react-datepicker.css";
+import "components/form-elements/DateFilter/DateFilter.scss";
 
 const CustomInput = React.forwardRef((props, ref) => {
   const {
-    onClick, title, value, placeholder, onClear, defaultMessage, formatDateToDisplay,
+    onClick,
+    title,
+    value,
+    placeholder,
+    onClear,
+    defaultMessage,
+    formatDateToDisplay,
   } = props;
   const onKeypressHandler = (event) => {
-    if (event.key === 'Enter') onClick();
+    if (event.key === "Enter") onClick();
   };
 
   return (
@@ -36,15 +42,20 @@ const CustomInput = React.forwardRef((props, ref) => {
         <span>{formatDateToDisplay(value) || placeholder}</span>
       </span>
       <div className="date-picker__icon-wrapper">
-        {
-          value
-            ? (
-              <button aria-label="Pick date" type="button" className="date-picker__icon" onClick={onClear}>
-                <RiCloseLine />
-              </button>
-            )
-            : <div className="date-picker__icon"><RiCalendarLine /></div>
-        }
+        {value ? (
+          <button
+            aria-label="Pick date"
+            type="button"
+            className="date-picker__icon"
+            onClick={onClear}
+          >
+            <RiCloseLine />
+          </button>
+        ) : (
+          <div className="date-picker__icon">
+            <RiCalendarLine />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -52,8 +63,15 @@ const CustomInput = React.forwardRef((props, ref) => {
 
 const DateFilter = (props) => {
   const {
-    value, onChange, dateFormat, placeholder, label, timeFormat, defaultMessage,
-    localizeDate, localizedDateFormat,
+    value,
+    onChange,
+    dateFormat,
+    placeholder,
+    label,
+    timeFormat,
+    defaultMessage,
+    localizeDate,
+    localizedDateFormat,
   } = props;
   const { localeCode, formatLocalizedDate } = useSelector((state) => ({
     localeCode: getLocaleCode(state.localize),
@@ -84,8 +102,8 @@ const DateFilter = (props) => {
 
   const onFocus = () => setIsFocused(true);
 
-  const isFocusedClass = isFocused ? 'date-picker__wrapper--focused' : '';
-  const isValidClass = value ? 'date-picker__wrapper--valid' : '';
+  const isFocusedClass = isFocused ? "date-picker__wrapper--focused" : "";
+  const isValidClass = value ? "date-picker__wrapper--valid" : "";
 
   const selectedDate = value ? moment(value, dateFormat) : null;
   const highlightedDates = [selectedDate || moment(new Date(), dateFormat)];
@@ -93,16 +111,19 @@ const DateFilter = (props) => {
   const localeCodeToDisplay = localizeDate ? localeCode : null;
 
   return (
-    <div className={`date-picker__wrapper ${isFocusedClass} ${isValidClass}`} data-testid="date-filter">
+    <div
+      className={`date-picker__wrapper ${isFocusedClass} ${isValidClass}`}
+      data-testid="date-filter"
+    >
       <DatePicker
         {...props}
-        customInput={(
+        customInput={
           <CustomInput
             formatDateToDisplay={formatDateToDisplay}
             onClear={onClear}
             defaultMessage={defaultMessage}
           />
-        )}
+        }
         className="date-picker__input"
         placeholderText={placeholder}
         title={label}
@@ -128,19 +149,16 @@ const DateFilter = (props) => {
 };
 
 const DateFilterBaseInput = (props) => (
-  <BaseField
-    {...props}
-    renderInput={DateFilter}
-  />
+  <BaseField {...props} renderInput={DateFilter} />
 );
 
 DateFilter.defaultProps = {
   onChange: undefined,
-  label: '',
-  defaultMessage: '',
-  placeholder: '',
-  dateFormat: 'MM/DD/YYYY',
-  timeFormat: 'HH:mm',
+  label: "",
+  defaultMessage: "",
+  placeholder: "",
+  dateFormat: "MM/DD/YYYY",
+  timeFormat: "HH:mm",
   value: null,
   localizeDate: false,
   localizedDateFormat: DateFormat.DEFAULT,

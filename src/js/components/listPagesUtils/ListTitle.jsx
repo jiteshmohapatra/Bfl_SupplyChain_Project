@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 const ListTitle = ({ label }) => (
   <span className="d-flex align-self-center title">

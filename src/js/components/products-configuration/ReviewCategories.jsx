@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import fileDownload from 'js-file-download';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import fileDownload from "js-file-download";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import { CATEGORY_URL } from 'consts/applicationUrls';
-import apiClient from 'utils/apiClient';
-import Translate from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import { CATEGORY_URL } from "consts/applicationUrls";
+import apiClient from "utils/apiClient";
+import Translate from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const INITIAL_STATE = {
   categoriesCount: 0,
@@ -27,7 +27,8 @@ class ReviewCategories extends Component {
 
   getCategoriesCount() {
     this.props.showSpinner();
-    apiClient.get('/api/productsConfiguration/categoriesCount')
+    apiClient
+      .get("/api/productsConfiguration/categoriesCount")
       .then((response) => {
         this.setState(
           { categoriesCount: response.data ? response.data.data : 0 },
@@ -39,18 +40,17 @@ class ReviewCategories extends Component {
 
   downloadCategories = () => {
     this.props.showSpinner();
-    apiClient.get('/api/productsConfiguration/downloadCategories')
+    apiClient
+      .get("/api/productsConfiguration/downloadCategories")
       .then((response) => {
-        fileDownload(response.data, 'Categories.csv', 'text/csv');
+        fileDownload(response.data, "Categories.csv", "text/csv");
         this.props.hideSpinner();
       })
       .catch(() => this.props.hideSpinner());
-  }
+  };
 
   render() {
-    const {
-      initialValues, previousPage, nextPage,
-    } = this.props;
+    const { initialValues, previousPage, nextPage } = this.props;
     const { categoriesCount } = this.state;
 
     return (
@@ -60,24 +60,45 @@ class ReviewCategories extends Component {
             {categoriesCount > 0 ? (
               <div className="d-flex flex-column justify-content-middle align-items-center col-6 offset-3">
                 <h3>
-                  <Translate id="react.productsConfiguration.importSuccess.label" defaultMessage="Import Complete!" />
+                  <Translate
+                    id="react.productsConfiguration.importSuccess.label"
+                    defaultMessage="Import Complete!"
+                  />
                 </h3>
-                <span style={{ textAlign: 'center' }}>
+                <span style={{ textAlign: "center" }}>
                   <Translate id="react.productsConfiguration.successfulCategoriesImport.message" />
                 </span>
-                <button type="button" onClick={this.downloadCategories} className="btn btn-outline-primary float-right mt-3">
-                  <Translate id="react.productsConfiguration.downloadCsvFile.label" defaultMessage="Download CSV file" />
+                <button
+                  type="button"
+                  onClick={this.downloadCategories}
+                  className="btn btn-outline-primary float-right mt-3"
+                >
+                  <Translate
+                    id="react.productsConfiguration.downloadCsvFile.label"
+                    defaultMessage="Download CSV file"
+                  />
                 </button>
-                <a href={CATEGORY_URL.tree()} className="btn btn-primary float-right mt-3" rel="noopener noreferrer" target="_blank">
-                  <Translate id="react.productsConfiguration.viewCategoryPage.label" defaultMessage="View Category Page" />
+                <a
+                  href={CATEGORY_URL.tree()}
+                  className="btn btn-primary float-right mt-3"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <Translate
+                    id="react.productsConfiguration.viewCategoryPage.label"
+                    defaultMessage="View Category Page"
+                  />
                 </a>
               </div>
             ) : (
               <div className="d-flex flex-column justify-content-middle align-items-center col-6 offset-3">
                 <h3>
-                  <Translate id="react.productsConfiguration.missingCategories.title" defaultMessage="No categories found" />
+                  <Translate
+                    id="react.productsConfiguration.missingCategories.title"
+                    defaultMessage="No categories found"
+                  />
                 </h3>
-                <span style={{ textAlign: 'center' }}>
+                <span style={{ textAlign: "center" }}>
                   <Translate id="react.productsConfiguration.missingCategories.message" />
                 </span>
               </div>
@@ -85,11 +106,25 @@ class ReviewCategories extends Component {
           </div>
         </div>
         <div className="submit-buttons">
-          <button type="button" onClick={() => previousPage(initialValues)} className="btn btn-outline-primary float-left btn-xs">
-            <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+          <button
+            type="button"
+            onClick={() => previousPage(initialValues)}
+            className="btn btn-outline-primary float-left btn-xs"
+          >
+            <Translate
+              id="react.default.button.previous.label"
+              defaultMessage="Previous"
+            />
           </button>
-          <button type="button" onClick={() => nextPage(initialValues)} className="btn btn-outline-primary float-right btn-xs">
-            <Translate id="react.default.button.next.label" defaultMessage="Next" />
+          <button
+            type="button"
+            onClick={() => nextPage(initialValues)}
+            className="btn btn-outline-primary float-right btn-xs"
+          >
+            <Translate
+              id="react.default.button.next.label"
+              defaultMessage="Next"
+            />
           </button>
         </div>
       </div>

@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import Modal from 'react-modal';
+import PropTypes from "prop-types";
+import Modal from "react-modal";
 
-import RejectRequestModalContent from 'components/stock-movement/modals/RejectRequestModalContent';
-import RejectRequestModalHeader from 'components/stock-movement/modals/RejectRequestModalHeader';
+import RejectRequestModalContent from "components/stock-movement/modals/RejectRequestModalContent";
+import RejectRequestModalHeader from "components/stock-movement/modals/RejectRequestModalHeader";
 
-import 'components/stock-movement/modals/RejectRequestModal.scss';
+import "components/stock-movement/modals/RejectRequestModal.scss";
 
 const RejectRequestModal = ({
   request,

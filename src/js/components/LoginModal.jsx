@@ -1,33 +1,34 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import store from 'store';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import store from "store";
 
-import apiClient from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import apiClient from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
 
 class LoginForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
     };
 
     this.onLogin = this.onLogin.bind(this);
   }
 
   onLogin() {
-    const url = '/api/login';
+    const url = "/api/login";
     const payload = {
       username: this.state.username,
       password: this.state.password,
     };
 
-    apiClient.post(url, payload)
+    apiClient
+      .post(url, payload)
       .then(() => {
         this.setUserLocation().then(() => {
           this.props.onClose();
@@ -49,7 +50,7 @@ class LoginForm extends Component {
         <div className="login-modal-header px-3 py-2">
           <span>
             <i className="fa fa-unlock-alt pr-2" />
-            {this.props.translate('react.default.login.label', 'Login')}
+            {this.props.translate("react.default.login.label", "Login")}
           </span>
         </div>
         <div className="px-3">
@@ -58,7 +59,10 @@ class LoginForm extends Component {
             name="username"
             type="text"
             className="form-control my-2"
-            placeholder={this.props.translate('react.default.username.placeholder', 'email or username')}
+            placeholder={this.props.translate(
+              "react.default.username.placeholder",
+              "email or username",
+            )}
             value={this.state.username}
             onChange={(event) => {
               this.setState({ username: event.target.value });
@@ -69,7 +73,10 @@ class LoginForm extends Component {
             name="password"
             type="password"
             className="form-control my-2"
-            placeholder={this.props.translate('react.default.password.placeholder', 'password')}
+            placeholder={this.props.translate(
+              "react.default.password.placeholder",
+              "password",
+            )}
             value={this.state.password}
             onChange={(event) => {
               this.setState({ password: event.target.value });
@@ -81,7 +88,7 @@ class LoginForm extends Component {
             disabled={!this.state.username || !this.state.password}
             onClick={this.onLogin}
           >
-            {this.props.translate('react.default.button.login.label', 'Login')}
+            {this.props.translate("react.default.button.login.label", "Login")}
           </button>
         </div>
       </div>
@@ -102,6 +109,6 @@ const mapStateToProps = (state) => ({
 
 const ConnectedLoginForm = connect(mapStateToProps)(LoginForm);
 
-const LoginModal = (props) => (<ConnectedLoginForm {...props} store={store} />);
+const LoginModal = (props) => <ConnectedLoginForm {...props} store={store} />;
 
 export default LoginModal;

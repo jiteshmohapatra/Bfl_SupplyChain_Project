@@ -2,7 +2,7 @@ import {
   FETCH_ATTRIBUTES,
   FETCH_PREFERENCE_TYPES,
   FETCH_RATING_TYPE_OPTIONS,
-} from 'actions/types';
+} from "actions/types";
 
 const initialState = {
   preferenceTypes: [],

@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { defaults } from 'react-chartjs-2';
-import { connect } from 'react-redux';
-import { SortableContainer } from 'react-sortable-hoc';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { defaults } from "react-chartjs-2";
+import { connect } from "react-redux";
+import { SortableContainer } from "react-sortable-hoc";
 
 import {
   addToIndicators,
@@ -14,85 +14,86 @@ import {
   reloadIndicator,
   reorderIndicators,
   resetIndicators,
-} from 'actions';
-import Filter from 'components/dashboard/Filter';
-import GraphCard from 'components/dashboard/GraphCard';
-import LoadingNumbers from 'components/dashboard/LoadingNumbers';
-import NumberCard from 'components/dashboard/NumberCard';
-import UnarchiveIndicators from 'components/dashboard/UnarchiveIndicators';
-import apiClient from 'utils/apiClient';
-import Translate from 'utils/Translate';
+} from "actions";
+import Filter from "components/dashboard/Filter";
+import GraphCard from "components/dashboard/GraphCard";
+import LoadingNumbers from "components/dashboard/LoadingNumbers";
+import NumberCard from "components/dashboard/NumberCard";
+import UnarchiveIndicators from "components/dashboard/UnarchiveIndicators";
+import apiClient from "utils/apiClient";
+import Translate from "utils/Translate";
 
-import 'react-table/react-table.css';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import 'components/dashboard/Dashboard.scss';
+import "react-table/react-table.css";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "components/dashboard/Dashboard.scss";
 // Disable charts legends by default.
 defaults.scale.ticks.beginAtZero = true;
 
 // TODO: OBPIH-4385 Refactor/Split this file into separate components
 
 // eslint-disable-next-line no-shadow
-const SortableCards = SortableContainer(({
-  data, loadIndicator, allLocations, personalDashboardActive,
-}) => (
-  <div className="card-component">
-    {data.map((value, index) =>
-      (value
-        && (
-        <GraphCard
-          key={`item-${value.id}`}
-          index={index}
-          cardId={value.id}
-          widgetId={value.widgetId}
-          cardTitle={value.title}
-          cardType={value.type}
-          cardLink={value.link}
-          cardInfo={value.info}
-          data={value.data}
-          timeFilter={value.timeFilter}
-          timeLimit={value.timeLimit}
-          locationFilter={value.locationFilter}
-          yearTypeFilter={value.yearTypeFilter}
-          options={value.options}
-          loadIndicator={loadIndicator}
-          allLocations={allLocations}
-          size={value.size}
-          disabled={!personalDashboardActive}
-          hideDraghandle={!personalDashboardActive}
-        />
-        )
-      ))}
-  </div>
-));
+const SortableCards = SortableContainer(
+  ({ data, loadIndicator, allLocations, personalDashboardActive }) => (
+    <div className="card-component">
+      {data.map(
+        (value, index) =>
+          value && (
+            <GraphCard
+              key={`item-${value.id}`}
+              index={index}
+              cardId={value.id}
+              widgetId={value.widgetId}
+              cardTitle={value.title}
+              cardType={value.type}
+              cardLink={value.link}
+              cardInfo={value.info}
+              data={value.data}
+              timeFilter={value.timeFilter}
+              timeLimit={value.timeLimit}
+              locationFilter={value.locationFilter}
+              yearTypeFilter={value.yearTypeFilter}
+              options={value.options}
+              loadIndicator={loadIndicator}
+              allLocations={allLocations}
+              size={value.size}
+              disabled={!personalDashboardActive}
+              hideDraghandle={!personalDashboardActive}
+            />
+          ),
+      )}
+    </div>
+  ),
+);
 
-const SortableNumberCards = SortableContainer(({ data, personalDashboardActive }) => (
-  <div className="card-component">
-    {data.map((value, index) => (
-      (value
-        && (
-        <NumberCard
-          key={`item-${value.id}`}
-          index={index}
-          widgetId={value.widgetId}
-          cardTitle={value.title}
-          cardNumberType={value.numberType}
-          cardNumber={value.number}
-          cardSubtitle={value.subtitle}
-          cardLink={value.link}
-          cardDataTooltip={value.tooltipData}
-          cardInfo={value.info}
-          sparklineData={value.data}
-          disabled={!personalDashboardActive}
-          hideDraghandle={!personalDashboardActive}
-        />
-        )
-      )
-    ))}
-  </div>
-));
+const SortableNumberCards = SortableContainer(
+  ({ data, personalDashboardActive }) => (
+    <div className="card-component">
+      {data.map(
+        (value, index) =>
+          value && (
+            <NumberCard
+              key={`item-${value.id}`}
+              index={index}
+              widgetId={value.widgetId}
+              cardTitle={value.title}
+              cardNumberType={value.numberType}
+              cardNumber={value.number}
+              cardSubtitle={value.subtitle}
+              cardLink={value.link}
+              cardDataTooltip={value.tooltipData}
+              cardInfo={value.info}
+              sparklineData={value.data}
+              disabled={!personalDashboardActive}
+              hideDraghandle={!personalDashboardActive}
+            />
+          ),
+      )}
+    </div>
+  ),
+);
 
 const ArchiveIndicator = ({ hideArchive }) => (
-  <div className={hideArchive ? 'archive-div hide-archive' : 'archive-div'}>
+  <div className={hideArchive ? "archive-div hide-archive" : "archive-div"}>
     <span>
       <Translate
         id="react.dashboard.archive.label"
@@ -104,56 +105,66 @@ const ArchiveIndicator = ({ hideArchive }) => (
 );
 
 const ConfigurationsList = ({
-  configs, activeConfig, loadConfigData, showNav, toggleNav, configModified, updateConfig,
+  configs,
+  activeConfig,
+  loadConfigData,
+  showNav,
+  toggleNav,
+  configModified,
+  updateConfig,
 }) => {
   if (!configs) {
     return null;
   }
   return (
-    <div className={`configs-left-nav ${!showNav ? 'hidden' : ''}`}>
+    <div className={`configs-left-nav ${!showNav ? "hidden" : ""}`}>
       <button type="button" className="toggle-nav" onClick={toggleNav}>
-        {showNav
-          ? <i className="fa fa-chevron-left" aria-hidden="true" />
-          : <i className="fa fa-chevron-right" aria-hidden="true" />}
+        {showNav ? (
+          <i className="fa fa-chevron-left" aria-hidden="true" />
+        ) : (
+          <i className="fa fa-chevron-right" aria-hidden="true" />
+        )}
       </button>
       <ul className="configs-list">
         {Object.entries(configs).map(([key, value]) => (
-          <li className={`configs-list-item ${activeConfig === key ? 'active' : ''}`} key={key}>
+          <li
+            className={`configs-list-item ${activeConfig === key ? "active" : ""}`}
+            key={key}
+          >
             <button type="button" onClick={() => loadConfigData(key)}>
               <i className="fa fa-bar-chart" aria-hidden="true" />
-              <Translate id={`react.dashboard.${key}.label`} defaultMessage={value.name} />
+              <Translate
+                id={`react.dashboard.${key}.label`}
+                defaultMessage={value.name}
+              />
             </button>
           </li>
         ))}
       </ul>
-      {
-        (activeConfig === 'personal' && configModified)
-          ? (
-            <div className="update-section">
-              <div className="division-line" />
-              <span>
-                <i className="fa fa-info-circle" aria-hidden="true" />
-                <Translate
-                  id="react.dashboard.hasBeenEdited.message"
-                  defaultMessage="The dashboard layout has been edited"
-                />
-              </span>
-              <button type="button" onClick={updateConfig}>
-                <i className="fa fa-floppy-o" aria-hidden="true" />
-                <Translate
-                  id="react.dashboard.saveConfiguration.label"
-                  defaultMessage="Save configuration"
-                />
-              </button>
-            </div>
-          )
-          : null
-      }
+      {activeConfig === "personal" && configModified ? (
+        <div className="update-section">
+          <div className="division-line" />
+          <span>
+            <i className="fa fa-info-circle" aria-hidden="true" />
+            <Translate
+              id="react.dashboard.hasBeenEdited.message"
+              defaultMessage="The dashboard layout has been edited"
+            />
+          </span>
+          <button type="button" onClick={updateConfig}>
+            <i className="fa fa-floppy-o" aria-hidden="true" />
+            <Translate
+              id="react.dashboard.saveConfiguration.label"
+              defaultMessage="Save configuration"
+            />
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };
 
-const MAIN_DASHBOARD_CONFIG = 'mainDashboard';
+const MAIN_DASHBOARD_CONFIG = "mainDashboard";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -173,8 +184,10 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    if (this.props.currentLocation !== '') {
-      this.getSubdashboardKeys().then(() => this.fetchData(this.determineActiveConfig()));
+    if (this.props.currentLocation !== "") {
+      this.getSubdashboardKeys().then(() =>
+        this.fetchData(this.determineActiveConfig()),
+      );
     }
     this.loadPageFilters(this.props.activeConfig);
   }
@@ -183,16 +196,21 @@ class Dashboard extends Component {
     const prevLocation = prevProps.currentLocation;
     const newLocation = this.props.currentLocation;
     if (prevLocation !== newLocation) {
-      this.getSubdashboardKeys().then(() => this.fetchData(this.determineActiveConfig()));
+      this.getSubdashboardKeys().then(() =>
+        this.fetchData(this.determineActiveConfig()),
+      );
     }
-    if (prevProps.dashboardConfig.dashboard !== this.props.dashboardConfig.dashboard) {
+    if (
+      prevProps.dashboardConfig.dashboard !==
+      this.props.dashboardConfig.dashboard
+    ) {
       this.loadPageFilters(this.props.activeConfig);
     }
   }
 
   getDashboardIdFromParams() {
     const dashboardId = this.props.match.params.configId;
-    if (dashboardId && dashboardId !== 'index') {
+    if (dashboardId && dashboardId !== "index") {
       return dashboardId;
     }
     return MAIN_DASHBOARD_CONFIG;
@@ -201,44 +219,51 @@ class Dashboard extends Component {
   getSubdashboardKeys() {
     const dashboardId = this.getDashboardIdFromParams();
     const url = `/api/dashboard/${dashboardId}/subdashboardKeys`;
-    return apiClient.get(url)
-      .then((res) => {
-        const subdashboardKeys = res.data;
-        if (subdashboardKeys) {
-          this.setState({ subdashboardKeys });
-        }
-      });
+    return apiClient.get(url).then((res) => {
+      const subdashboardKeys = res.data;
+      if (subdashboardKeys) {
+        this.setState({ subdashboardKeys });
+      }
+    });
   }
 
   determineActiveConfig() {
-    if (this.props.match.params.configId && this.props.match.params.configId !== 'index') {
+    if (
+      this.props.match.params.configId &&
+      this.props.match.params.configId !== "index"
+    ) {
       return this.props.match.params.configId;
     }
-    const configFromSessionStorage = sessionStorage.getItem('dashboardKey');
+    const configFromSessionStorage = sessionStorage.getItem("dashboardKey");
     // eslint-disable-next-line max-len
-    if (configFromSessionStorage && this.state.subdashboardKeys.includes(configFromSessionStorage)) {
+    if (
+      configFromSessionStorage &&
+      this.state.subdashboardKeys.includes(configFromSessionStorage)
+    ) {
       return configFromSessionStorage;
     }
-    return 'personal';
+    return "personal";
   }
 
   dataFetched = false;
 
-  loadPageFilters(config = '') {
+  loadPageFilters(config = "") {
     let pageFilters = [];
     if (this.props.dashboardConfig.dashboard) {
-      const allPages = Object.entries(this.props.dashboardConfig.dashboard)
-        .map(([key, value]) => [key, value]);
+      const allPages = Object.entries(this.props.dashboardConfig.dashboard).map(
+        ([key, value]) => [key, value],
+      );
       allPages.forEach((page) => {
         if (page[1].filters) {
-          const filters = Object.entries(page[1].filters)
-            .map(([keyFilter, valueFilter]) => {
+          const filters = Object.entries(page[1].filters).map(
+            ([keyFilter, valueFilter]) => {
               const filter = {
                 name: keyFilter,
                 endpoint: valueFilter.endpoint,
               };
               return filter;
-            });
+            },
+          );
           if (filters.length > 0 && page[0] === config) {
             pageFilters = filters;
           }
@@ -249,19 +274,19 @@ class Dashboard extends Component {
   }
 
   fetchLocations() {
-    const url = '/api/dashboard/fillRateDestinations';
+    const url = "/api/dashboard/fillRateDestinations";
 
-    return apiClient.get(url)
-      .then((response) => {
-        this.setState({
-          allLocations: response.data.data
-            .sort((a, b) => a.id.localeCompare(b.id)),
-        });
+    return apiClient.get(url).then((response) => {
+      this.setState({
+        allLocations: response.data.data.sort((a, b) =>
+          a.id.localeCompare(b.id),
+        ),
       });
+    });
   }
 
-  fetchData = (config = 'personal') => {
-    sessionStorage.setItem('dashboardKey', config);
+  fetchData = (config = "personal") => {
+    sessionStorage.setItem("dashboardKey", config);
     this.props.resetIndicators();
     if (this.props.dashboardConfig && this.props.dashboardConfig.dashboard) {
       this.props.fetchIndicators(
@@ -293,7 +318,7 @@ class Dashboard extends Component {
       widgets.push({ widgetId: widgetData.widgetId, order: index + 1 });
     });
 
-    const url = '/api/dashboard/config';
+    const url = "/api/dashboard/config";
     const payload = {
       ...this.props.dashboardConfig.dashboard,
       [this.props.activeConfig]: {
@@ -309,8 +334,12 @@ class Dashboard extends Component {
   };
 
   loadIndicator = (widgetId, params) => {
-    const dashboardConf = this.props.dashboardConfig.dashboard[this.props.activeConfig];
-    const widget = _.find(dashboardConf.widgets, (w) => w.widgetId === widgetId);
+    const dashboardConf =
+      this.props.dashboardConfig.dashboard[this.props.activeConfig];
+    const widget = _.find(
+      dashboardConf.widgets,
+      (w) => w.widgetId === widgetId,
+    );
     const widgetConf = {
       ...this.props.dashboardConfig.dashboardWidgets[widgetId],
       ...widget,
@@ -327,12 +356,16 @@ class Dashboard extends Component {
   };
 
   sortEndHandle = ({ oldIndex, newIndex }, e, type) => {
-    const maxHeight = window.innerHeight - (((6 * window.innerHeight) / 100) + 80);
+    const maxHeight =
+      window.innerHeight - ((6 * window.innerHeight) / 100 + 80);
     if (e.clientY > maxHeight) {
-      e.target.id = 'archive';
+      e.target.id = "archive";
     }
     this.props.reorderIndicators({ oldIndex, newIndex }, e, type);
-    if (this.props.activeConfig === 'personal' && (oldIndex !== newIndex || e.target.id === 'archive')) {
+    if (
+      this.props.activeConfig === "personal" &&
+      (oldIndex !== newIndex || e.target.id === "archive")
+    ) {
       this.setState({
         configModified: true,
         isDragging: false,
@@ -343,16 +376,17 @@ class Dashboard extends Component {
   };
 
   sortEndHandleNumber = ({ oldIndex, newIndex }, e) => {
-    this.sortEndHandle({ oldIndex, newIndex }, e, 'number');
+    this.sortEndHandle({ oldIndex, newIndex }, e, "number");
   };
 
   sortEndHandleGraph = ({ oldIndex, newIndex }, e) => {
-    this.sortEndHandle({ oldIndex, newIndex }, e, 'graph');
+    this.sortEndHandle({ oldIndex, newIndex }, e, "graph");
   };
 
   unarchiveHandler = () => {
-    const size = _.size(this.props.dashboardConfig.dashboardWidgets)
-      - (this.props.indicatorsData.length + this.props.numberData.length);
+    const size =
+      _.size(this.props.dashboardConfig.dashboardWidgets) -
+      (this.props.indicatorsData.length + this.props.numberData.length);
 
     if (size) {
       this.setState((prev) => ({ showPopout: !prev.showPopout }));
@@ -366,25 +400,33 @@ class Dashboard extends Component {
     const widgetConf = {
       ...widget,
       widgetId,
-      order: (widget.type === 'number' ? this.props.numberData.length : this.props.indicatorsData.length) + 1,
+      order:
+        (widget.type === "number"
+          ? this.props.numberData.length
+          : this.props.indicatorsData.length) + 1,
     };
-    this.props.addToIndicators(widgetConf, this.props.currentLocation, this.props.currentUser);
+    this.props.addToIndicators(
+      widgetConf,
+      this.props.currentLocation,
+      this.props.currentUser,
+    );
 
-    const size = _.size(this.props.dashboardConfig.dashboardWidgets)
-      - (this.props.indicatorsData.length + this.props.numberData.length);
+    const size =
+      _.size(this.props.dashboardConfig.dashboardWidgets) -
+      (this.props.indicatorsData.length + this.props.numberData.length);
 
-    if (this.props.activeConfig === 'personal') {
+    if (this.props.activeConfig === "personal") {
       this.setState({
         configModified: true,
-        showPopout: (size > 0),
+        showPopout: size > 0,
       });
     } else {
-      this.setState({ showPopout: (size > 0) });
+      this.setState({ showPopout: size > 0 });
     }
   };
 
   isPersonalDashboardActive() {
-    return this.props.activeConfig === 'personal';
+    return this.props.activeConfig === "personal";
   }
 
   render() {
@@ -417,7 +459,7 @@ class Dashboard extends Component {
           updateConfig={this.updateConfig}
         />
         <div
-          className={`overlay ${this.state.showNav ? 'visible' : ''}`}
+          className={`overlay ${this.state.showNav ? "visible" : ""}`}
           aria-label="button"
           role="button"
           tabIndex={0}
@@ -444,8 +486,7 @@ class Dashboard extends Component {
               personalDashboardActive={isPersonalDashboardActive}
             />
             <ArchiveIndicator hideArchive={!this.state.isDragging} />
-            {isPersonalDashboardActive
-              && (
+            {isPersonalDashboardActive && (
               <UnarchiveIndicators
                 graphData={this.props.indicatorsData}
                 numberData={this.props.numberData}
@@ -455,7 +496,7 @@ class Dashboard extends Component {
                 unarchiveHandler={this.unarchiveHandler}
                 handleAdd={this.handleAdd}
               />
-              )}
+            )}
           </div>
         </div>
       </div>
@@ -483,24 +524,28 @@ export default connect(mapStateToProps, {
 })(Dashboard);
 
 Dashboard.defaultProps = {
-  currentLocation: '',
-  currentUser: '',
+  currentLocation: "",
+  currentUser: "",
   indicatorsData: null,
   numberData: [],
   match: {
-    params: { configId: 'personal' },
+    params: { configId: "personal" },
   },
 };
 
 Dashboard.propTypes = {
   fetchIndicators: PropTypes.func.isRequired,
   reorderIndicators: PropTypes.func.isRequired,
-  indicatorsData: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
-  })),
-  numberData: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number,
-  })),
+  indicatorsData: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+    }),
+  ),
+  numberData: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+    }),
+  ),
   dashboardConfig: PropTypes.shape({
     dashboard: PropTypes.shape({}),
     dashboardWidgets: PropTypes.shape({}),

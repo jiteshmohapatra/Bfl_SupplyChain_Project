@@ -1,15 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 
-import BadgeCount from 'components/Filter/BadgeCount';
-import Translate from 'utils/Translate';
+import BadgeCount from "components/Filter/BadgeCount";
+import Translate from "utils/Translate";
 
-const FilterVisibilityToggler = ({ filtersHidden, amountFilled, setFiltersHidden }) => {
+const FilterVisibilityToggler = ({
+  filtersHidden,
+  amountFilled,
+  setFiltersHidden,
+}) => {
   const labelAttributes = filtersHidden
-    ? { id: 'react.button.showFilters.label', defaultMessage: 'Show Filters' }
-    : { id: 'react.button.hideFilters.label', defaultMessage: 'Hide Filters' };
+    ? { id: "react.button.showFilters.label", defaultMessage: "Show Filters" }
+    : { id: "react.button.hideFilters.label", defaultMessage: "Hide Filters" };
 
   return (
     <button
@@ -20,8 +24,8 @@ const FilterVisibilityToggler = ({ filtersHidden, amountFilled, setFiltersHidden
       <span className="hide-filters-label">
         <Translate {...labelAttributes} />
       </span>
-      { amountFilled > 0 && <BadgeCount count={amountFilled} />}
-      { filtersHidden ? <RiArrowDownSLine /> : <RiArrowUpSLine /> }
+      {amountFilled > 0 && <BadgeCount count={amountFilled} />}
+      {filtersHidden ? <RiArrowDownSLine /> : <RiArrowUpSLine />}
     </button>
   );
 };

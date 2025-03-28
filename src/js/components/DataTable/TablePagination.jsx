@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import PropTypes from 'prop-types';
-import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Select from 'react-select';
+import PropTypes from "prop-types";
+import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Select from "react-select";
 
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { translateWithDefaultMessage } from "utils/Translate";
 
 const TablePagination = (props) => {
   const [currentPage, setCurrentPage] = useState(props.page + 1);
@@ -31,30 +31,35 @@ const TablePagination = (props) => {
     setCurrentPage(e.target.valueAsNumber);
   };
   const changePageOnKeyPressHandler = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       props.onPageChange(currentPage - 1);
     }
   };
 
   const totalDataSize = props.totalData || props.resolvedData.length;
-  const rangeNumberFrom = (props.page * props.pageSize) + 1;
-  let rangeNumberTo = (props.page * props.pageSize) + props.pageSize;
+  const rangeNumberFrom = props.page * props.pageSize + 1;
+  let rangeNumberTo = props.page * props.pageSize + props.pageSize;
   if (totalDataSize < rangeNumberTo) {
     rangeNumberTo = totalDataSize;
   }
 
   const pageSizeSelectOptions = props.pageSizeOptions.map((size) => ({
-    label: `${size} ${props.translate('react.reactTable.pagination.rows.label', 'rows')}`,
+    label: `${size} ${props.translate("react.reactTable.pagination.rows.label", "rows")}`,
     value: size,
   }));
-  const selectedPageSizeOption = pageSizeSelectOptions.find(({ value }) =>
-    value === props.pageSize);
+  const selectedPageSizeOption = pageSizeSelectOptions.find(
+    ({ value }) => value === props.pageSize,
+  );
 
   return (
-    <div className={`table-pagination d-flex flex-row align-items-center justify-content-between py-2 px-3 ${props.className}`}>
+    <div
+      className={`table-pagination d-flex flex-row align-items-center justify-content-between py-2 px-3 ${props.className}`}
+    >
       <div className="d-flex">
         <span>{`${rangeNumberFrom}-${rangeNumberTo}`}</span>
-        <span className="mx-1">{props.translate('react.reactTable.pagination.of.label', 'of')}</span>
+        <span className="mx-1">
+          {props.translate("react.reactTable.pagination.of.label", "of")}
+        </span>
         <span>{totalDataSize}</span>
       </div>
       <div className="d-flex pages-selector">
@@ -76,7 +81,9 @@ const TablePagination = (props) => {
               onChange={changePageOnChangeHandler}
               onKeyPress={changePageOnKeyPressHandler}
             />
-            <span className="mx-1">{props.translate('react.reactTable.pagination.of.label', 'of')}</span>
+            <span className="mx-1">
+              {props.translate("react.reactTable.pagination.of.label", "of")}
+            </span>
             <span>{props.pages}</span>
           </span>
           <button
@@ -109,7 +116,7 @@ const mapStateToProps = (state) => ({
 
 TablePagination.defaultProps = {
   totalData: undefined,
-  className: '',
+  className: "",
 };
 
 TablePagination.propTypes = {

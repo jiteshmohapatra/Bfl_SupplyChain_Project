@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import FilterForm from 'components/Filter/FilterForm';
-import { debouncePeopleFetch } from 'utils/option-utils';
+import FilterForm from "components/Filter/FilterForm";
+import { debouncePeopleFetch } from "utils/option-utils";
 
 const StockTransferListFilters = ({
   setFilterParams,

@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import { hideUserActions, showUserActions } from 'actions';
+import { hideUserActions, showUserActions } from "actions";
 
 class UserActionMenu extends Component {
   constructor(props) {
@@ -22,9 +22,7 @@ class UserActionMenu extends Component {
 
   render() {
     return (
-      <div
-        className="user-action-menu"
-      >
+      <div className="user-action-menu">
         <button
           type="button"
           className="btn btn-light ml-1"
@@ -33,10 +31,7 @@ class UserActionMenu extends Component {
           {`${this.props.currentUser.username} [${this.props.highestRole}]`}
         </button>
 
-        <ul
-          className="dropdown"
-          hidden={!this.props.userActionMenuOpen}
-        >
+        <ul className="dropdown" hidden={!this.props.userActionMenuOpen}>
           {this.props.menuItems.map((item) => (
             <li key={item.label}>
               <a href={item.linkAction}>
@@ -65,11 +60,13 @@ export default connect(mapStateToProps, {
 
 UserActionMenu.propTypes = {
   // List of action items for the user action menu
-  menuItems: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
-    linkIcon: PropTypes.string.isRequired,
-    linkAction: PropTypes.string.isRequired,
-  }).isRequired).isRequired,
+  menuItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      linkIcon: PropTypes.string.isRequired,
+      linkAction: PropTypes.string.isRequired,
+    }).isRequired,
+  ).isRequired,
   // Current user
   currentUser: PropTypes.shape({
     username: PropTypes.string.isRequired,

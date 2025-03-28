@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import _ from 'lodash';
+import _ from "lodash";
 
 const usePreferenceTypeVariationsFiltering = ({ errors, updatedRows }) => {
   const [isFiltered, setIsFiltered] = useState(false);
@@ -18,11 +18,16 @@ const usePreferenceTypeVariationsFiltering = ({ errors, updatedRows }) => {
 
   const filterForInvalidRows = (filter, row) => isRowInvalid(row._index);
 
-  const getFilterMethod = (filter, row) => (isFiltered ? filterForInvalidRows(filter, row) : true);
+  const getFilterMethod = (filter, row) =>
+    isFiltered ? filterForInvalidRows(filter, row) : true;
 
   const invalidRowCount = Object.keys(errors).filter(isRowInvalid).length;
 
-  const getTablePageSize = (allRowsCount, invalidRowsCount, isFilteringApplied) => {
+  const getTablePageSize = (
+    allRowsCount,
+    invalidRowsCount,
+    isFilteringApplied,
+  ) => {
     const dataCount = isFilteringApplied ? invalidRowsCount : allRowsCount;
     return dataCount <= 4 ? 4 : dataCount;
   };
@@ -31,7 +36,11 @@ const usePreferenceTypeVariationsFiltering = ({ errors, updatedRows }) => {
     isFiltered,
     setIsFiltered,
     invalidRowCount,
-    tablePageSize: getTablePageSize(updatedRows?.length, invalidRowCount, isFiltered),
+    tablePageSize: getTablePageSize(
+      updatedRows?.length,
+      invalidRowCount,
+      isFiltered,
+    ),
     getFilterMethod,
     triggerFiltering,
   };

@@ -1,11 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const ListTableWrapper = ({ children, className }) => (
-  <div className={`list-page-list-section ${className}`}>
-    {children}
-  </div>
+  <div className={`list-page-list-section ${className}`}>{children}</div>
 );
 
 export default ListTableWrapper;
@@ -16,5 +14,5 @@ ListTableWrapper.propTypes = {
 };
 
 ListTableWrapper.defaultProps = {
-  className: '',
+  className: "",
 };

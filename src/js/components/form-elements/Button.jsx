@@ -1,9 +1,9 @@
 /* eslint-disable react/button-has-type */
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 const Button = ({
   label,
@@ -18,19 +18,21 @@ const Button = ({
   className,
   customRef,
 }) => {
-  const buttonClass = 'd-flex justify-content-around align-items-center gap-8';
+  const buttonClass = "d-flex justify-content-around align-items-center gap-8";
   const variantClass = `${variant}-button`;
-  const dropDownClass = `${isDropdown ? 'dropdown-toggle' : ''}`;
+  const dropDownClass = `${isDropdown ? "dropdown-toggle" : ""}`;
 
   return (
     <button
-      className={[variantClass, buttonClass, dropDownClass, className].join(' ')}
+      className={[variantClass, buttonClass, dropDownClass, className].join(
+        " ",
+      )}
       disabled={disabled}
       type={type}
       onClick={onClick}
-      data-toggle={isDropdown && 'dropdown'}
-      aria-haspopup={isDropdown && 'true'}
-      aria-expanded={isDropdown && 'false'}
+      data-toggle={isDropdown && "dropdown"}
+      aria-haspopup={isDropdown && "true"}
+      aria-expanded={isDropdown && "false"}
       ref={customRef}
     >
       <>
@@ -50,11 +52,11 @@ Button.propTypes = {
   disabled: PropTypes.bool,
   type: PropTypes.string,
   variant: PropTypes.oneOf([
-    'primary',
-    'secondary',
-    'transparent',
-    'primary-outline',
-    'grayed',
+    "primary",
+    "secondary",
+    "transparent",
+    "primary-outline",
+    "grayed",
   ]),
   onClick: PropTypes.func,
   EndIcon: PropTypes.element,
@@ -70,11 +72,11 @@ Button.propTypes = {
 Button.defaultProps = {
   disabled: false,
   isDropdown: false,
-  type: 'button',
-  variant: 'primary',
+  type: "button",
+  variant: "primary",
   onClick: undefined,
   EndIcon: null,
   StartIcon: null,
-  className: '',
+  className: "",
   customRef: null,
 };

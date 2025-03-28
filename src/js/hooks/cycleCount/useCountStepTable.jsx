@@ -1,23 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 
-import { createColumnHelper } from '@tanstack/react-table';
-import _ from 'lodash';
-import { RiDeleteBinLine, RiErrorWarningLine } from 'react-icons/ri';
-import { useSelector } from 'react-redux';
-import { Tooltip } from 'react-tippy';
+import { createColumnHelper } from "@tanstack/react-table";
+import _ from "lodash";
+import { RiDeleteBinLine, RiErrorWarningLine } from "react-icons/ri";
+import { useSelector } from "react-redux";
+import { Tooltip } from "react-tippy";
 
-import { TableCell } from 'components/DataTable';
-import TableHeaderCell from 'components/DataTable/TableHeaderCell';
-import DateField from 'components/form-elements/v2/DateField';
-import SelectField from 'components/form-elements/v2/SelectField';
-import TextInput from 'components/form-elements/v2/TextInput';
-import cycleCountColumn from 'consts/cycleCountColumn';
-import { DateFormat } from 'consts/timeFormat';
-import useArrowsNavigation from 'hooks/useArrowsNavigation';
-import useTranslate from 'hooks/useTranslate';
-import groupBinLocationsByZone from 'utils/groupBinLocationsByZone';
-import { checkBinLocationSupport } from 'utils/supportedActivitiesUtils';
-import CustomTooltip from 'wrappers/CustomTooltip';
+import { TableCell } from "components/DataTable";
+import TableHeaderCell from "components/DataTable/TableHeaderCell";
+import DateField from "components/form-elements/v2/DateField";
+import SelectField from "components/form-elements/v2/SelectField";
+import TextInput from "components/form-elements/v2/TextInput";
+import cycleCountColumn from "consts/cycleCountColumn";
+import { DateFormat } from "consts/timeFormat";
+import useArrowsNavigation from "hooks/useArrowsNavigation";
+import useTranslate from "hooks/useTranslate";
+import groupBinLocationsByZone from "utils/groupBinLocationsByZone";
+import { checkBinLocationSupport } from "utils/supportedActivitiesUtils";
+import CustomTooltip from "wrappers/CustomTooltip";
 
 // Managing state for single table, mainly table configuration (from count step)
 const useCountStepTable = ({
@@ -55,8 +55,10 @@ const useCountStepTable = ({
     }
   }, [refreshFocusCounter]);
 
-  const showBinLocation = useMemo(() =>
-    checkBinLocationSupport(currentLocation.supportedActivities), [currentLocation?.id]);
+  const showBinLocation = useMemo(
+    () => checkBinLocationSupport(currentLocation.supportedActivities),
+    [currentLocation?.id],
+  );
 
   // Get appropriate input component based on table column
   const getFieldComponent = (fieldName) => {
@@ -75,17 +77,17 @@ const useCountStepTable = ({
   // the rest of the inputs should be text
   const getFieldType = (fieldName) => {
     if (fieldName === cycleCountColumn.QUANTITY_COUNTED) {
-      return 'number';
+      return "number";
     }
 
-    return 'text';
+    return "text";
   };
 
   // Get field props, for the binLocation dropdown we have to pass options
   const getFieldProps = (fieldName) => {
     if (fieldName === cycleCountColumn.BIN_LOCATION && showBinLocation) {
       return {
-        labelKey: 'name',
+        labelKey: "name",
         options: groupBinLocationsByZone(binLocations),
       };
     }
@@ -101,7 +103,7 @@ const useCountStepTable = ({
 
   // this function is required because there is a problem with getValue
   const getValueToDisplay = (id, value) => {
-    const columnPath = id.replaceAll('_', '.');
+    const columnPath = id.replaceAll("_", ".");
     if (columnPath === cycleCountColumn.EXPIRATION_DATE) {
       return formatLocalizedDate(value, DateFormat.DD_MMM_YYYY);
     }
@@ -118,17 +120,16 @@ const useCountStepTable = ({
   };
 
   const defaultColumn = {
-    cell: ({
-      row: { original, index }, column: { id }, table,
-    }) => {
-      const columnPath = id.replaceAll('_', '.');
+    cell: ({ row: { original, index }, column: { id }, table }) => {
+      const columnPath = id.replaceAll("_", ".");
       const initialValue = _.get(tableData, `[${index}].${columnPath}`);
       const [value, setValue] = useState(initialValue);
 
-      const isFieldEditable = !original.id.includes('newRow') && ![
-        cycleCountColumn.QUANTITY_COUNTED,
-        cycleCountColumn.COMMENT,
-      ].includes(id);
+      const isFieldEditable =
+        !original.id.includes("newRow") &&
+        ![cycleCountColumn.QUANTITY_COUNTED, cycleCountColumn.COMMENT].includes(
+          id,
+        );
 
       // We shouldn't allow users edit fetched data (only quantity counted and comment are editable)
       if (!isStepEditable) {
@@ -139,7 +140,9 @@ const useCountStepTable = ({
         );
       }
 
-      const errorMessage = validationErrors?.[cycleCountId]?.errors?.[index]?.[columnPath]?._errors;
+      const errorMessage =
+        validationErrors?.[cycleCountId]?.errors?.[index]?.[columnPath]
+          ?._errors;
       const [error, setError] = useState(errorMessage);
       // If the value at the end of entering data is the same as it was initially,
       // we don't want to trigger rerender
@@ -150,9 +153,14 @@ const useCountStepTable = ({
           return;
         }
         if (columnPath === cycleCountColumn.QUANTITY_COUNTED) {
-          const parsedValue = value ? (parseInt(value, 10) || 0) : value;
+          const parsedValue = value ? parseInt(value, 10) || 0 : value;
           setValue(parsedValue);
-          table.options.meta?.updateData(cycleCountId, original.id, id, parsedValue);
+          table.options.meta?.updateData(
+            cycleCountId,
+            original.id,
+            id,
+            parsedValue,
+          );
           setError(null);
           triggerValidation();
           return;
@@ -211,7 +219,7 @@ const useCountStepTable = ({
 
       // Checks if the row is a new one (i.e., added by user and contains 'newRow' in id),
       // and if yes, allow navigation through `newRowFocusableCells`.
-      const isNewRow = (row) => row?.id?.includes('newRow');
+      const isNewRow = (row) => row?.id?.includes("newRow");
 
       const { handleKeyDown } = useArrowsNavigation({
         newRowFocusableCells,
@@ -229,8 +237,14 @@ const useCountStepTable = ({
           className="rt-td rt-td-count-step pb-0"
           tooltip={showTooltip}
           tooltipForm={showTooltip}
-          tooltipClassname={showTooltip && 'bin-location-tooltip'}
-          tooltipLabel={value?.name || translate('react.cycleCount.table.binLocation.label', 'Bin Location')}
+          tooltipClassname={showTooltip && "bin-location-tooltip"}
+          tooltipLabel={
+            value?.name ||
+            translate(
+              "react.cycleCount.table.binLocation.label",
+              "Bin Location",
+            )
+          }
         >
           <Component
             disabled={isFieldEditable}
@@ -238,7 +252,7 @@ const useCountStepTable = ({
             value={value}
             onChange={onChange}
             onBlur={onBlur}
-            className={`m-1 hide-arrows ${showTooltip ? 'w-99' : 'w-75'} ${error && 'border border-danger input-has-error'}`}
+            className={`m-1 hide-arrows ${showTooltip ? "w-99" : "w-75"} ${error && "border border-danger input-has-error"}`}
             showErrorBorder={error}
             hideErrorMessageWrapper
             onKeyDown={(e) => handleKeyDown(e, index, columnPath)}
@@ -265,11 +279,16 @@ const useCountStepTable = ({
 
   const columns = [
     columnHelper.accessor(
-      (row) => (row?.binLocation?.label ? row?.binLocation : row.binLocation?.name), {
+      (row) =>
+        row?.binLocation?.label ? row?.binLocation : row.binLocation?.name,
+      {
         id: cycleCountColumn.BIN_LOCATION,
         header: () => (
           <TableHeaderCell className="rt-th-count-step">
-            {translate('react.cycleCount.table.binLocation.label', 'Bin Location')}
+            {translate(
+              "react.cycleCount.table.binLocation.label",
+              "Bin Location",
+            )}
           </TableHeaderCell>
         ),
         meta: {
@@ -281,7 +300,10 @@ const useCountStepTable = ({
     columnHelper.accessor(cycleCountColumn.LOT_NUMBER, {
       header: () => (
         <TableHeaderCell className="rt-th-count-step">
-          {translate('react.cycleCount.table.lotNumber.label', 'Serial / Lot Number')}
+          {translate(
+            "react.cycleCount.table.lotNumber.label",
+            "Serial / Lot Number",
+          )}
         </TableHeaderCell>
       ),
       meta: {
@@ -291,20 +313,26 @@ const useCountStepTable = ({
     columnHelper.accessor(cycleCountColumn.EXPIRATION_DATE, {
       header: () => (
         <TableHeaderCell>
-          {translate('react.cycleCount.table.expirationDate.label', 'Expiration Date')}
+          {translate(
+            "react.cycleCount.table.expirationDate.label",
+            "Expiration Date",
+          )}
         </TableHeaderCell>
       ),
       meta: {
         flexWidth: 100,
         getCellContext: () => ({
-          className: 'split-table-right',
+          className: "split-table-right",
         }),
       },
     }),
     columnHelper.accessor(cycleCountColumn.QUANTITY_COUNTED, {
       header: () => (
         <TableHeaderCell className="rt-th-count-step">
-          {translate('react.cycleCount.table.quantityCounted.label', 'Quantity Counted')}
+          {translate(
+            "react.cycleCount.table.quantityCounted.label",
+            "Quantity Counted",
+          )}
         </TableHeaderCell>
       ),
       meta: {
@@ -314,7 +342,7 @@ const useCountStepTable = ({
     columnHelper.accessor(cycleCountColumn.COMMENT, {
       header: () => (
         <TableHeaderCell className="rt-th-count-step">
-          {translate('react.cycleCount.table.comment.label', 'Comment')}
+          {translate("react.cycleCount.table.comment.label", "Comment")}
         </TableHeaderCell>
       ),
       meta: {
@@ -332,26 +360,27 @@ const useCountStepTable = ({
             duration="250"
             hideDelay="50"
             className="text-overflow-ellipsis"
-            html={(
+            html={
               <span className="p-2">
-                {translate('react.default.button.delete.label', 'Delete')}
+                {translate("react.default.button.delete.label", "Delete")}
               </span>
-            )}
+            }
             disabled={original.id}
           >
-            {(original.id.includes('newRow') || original.custom) && isStepEditable && (
-              <RiDeleteBinLine
-                className="cursor-pointer"
-                onClick={() => removeRow(cycleCountId, original.id)}
-                size={22}
-              />
-            )}
+            {(original.id.includes("newRow") || original.custom) &&
+              isStepEditable && (
+                <RiDeleteBinLine
+                  className="cursor-pointer"
+                  onClick={() => removeRow(cycleCountId, original.id)}
+                  size={22}
+                />
+              )}
           </Tooltip>
         </TableCell>
       ),
       meta: {
         getCellContext: () => ({
-          className: 'count-step-actions',
+          className: "count-step-actions",
         }),
         flexWidth: 25,
       },

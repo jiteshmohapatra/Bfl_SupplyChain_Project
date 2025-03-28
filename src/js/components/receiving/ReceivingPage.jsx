@@ -1,24 +1,23 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import queryString from "query-string";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import queryString from 'query-string';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import PartialReceivingPage from "components/receiving/PartialReceivingPage";
+import ReceivingCheckScreen from "components/receiving/ReceivingCheckScreen";
+import Wizard from "components/wizard/Wizard";
+import DateFormat from "consts/dateFormat";
+import receivingSortOptions from "consts/receivingSortOptions";
+import apiClient, { parseResponse } from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import PartialReceivingPage from 'components/receiving/PartialReceivingPage';
-import ReceivingCheckScreen from 'components/receiving/ReceivingCheckScreen';
-import Wizard from 'components/wizard/Wizard';
-import DateFormat from 'consts/dateFormat';
-import receivingSortOptions from 'consts/receivingSortOptions';
-import apiClient, { parseResponse } from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
-
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "components/stock-movement-wizard/StockMovement.scss";
 
 /** Main partial receiving form's component. */
 class ReceivingPage extends Component {
@@ -28,15 +27,15 @@ class ReceivingPage extends Component {
     this.state = {
       bins: [],
       formData: {},
-      locationId: '',
-      shipmentNumber: '',
+      locationId: "",
+      shipmentNumber: "",
       currentPage: 1,
       sort: receivingSortOptions[0].value,
     };
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'partialReceiving');
+    this.props.fetchTranslations("", "partialReceiving");
 
     if (this.props.partialReceivingTranslationsFetched) {
       this.dataFetched = true;
@@ -47,7 +46,7 @@ class ReceivingPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'partialReceiving');
+      this.props.fetchTranslations(nextProps.locale, "partialReceiving");
     }
 
     if (nextProps.partialReceivingTranslationsFetched && !this.dataFetched) {
@@ -66,8 +65,11 @@ class ReceivingPage extends Component {
 
   get stepList() {
     return [
-      this.props.translate('react.partialReceiving.receiving.label', 'Receiving'),
-      this.props.translate('react.partialReceiving.check.label', 'Check'),
+      this.props.translate(
+        "react.partialReceiving.receiving.label",
+        "Receiving",
+      ),
+      this.props.translate("react.partialReceiving.check.label", "Check"),
     ];
   }
 
@@ -81,40 +83,37 @@ class ReceivingPage extends Component {
     if (!formData.shipment) {
       return [];
     }
-    const dateShipped = moment(formData.dateShipped).format('MM/DD/YYYY');
+    const dateShipped = moment(formData.dateShipped).format("MM/DD/YYYY");
     return [
       {
-        text: `${this.props.translate('react.partialReceiving.receiving.label', 'Receiving')}`,
-        color: '#000000',
-        delimeter: ' | ',
+        text: `${this.props.translate("react.partialReceiving.receiving.label", "Receiving")}`,
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: formData.shipment.shipmentNumber,
-        color: '#000000',
-        delimeter: ' - ',
+        color: "#000000",
+        delimeter: " - ",
       },
       {
         text: formData.origin.name,
-        color: '#004d40',
-        delimeter: ` ${this.props.translate('react.default.to.label', 'to')} `,
+        color: "#004d40",
+        delimeter: ` ${this.props.translate("react.default.to.label", "to")} `,
       },
       {
         text: formData.destination.name,
-        color: '#01579b',
-        delimeter: ', ',
+        color: "#01579b",
+        delimeter: ", ",
       },
       {
-        text: this.props.formatLocalizedDate(
-          dateShipped,
-          DateFormat.COMMON,
-        ),
-        color: '#4a148c',
-        delimeter: ', ',
+        text: this.props.formatLocalizedDate(dateShipped, DateFormat.COMMON),
+        color: "#4a148c",
+        delimeter: ", ",
       },
       {
         text: formData.description,
-        color: '#770838',
-        delimeter: '',
+        color: "#770838",
+        delimeter: "",
       },
     ];
   }
@@ -129,16 +128,20 @@ class ReceivingPage extends Component {
     this.props.showSpinner();
     const url = `/api/partialReceiving/${this.props.match.params.shipmentId}?stepNumber=${this.state.currentPage}`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
         const formData = parseResponse(response.data.data);
-        this.setState({
-          formData,
-          locationId: formData.destination.id,
-          shipmentNumber: formData.shipment.shipmentNumber,
-        }, () => {
-          this.fetchBins();
-        });
+        this.setState(
+          {
+            formData,
+            locationId: formData.destination.id,
+            shipmentNumber: formData.shipment.shipmentNumber,
+          },
+          () => {
+            this.fetchBins();
+          },
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -148,29 +151,31 @@ class ReceivingPage extends Component {
    * @public
    */
   fetchBins() {
-    const url = '/api/internalLocations/receiving';
-    const mapBins = (bins) => (_.chain(bins)
-      .orderBy(['name'], ['asc']).value()
-    );
+    const url = "/api/internalLocations/receiving";
+    const mapBins = (bins) => _.chain(bins).orderBy(["name"], ["asc"]).value();
 
-    return apiClient.get(url, {
-      paramsSerializer: (parameters) => queryString.stringify(parameters),
-      params: {
-        locationTypeCode: ['BIN_LOCATION', 'INTERNAL'],
-        'location.id': this.state.locationId,
-        shipmentNumber: this.state.shipmentNumber,
-      },
-    })
+    return apiClient
+      .get(url, {
+        paramsSerializer: (parameters) => queryString.stringify(parameters),
+        params: {
+          locationTypeCode: ["BIN_LOCATION", "INTERNAL"],
+          "location.id": this.state.locationId,
+          shipmentNumber: this.state.shipmentNumber,
+        },
+      })
       .then((response) => {
-        const binGroups = _.partition(response.data.data, (bin) => (bin.zoneName));
-        const binsWithZone = _.chain(binGroups[0]).groupBy('zoneName')
+        const binGroups = _.partition(
+          response.data.data,
+          (bin) => bin.zoneName,
+        );
+        const binsWithZone = _.chain(binGroups[0])
+          .groupBy("zoneName")
           .map((value, key) => ({ name: key, options: mapBins(value) }))
-          .orderBy(['label'], ['asc'])
+          .orderBy(["label"], ["asc"])
           .value();
         const binsWithoutZone = mapBins(binGroups[1]);
-        this.setState(
-          { bins: [...binsWithZone, ...binsWithoutZone] },
-          () => this.props.hideSpinner(),
+        this.setState({ bins: [...binsWithZone, ...binsWithoutZone] }, () =>
+          this.props.hideSpinner(),
         );
       })
       .catch(() => this.props.hideSpinner());
@@ -181,9 +186,7 @@ class ReceivingPage extends Component {
   };
 
   render() {
-    const {
-      formData, locationId, currentPage, bins, sort,
-    } = this.state;
+    const { formData, locationId, currentPage, bins, sort } = this.state;
     const { match, translate } = this.props;
     const pageList = [PartialReceivingPage, ReceivingCheckScreen];
 
@@ -197,7 +200,12 @@ class ReceivingPage extends Component {
           currentPage={currentPage}
           prevPage={currentPage === 1 ? 1 : currentPage - 1}
           additionalProps={{
-            bins, locationId, match, translate, sort, updateSort: this.updateSort,
+            bins,
+            locationId,
+            match,
+            translate,
+            sort,
+            updateSort: this.updateSort,
           }}
         />
       );
@@ -211,13 +219,17 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
   hasBinLocationSupport: state.session.currentLocation.hasBinLocationSupport,
   locale: state.session.activeLanguage,
-  partialReceivingTranslationsFetched: state.session.fetchedTranslations.partialReceiving,
-  hasPartialReceivingSupport: state.session.currentLocation.hasPartialReceivingSupport,
+  partialReceivingTranslationsFetched:
+    state.session.fetchedTranslations.partialReceiving,
+  hasPartialReceivingSupport:
+    state.session.currentLocation.hasPartialReceivingSupport,
   formatLocalizedDate: formatDate(state.localize),
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(ReceivingPage);
 
 ReceivingPage.propTypes = {

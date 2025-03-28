@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import PropTypes from 'prop-types';
-import { RiCloseLine, RiSearchLine } from 'react-icons/ri';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { Async, components } from 'react-select';
-import { Tooltip } from 'react-tippy';
+import PropTypes from "prop-types";
+import { RiCloseLine, RiSearchLine } from "react-icons/ri";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { Async, components } from "react-select";
+import { Tooltip } from "react-tippy";
 
-import { GLOBAL_SEARCH } from 'api/urls';
-import { debounceGlobalSearch } from 'utils/option-utils';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { GLOBAL_SEARCH } from "api/urls";
+import { debounceGlobalSearch } from "utils/option-utils";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import 'components/GlobalSearch/GlobalSearch.scss';
+import "components/GlobalSearch/GlobalSearch.scss";
 
 // eslint-disable-next-line react/prop-types
 const ValueContainer = ({ children, ...props }) => (
   <>
     <RiSearchLine className="app-global-search__search-icon" />
-    <components.ValueContainer {...props}>
-      {children}
-    </components.ValueContainer>
+    <components.ValueContainer {...props}>{children}</components.ValueContainer>
   </>
 );
 
 const GlobalSearch = ({
-  className, visible, renderButton, debounceTime, minSearchLength, translate,
+  className,
+  visible,
+  renderButton,
+  debounceTime,
+  minSearchLength,
+  translate,
 }) => {
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -41,7 +44,7 @@ const GlobalSearch = ({
   };
 
   const onKeyPressHandler = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       window.location = GLOBAL_SEARCH(event.target.value);
     }
   };
@@ -92,7 +95,7 @@ const GlobalSearch = ({
       // eslint-disable-next-line react/prop-types
       const { hasValue, setValue } = props;
       if (hasValue) {
-        setValue('');
+        setValue("");
         return;
       }
       if (renderButton) {
@@ -117,17 +120,24 @@ const GlobalSearch = ({
       {renderButton?.({ isVisible, showSearchbar })}
       {isVisible && (
         <Async
-          className={`app-global-search ${renderButton ? 'position-absolute' : ''} ${className}`}
+          className={`app-global-search ${renderButton ? "position-absolute" : ""} ${className}`}
           classNamePrefix="app-global-search"
           autoFocus
           openMenuOnClick={false}
-          loadingMessage={() => translate('react.default.loading.label', 'Loading...')}
-          noOptionsMessage={() => translate('react.default.noOptions.label', 'No options')}
+          loadingMessage={() =>
+            translate("react.default.loading.label", "Loading...")
+          }
+          noOptionsMessage={() =>
+            translate("react.default.noOptions.label", "No options")
+          }
           loadOptions={searchItems}
           onKeyDown={onKeyPressHandler}
           onChange={onOptionSelectedHandler}
           onBlur={hideSearchbarOnBlur}
-          placeholder={translate('react.default.globalSearch.placeholder.label', 'Search...')}
+          placeholder={translate(
+            "react.default.globalSearch.placeholder.label",
+            "Search...",
+          )}
           components={{
             ValueContainer,
             DropdownIndicator,
@@ -159,5 +169,5 @@ GlobalSearch.propTypes = {
 GlobalSearch.defaultProps = {
   renderButton: undefined,
   visible: false,
-  className: '',
+  className: "",
 };

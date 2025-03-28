@@ -1,18 +1,18 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { RiCopyrightLine } from 'react-icons/all';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { RiCopyrightLine } from "react-icons/all";
+import { Tooltip } from "react-tippy";
 
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import TextInput from 'components/form-elements/v2/TextInput';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import ContextMenu from 'utils/ContextMenu';
-import { renderFormField } from 'utils/form-utils';
-import { getInvoiceDescription } from 'utils/form-values-utils';
-import accountingFormat from 'utils/number-utils';
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import TextInput from "components/form-elements/v2/TextInput";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import ContextMenu from "utils/ContextMenu";
+import { renderFormField } from "utils/form-utils";
+import { getInvoiceDescription } from "utils/form-values-utils";
+import accountingFormat from "utils/number-utils";
 
 const INVOICE_ITEMS = {
   invoiceItems: {
@@ -22,22 +22,19 @@ const INVOICE_ITEMS = {
     isRowLoaded: ({ isRowLoaded }) => isRowLoaded,
     loadMoreRows: ({ loadMoreRows }) => loadMoreRows(),
     getDynamicRowAttr: ({ rowValues }) => ({
-      className: rowValues?.amount < 0 ? 'negative-row-value' : '',
+      className: rowValues?.amount < 0 ? "negative-row-value" : "",
     }),
     fields: {
       rowIcon: {
         type: (params) => {
-          const {
-            invoiceItems,
-            rowIndex,
-            isPrepaymentInvoice,
-          } = params;
+          const { invoiceItems, rowIndex, isPrepaymentInvoice } = params;
           const hasItems = !!invoiceItems;
           const invoiceItem = invoiceItems[rowIndex];
-          const isPrepLine = hasItems && (isPrepaymentInvoice
-            || invoiceItem?.isPrepaymentItem
-            || invoiceItem?.inverse
-          );
+          const isPrepLine =
+            hasItems &&
+            (isPrepaymentInvoice ||
+              invoiceItem?.isPrepaymentItem ||
+              invoiceItem?.inverse);
 
           if (isPrepLine) {
             return (
@@ -62,52 +59,53 @@ const INVOICE_ITEMS = {
 
           return null;
         },
-        label: '',
-        defaultMessage: '',
-        flexWidth: '0.25',
+        label: "",
+        defaultMessage: "",
+        flexWidth: "0.25",
       },
       shipmentNumber: {
         type: LabelField,
-        label: 'react.invoice.shipmentNumber.label',
-        defaultMessage: 'Shipment Number',
-        flexWidth: '1',
+        label: "react.invoice.shipmentNumber.label",
+        defaultMessage: "Shipment Number",
+        flexWidth: "1",
         getDynamicAttr: (params) => {
           const { invoiceItems, rowIndex } = params;
           const invoiceItem = invoiceItems[rowIndex];
-          const shipmentId = invoiceItems
-            && invoiceItems[rowIndex]
-            && invoiceItems[rowIndex].shipmentId;
+          const shipmentId =
+            invoiceItems &&
+            invoiceItems[rowIndex] &&
+            invoiceItems[rowIndex].shipmentId;
           return {
-            url: shipmentId ? STOCK_MOVEMENT_URL.show(shipmentId) : '',
-            formatValue: (value) => (invoiceItem?.inverse ? '' : value),
+            url: shipmentId ? STOCK_MOVEMENT_URL.show(shipmentId) : "",
+            formatValue: (value) => (invoiceItem?.inverse ? "" : value),
           };
         },
       },
       budgetCode: {
         type: LabelField,
-        label: 'react.invoice.budgetCode.label',
-        defaultMessage: 'Budget Code',
-        flexWidth: '1',
+        label: "react.invoice.budgetCode.label",
+        defaultMessage: "Budget Code",
+        flexWidth: "1",
       },
       glCode: {
         type: LabelField,
-        label: 'react.invoice.glCode.label',
-        defaultMessage: 'GL Code',
-        flexWidth: '1',
+        label: "react.invoice.glCode.label",
+        defaultMessage: "GL Code",
+        flexWidth: "1",
       },
       productCode: {
         type: LabelField,
-        label: 'react.invoice.itemNo.label',
-        defaultMessage: 'Item No',
-        flexWidth: '1',
+        label: "react.invoice.itemNo.label",
+        defaultMessage: "Item No",
+        flexWidth: "1",
       },
       description: {
         type: LabelField,
-        label: 'react.invoice.description.label',
-        defaultMessage: 'Description',
-        flexWidth: '5',
+        label: "react.invoice.description.label",
+        defaultMessage: "Description",
+        flexWidth: "5",
         attributes: {
-          className: 'text-left',
+          className: "text-left",
         },
         getDynamicAttr: (params) => ({
           formatValue: () => {
@@ -123,38 +121,39 @@ const INVOICE_ITEMS = {
         type: (params) => {
           const invoiceItem = params?.invoiceItems[params?.rowIndex];
           const errors = params.validate(invoiceItem);
-          return (
-            params.isEditable(invoiceItem?.id) && !invoiceItem?.orderAdjustment
-              ? (
-                <Tooltip
-                  html={<div className="custom-tooltip">{errors}</div>}
-                  theme="transparent"
-                  disabled={!errors}
-                >
-                  <TextInput
-                    type="number"
-                    value={invoiceItem.quantity}
-                    showErrorBorder={!!errors}
-                    onChange={
-                      params.updateInvoiceItemData(invoiceItem?.id, 'quantity')
-                    }
-                    {...params}
-                  />
-                </Tooltip>
-              )
-              : <LabelField {...params} />
+          return params.isEditable(invoiceItem?.id) &&
+            !invoiceItem?.orderAdjustment ? (
+            <Tooltip
+              html={<div className="custom-tooltip">{errors}</div>}
+              theme="transparent"
+              disabled={!errors}
+            >
+              <TextInput
+                type="number"
+                value={invoiceItem.quantity}
+                showErrorBorder={!!errors}
+                onChange={params.updateInvoiceItemData(
+                  invoiceItem?.id,
+                  "quantity",
+                )}
+                {...params}
+              />
+            </Tooltip>
+          ) : (
+            <LabelField {...params} />
           );
         },
-        label: 'react.invoice.qty.label',
-        defaultMessage: 'Qty',
-        flexWidth: '1',
+        label: "react.invoice.qty.label",
+        defaultMessage: "Qty",
+        flexWidth: "1",
         getDynamicAttr: (params) => ({
           formatValue: () => {
             const { invoiceItems } = params;
             const hasItems = invoiceItems;
-            const isPrepLine = hasItems && invoiceItems[params.rowIndex]?.isPrepaymentItem;
+            const isPrepLine =
+              hasItems && invoiceItems[params.rowIndex]?.isPrepaymentItem;
             if (isPrepLine) {
-              return params.fieldValue * (-1);
+              return params.fieldValue * -1;
             }
             return params.fieldValue;
           },
@@ -162,48 +161,48 @@ const INVOICE_ITEMS = {
       },
       uom: {
         type: LabelField,
-        label: 'react.invoice.uom.label',
-        defaultMessage: 'UOM',
-        flexWidth: '1',
+        label: "react.invoice.uom.label",
+        defaultMessage: "UOM",
+        flexWidth: "1",
       },
       unitPrice: {
         type: (params) => {
           const invoiceItem = params?.invoiceItems[params?.rowIndex];
           const errors = params.validate(invoiceItem);
-          return (
-            params.isEditable(invoiceItem?.id) && invoiceItem?.orderAdjustment
-              ? (
-                <Tooltip
-                  html={<div className="custom-tooltip">{errors}</div>}
-                  theme="transparent"
-                  disabled={!errors}
-                >
-                  <TextInput
-                    type="number"
-                    value={invoiceItem.unitPrice}
-                    showErrorBorder={!!errors}
-                    onChange={
-                      params.updateInvoiceItemData(invoiceItem?.id, 'unitPrice')
-                    }
-                    {...params}
-                  />
-                </Tooltip>
-              )
-              : <LabelField {...params} />
+          return params.isEditable(invoiceItem?.id) &&
+            invoiceItem?.orderAdjustment ? (
+            <Tooltip
+              html={<div className="custom-tooltip">{errors}</div>}
+              theme="transparent"
+              disabled={!errors}
+            >
+              <TextInput
+                type="number"
+                value={invoiceItem.unitPrice}
+                showErrorBorder={!!errors}
+                onChange={params.updateInvoiceItemData(
+                  invoiceItem?.id,
+                  "unitPrice",
+                )}
+                {...params}
+              />
+            </Tooltip>
+          ) : (
+            <LabelField {...params} />
           );
         },
-        label: 'react.invoice.unitPrice.label',
-        defaultMessage: 'Unit Price',
-        flexWidth: '1',
+        label: "react.invoice.unitPrice.label",
+        defaultMessage: "Unit Price",
+        flexWidth: "1",
         attributes: {
           formatValue: (value) => (value ? accountingFormat(value) : value),
         },
       },
       amount: {
         type: LabelField,
-        label: 'react.invoice.totalPrice.label',
-        defaultMessage: 'Total Price',
-        flexWidth: '1',
+        label: "react.invoice.totalPrice.label",
+        defaultMessage: "Total Price",
+        flexWidth: "1",
         attributes: {
           formatValue: (value) => (value ? accountingFormat(value) : value),
         },
@@ -219,7 +218,7 @@ const INVOICE_ITEMS = {
           if (canUseActionDots) {
             return (
               <ContextMenu
-                positions={['left']}
+                positions={["left"]}
                 actions={params.actions(invoiceItem)}
                 id={params?.rowIndex}
               />
@@ -228,7 +227,7 @@ const INVOICE_ITEMS = {
 
           return null;
         },
-        flexWidth: '1',
+        flexWidth: "1",
       },
     },
   },
@@ -270,7 +269,8 @@ const InvoicePrepayedItemsTable = ({
           actions,
           invoiceStatus,
           isActionMenuVisible,
-        }))}
+        }),
+      )}
     </div>
   );
 };
@@ -283,14 +283,10 @@ InvoicePrepayedItemsTable.propTypes = {
   loadMoreRows: PropTypes.func.isRequired,
   updateInvoiceItemData: PropTypes.func.isRequired,
   invoicePrepaidItemsTableData: PropTypes.shape({
-    actions: PropTypes.arrayOf(
-      PropTypes.shape({}),
-    ).isRequired,
+    actions: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     isRowLoaded: PropTypes.func.isRequired,
     isEditable: PropTypes.func.isRequired,
-    editableRows: PropTypes.arrayOf(
-      PropTypes.shape({}),
-    ).isRequired,
+    editableRows: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     validate: PropTypes.func.isRequired,
     isActionMenuVisible: PropTypes.func.isRequired,
   }).isRequired,

@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import TablePagination from 'components/DataTable/TablePagination';
+import TablePagination from "components/DataTable/TablePagination";
 
 const DataTableFooter = ({
   footerComponent,
@@ -16,11 +16,7 @@ const DataTableFooter = ({
   totalData,
 }) => (
   <>
-    {footerComponent && (
-    <div className="table-footer">
-      {footerComponent()}
-    </div>
-    )}
+    {footerComponent && <div className="table-footer">{footerComponent()}</div>}
     <div className="pagination-bottom">
       <TablePagination
         page={pagination.pageIndex}

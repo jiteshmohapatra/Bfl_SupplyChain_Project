@@ -1,41 +1,39 @@
-import React from 'react';
+import React from "react";
 
-import { act, renderHook } from '@testing-library/react-hooks';
-import { MemoryRouter } from 'react-router-dom';
+import { act, renderHook } from "@testing-library/react-hooks";
+import { MemoryRouter } from "react-router-dom";
 
-import useWizard from 'hooks/useWizard';
+import useWizard from "hooks/useWizard";
 
-describe('Changing steps', () => {
+describe("Changing steps", () => {
   const STEP_KEYS = {
-    FIRST: 'FIRST',
-    SECOND: 'SECOND',
-    THIRD: 'THIRD',
-    FOURTH: 'FOURTH',
+    FIRST: "FIRST",
+    SECOND: "SECOND",
+    THIRD: "THIRD",
+    FOURTH: "FOURTH",
   };
 
   const steps = [
     {
       key: STEP_KEYS.FIRST,
-      Component: () => (<div>First component</div>),
+      Component: () => <div>First component</div>,
     },
     {
       key: STEP_KEYS.SECOND,
-      Component: () => (<div>Second component</div>),
+      Component: () => <div>Second component</div>,
     },
     {
       key: STEP_KEYS.THIRD,
-      Component: () => (<div>Third component</div>),
+      Component: () => <div>Third component</div>,
     },
     {
       key: STEP_KEYS.FOURTH,
-      Component: () => (<div>Fourth component</div>),
+      Component: () => <div>Fourth component</div>,
     },
   ];
 
-  it('should start with the initial key', () => {
-    const {
-      result,
-    } = renderHook(
+  it("should start with the initial key", () => {
+    const { result } = renderHook(
       () => useWizard({ initialKey: STEP_KEYS.THIRD, steps }),
       { wrapper: MemoryRouter },
     );
@@ -43,7 +41,7 @@ describe('Changing steps', () => {
     expect(result.current[0].key).toEqual(STEP_KEYS.THIRD);
   });
 
-  it('should go to next step', () => {
+  it("should go to next step", () => {
     const { result } = renderHook(
       () => useWizard({ initialKey: STEP_KEYS.SECOND, steps }),
       { wrapper: MemoryRouter },
@@ -56,10 +54,8 @@ describe('Changing steps', () => {
     expect(result.current[0].key).toEqual(STEP_KEYS.THIRD);
   });
 
-  it('should go to previous step', () => {
-    const {
-      result,
-    } = renderHook(
+  it("should go to previous step", () => {
+    const { result } = renderHook(
       () => useWizard({ initialKey: STEP_KEYS.FOURTH, steps }),
       { wrapper: MemoryRouter },
     );
@@ -71,10 +67,8 @@ describe('Changing steps', () => {
     expect(result.current[0].key).toEqual(STEP_KEYS.THIRD);
   });
 
-  it('should go to specific step', () => {
-    const {
-      result,
-    } = renderHook(
+  it("should go to specific step", () => {
+    const { result } = renderHook(
       () => useWizard({ initialKey: STEP_KEYS.FIRST, steps }),
       { wrapper: MemoryRouter },
     );
@@ -86,10 +80,8 @@ describe('Changing steps', () => {
     expect(result.current[0].key).toEqual(STEP_KEYS.FOURTH);
   });
 
-  it('should go to last step', () => {
-    const {
-      result,
-    } = renderHook(
+  it("should go to last step", () => {
+    const { result } = renderHook(
       () => useWizard({ initialKey: STEP_KEYS.FIRST, steps }),
       { wrapper: MemoryRouter },
     );
@@ -101,10 +93,8 @@ describe('Changing steps', () => {
     expect(result.current[0].key).toEqual(STEP_KEYS.FOURTH);
   });
 
-  it('should go to first step', () => {
-    const {
-      result,
-    } = renderHook(
+  it("should go to first step", () => {
+    const { result } = renderHook(
       () => useWizard({ initialKey: STEP_KEYS.THIRD, steps }),
       { wrapper: MemoryRouter },
     );

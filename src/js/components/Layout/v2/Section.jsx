@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
-import './styles.scss';
+import "./styles.scss";
 
 const Section = ({ title, children, className }) => (
   <div className={`v2-section ${className}`}>
@@ -27,5 +27,5 @@ Section.propTypes = {
 };
 
 Section.defaultProps = {
-  className: '',
+  className: "",
 };

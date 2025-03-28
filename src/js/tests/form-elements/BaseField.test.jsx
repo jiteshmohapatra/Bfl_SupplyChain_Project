@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import renderer from 'react-test-renderer';
+import renderer from "react-test-renderer";
 
-import BaseField from 'components/form-elements/BaseField';
+import BaseField from "components/form-elements/BaseField";
 
-jest.mock('react-final-form', () => ({
+jest.mock("react-final-form", () => ({
   Field: (props) => {
     const { component: Component, name, ...others } = props;
     const input = { onChange: () => {}, name };
@@ -13,7 +13,7 @@ jest.mock('react-final-form', () => ({
   },
 }));
 
-jest.mock('react-localize-redux', () => ({
+jest.mock("react-localize-redux", () => ({
   Translate: (props) => {
     const { id } = props;
 
@@ -21,14 +21,14 @@ jest.mock('react-localize-redux', () => ({
   },
 }));
 
-xdescribe('BaseField component is correctly rendering', () => {
-  it('text label', () => {
+xdescribe("BaseField component is correctly rendering", () => {
+  it("text label", () => {
     const props = {
-      fieldName: 'test',
+      fieldName: "test",
       fieldConfig: {
-        label: 'test label',
+        label: "test label",
       },
-      renderInput: () => (<input />),
+      renderInput: () => <input />,
     };
 
     const rendered = renderer.create(<BaseField {...props} />);
@@ -36,13 +36,13 @@ xdescribe('BaseField component is correctly rendering', () => {
     expect(rendered.toJSON()).toMatchSnapshot();
   });
 
-  it('component label', () => {
+  it("component label", () => {
     const props = {
-      fieldName: 'test',
+      fieldName: "test",
       fieldConfig: {
-        label: () => (<span>test</span>),
+        label: () => <span>test</span>,
       },
-      renderInput: () => (<input />),
+      renderInput: () => <input />,
     };
 
     const rendered = renderer.create(<BaseField {...props} />);
@@ -50,19 +50,22 @@ xdescribe('BaseField component is correctly rendering', () => {
     expect(rendered.toJSON()).toMatchSnapshot();
   });
 
-  it('attributes', () => {
+  it("attributes", () => {
     const props = {
-      fieldName: 'test',
+      fieldName: "test",
       fieldConfig: {
-        label: 'test label',
+        label: "test label",
         attributes: {
           required: true,
           testAttr: true,
         },
-        getDynamicAttr: ({ dynamicProp }) => ({ hidden: true, dynamicAttr: dynamicProp }),
+        getDynamicAttr: ({ dynamicProp }) => ({
+          hidden: true,
+          dynamicAttr: dynamicProp,
+        }),
       },
-      dynamicProp: 'dynamic property',
-      renderInput: (attr) => (<input {...attr} />),
+      dynamicProp: "dynamic property",
+      renderInput: (attr) => <input {...attr} />,
     };
 
     const rendered = renderer.create(<BaseField {...props} />);

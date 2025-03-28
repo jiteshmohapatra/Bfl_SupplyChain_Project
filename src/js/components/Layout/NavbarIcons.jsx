@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import PropTypes from "prop-types";
 import {
   RiArrowDropDownLine,
-  RiLoginBoxLine, RiMapPinLine,
+  RiLoginBoxLine,
+  RiMapPinLine,
   RiRefreshLine,
   RiSearchLine,
   RiSettings5Line,
   RiUser3Line,
-} from 'react-icons/ri';
-import { connect } from 'react-redux';
+} from "react-icons/ri";
+import { connect } from "react-redux";
 
-import GlobalSearch from 'components/GlobalSearch/GlobalSearch';
-import MenuConfigurationSubsection from 'components/Layout/menu/MenuConfigurationSubsection';
-import NavbarIcon from 'components/Layout/NavbarIcon';
-import HelpScout from 'components/support-button/HelpScout';
-import useElementSize from 'hooks/useElementSize';
-import useTranslate from 'hooks/useTranslate';
+import GlobalSearch from "components/GlobalSearch/GlobalSearch";
+import MenuConfigurationSubsection from "components/Layout/menu/MenuConfigurationSubsection";
+import NavbarIcon from "components/Layout/NavbarIcon";
+import HelpScout from "components/support-button/HelpScout";
+import useElementSize from "hooks/useElementSize";
+import useTranslate from "hooks/useTranslate";
 
 const NavbarIcons = ({
-  username, highestRole, menuItems, configurationMenuSection,
+  username,
+  highestRole,
+  menuItems,
+  configurationMenuSection,
 }) => {
   const windowSize = useElementSize(window);
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
@@ -35,25 +39,29 @@ const NavbarIcons = ({
 
   const findIcon = (icon) => {
     switch (icon) {
-      case 'localization-mode':
+      case "localization-mode":
         return <RiMapPinLine />;
-      case 'profile':
+      case "profile":
         return <RiUser3Line />;
-      case 'flush-cache':
+      case "flush-cache":
         return <RiRefreshLine />;
-      case 'logout':
+      case "logout":
         return <RiLoginBoxLine />;
       default:
-        return '';
+        return "";
     }
   };
 
-  const configurationMenuSubsections = _.get(configurationMenuSection, 'subsections', []);
+  const configurationMenuSubsections = _.get(
+    configurationMenuSection,
+    "subsections",
+    [],
+  );
 
   const iconsList = [
     {
-      name: 'search',
-      tooltip: translate('react.default.navbar.search', 'Search'),
+      name: "search",
+      tooltip: translate("react.default.navbar.search", "Search"),
       component: (renderProps) => (
         <GlobalSearch
           renderButton={({ showSearchbar, isVisible }) => {
@@ -72,13 +80,17 @@ const NavbarIcons = ({
       ),
     },
     {
-      name: 'help',
-      tooltip: translate('react.default.navbar.help', 'Help'),
-      component: () => (<div className="menu-icon"><HelpScout /></div>),
+      name: "help",
+      tooltip: translate("react.default.navbar.help", "Help"),
+      component: () => (
+        <div className="menu-icon">
+          <HelpScout />
+        </div>
+      ),
     },
     {
-      name: 'configuration',
-      tooltip: translate('react.default.navbar.configuration', 'Configuration'),
+      name: "configuration",
+      tooltip: translate("react.default.navbar.configuration", "Configuration"),
       hide: configurationMenuSubsections.length === 0,
       component: (renderProps) => (
         <div className="btn-group">
@@ -98,22 +110,20 @@ const NavbarIcons = ({
             tabIndex={0}
           >
             <div className="dropdown-menu-subsections dropdown-menu-content conf-subsections">
-              {configurationMenuSubsections
-                .map((subsection) =>
-                  (
-                    <MenuConfigurationSubsection
-                      key={`${subsection.label}-subsection`}
-                      subsection={subsection}
-                    />
-                  ))}
+              {configurationMenuSubsections.map((subsection) => (
+                <MenuConfigurationSubsection
+                  key={`${subsection.label}-subsection`}
+                  subsection={subsection}
+                />
+              ))}
             </div>
           </div>
         </div>
       ),
     },
     {
-      name: 'profile',
-      tooltip: translate('react.default.navbar.profile', 'Profile'),
+      name: "profile",
+      tooltip: translate("react.default.navbar.profile", "Profile"),
       component: (renderProps) => (
         <div className="btn-group">
           <div
@@ -133,19 +143,20 @@ const NavbarIcons = ({
           >
             <div className="dropdown-menu-content">
               <span className="subsection-section-title">
-                {username && username}
-                {' '}
-                {highestRole && `(${highestRole})`}
+                {username && username} {highestRole && `(${highestRole})`}
               </span>
-              {menuItems && menuItems.map((item) => (
-                <a role="menuitem" className="dropdown-item" key={item.label} href={item.linkAction}>
-                  <span className="icon">
-                    {findIcon(item.linkReactIcon)}
-                  </span>
-                  {' '}
-                  {item.label}
-                </a>
-              ))}
+              {menuItems &&
+                menuItems.map((item) => (
+                  <a
+                    role="menuitem"
+                    className="dropdown-item"
+                    key={item.label}
+                    href={item.linkAction}
+                  >
+                    <span className="icon">{findIcon(item.linkReactIcon)}</span>{" "}
+                    {item.label}
+                  </a>
+                ))}
             </div>
           </div>
         </div>
@@ -156,8 +167,7 @@ const NavbarIcons = ({
   return (
     <>
       {/* before MD (middle) breakpoint render below nav-icons (as collapsable) */}
-      { isMenuCollapsed
-        && (
+      {isMenuCollapsed && (
         <div className=" px-3 mt-4">
           <li className="collapse-nav-item nav-item justify-content-center d-flex">
             <GlobalSearch visible className="w-100 my-2" />
@@ -180,77 +190,93 @@ const NavbarIcons = ({
             <div className="collapse w-100" id="collapse-profile">
               <div className="d-flex flex-column">
                 <span className="subsection-section-title">
-                  {username && username}
-                  {' '}
-                  {highestRole && `(${highestRole})`}
+                  {username && username} {highestRole && `(${highestRole})`}
                 </span>
-                {menuItems && menuItems.map((item) => (
-                  <a className="subsection-section-item" key={item.label} href={item.linkAction}>
-                    <span className="icon">
-                      {findIcon(item.linkReactIcon)}
-                    </span>
-                    {' '}
-                    {item.label}
-                  </a>
-                ))}
+                {menuItems &&
+                  menuItems.map((item) => (
+                    <a
+                      className="subsection-section-item"
+                      key={item.label}
+                      href={item.linkAction}
+                    >
+                      <span className="icon">
+                        {findIcon(item.linkReactIcon)}
+                      </span>{" "}
+                      {item.label}
+                    </a>
+                  ))}
               </div>
             </div>
           </li>
-          {configurationMenuSubsections.length > 0
-          && (
-          <li className="collapse-nav-item nav-item justify-content-center align-items-center d-flex">
-            <a
-              className="nav-link d-flex justify-content-between align-items-center w-100"
-              data-toggle="collapse"
-              href="#collapse-configuration"
-              role="button"
-              aria-expanded="false"
-              aria-controls="collapse-configuration"
-            >
-              <span className="d-flex align-items-center">
-                <RiSettings5Line className="mr-2" />
-                Configuration
-              </span>
-              <RiArrowDropDownLine className="collapse-arrow-icon" />
-            </a>
-            <div className="collapse w-100" id="collapse-configuration">
-              <div className="d-flex flex-row flex-wrap">
-                {_.map(configurationMenuSubsections, (subsection, subsectionKey) => (
-                  <div key={subsectionKey} className="d-flex flex-column m-3">
-                    {subsection.label
-                    && <span className="subsection-section-title">{subsection.label}</span>}
-                    {_.map(subsection.menuItems, (menuItem, menuItemKey) => (
-                      <a
-                        className="subsection-section-item"
-                        key={menuItemKey}
-                        href={menuItem.href}
-                        target={menuItem.target}
+          {configurationMenuSubsections.length > 0 && (
+            <li className="collapse-nav-item nav-item justify-content-center align-items-center d-flex">
+              <a
+                className="nav-link d-flex justify-content-between align-items-center w-100"
+                data-toggle="collapse"
+                href="#collapse-configuration"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapse-configuration"
+              >
+                <span className="d-flex align-items-center">
+                  <RiSettings5Line className="mr-2" />
+                  Configuration
+                </span>
+                <RiArrowDropDownLine className="collapse-arrow-icon" />
+              </a>
+              <div className="collapse w-100" id="collapse-configuration">
+                <div className="d-flex flex-row flex-wrap">
+                  {_.map(
+                    configurationMenuSubsections,
+                    (subsection, subsectionKey) => (
+                      <div
+                        key={subsectionKey}
+                        className="d-flex flex-column m-3"
                       >
-                        {menuItem.label}
-                      </a>
-                    ))}
-                  </div>
-                ))}
+                        {subsection.label && (
+                          <span className="subsection-section-title">
+                            {subsection.label}
+                          </span>
+                        )}
+                        {_.map(
+                          subsection.menuItems,
+                          (menuItem, menuItemKey) => (
+                            <a
+                              className="subsection-section-item"
+                              key={menuItemKey}
+                              href={menuItem.href}
+                              target={menuItem.target}
+                            >
+                              {menuItem.label}
+                            </a>
+                          ),
+                        )}
+                      </div>
+                    ),
+                  )}
+                </div>
               </div>
-            </div>
-          </li>
+            </li>
           )}
           <li className="nav-item collapse-nav-item d-flex dropdown justify-content-start justify-content-md-center align-items-center mb-2">
             <a href="#" className="nav-link w-100 d-flex align-items-center">
-              <HelpScout className="d-flex align-items-center gap-8 w-100" text="Help" />
+              <HelpScout
+                className="d-flex align-items-center gap-8 w-100"
+                text="Help"
+              />
             </a>
           </li>
         </div>
-        )}
+      )}
       {/* after MD (middle) breakpoint render below nav-icons (as dropdowns) */}
-      { !isMenuCollapsed
-      && (
-      <div className="d-flex align-items-center justify-content-end navbar-icons">
-        {iconsList
-          .filter(({ hide }) => !hide)
-          .map(({ name, ...restProps }) =>
-            (<NavbarIcon key={name} name={name} {...restProps} />))}
-      </div>
+      {!isMenuCollapsed && (
+        <div className="d-flex align-items-center justify-content-end navbar-icons">
+          {iconsList
+            .filter(({ hide }) => !hide)
+            .map(({ name, ...restProps }) => (
+              <NavbarIcon key={name} name={name} {...restProps} />
+            ))}
+        </div>
       )}
     </>
   );
@@ -260,7 +286,10 @@ const mapStateToProps = (state) => ({
   username: state.session.user.username,
   highestRole: state.session.highestRole,
   menuItems: state.session.menuItems,
-  configurationMenuSection: _.find(state.session.menuConfig, (section) => section.id === 'configuration'),
+  configurationMenuSection: _.find(
+    state.session.menuConfig,
+    (section) => section.id === "configuration",
+  ),
   localizedHelpScoutKey: state.session.localizedHelpScoutKey,
   isHelpScoutEnabled: state.session.isHelpScoutEnabled,
 });
@@ -270,12 +299,14 @@ export default connect(mapStateToProps)(NavbarIcons);
 NavbarIcons.propTypes = {
   username: PropTypes.string.isRequired,
   highestRole: PropTypes.string.isRequired,
-  menuItems: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
-    linkIcon: PropTypes.string.isRequired,
-    linkAction: PropTypes.string.isRequired,
-    linkReactIcon: PropTypes.string.isRequired,
-  }).isRequired).isRequired,
+  menuItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      linkIcon: PropTypes.string.isRequired,
+      linkAction: PropTypes.string.isRequired,
+      linkReactIcon: PropTypes.string.isRequired,
+    }).isRequired,
+  ).isRequired,
   configurationMenuSection: PropTypes.shape({
     label: PropTypes.string,
     subsections: PropTypes.shape([]),

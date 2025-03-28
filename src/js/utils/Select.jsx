@@ -1,22 +1,27 @@
-import React, { Component, isValidElement } from 'react';
+import React, { Component, isValidElement } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { Overlay } from 'react-overlays';
-import { connect } from 'react-redux';
-import ReactSelect, { Async, components } from 'react-select';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { Overlay } from "react-overlays";
+import { connect } from "react-redux";
+import ReactSelect, { Async, components } from "react-select";
+import { Tooltip } from "react-tippy";
 
-import { selectNullOption } from 'utils/option-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { selectNullOption } from "utils/option-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-tippy/dist/tippy.css';
+import "react-tippy/dist/tippy.css";
 
 const Dropdown = ({ children, style, width }) => (
   <div
     style={{
-      ...style, position: 'absolute', zIndex: 9999, width, backgroundColor: 'white', border: '1px solid hsl(0deg 0% 80%)',
+      ...style,
+      position: "absolute",
+      zIndex: 9999,
+      width,
+      backgroundColor: "white",
+      border: "1px solid hsl(0deg 0% 80%)",
     }}
   >
     {children}
@@ -36,12 +41,16 @@ const Menu = (props) => {
       show
       placement="bottom"
       target={target}
-      container={document.getElementById('root')}
+      container={document.getElementById("root")}
     >
       <Dropdown width={target.offsetWidth.toString()}>
-        <div role="list" data-testid="custom-select-dropdown-menu" className="custom-option" {...props.innerProps}>
-          {props.selectProps.createNewFromModal
-            && (
+        <div
+          role="list"
+          data-testid="custom-select-dropdown-menu"
+          className="custom-option"
+          {...props.innerProps}
+        >
+          {props.selectProps.createNewFromModal && (
             <div
               className="add-new-button"
               onClick={props.selectProps.newOptionModalOpen}
@@ -57,7 +66,7 @@ const Menu = (props) => {
                 />
               </span>
             </div>
-            )}
+          )}
           {props.children}
         </div>
       </Dropdown>
@@ -104,7 +113,7 @@ class Select extends Component {
 
     this.state = {
       value: props.initialValue === undefined ? null : props.initialValue,
-      id: _.uniqueId('select-id_'),
+      id: _.uniqueId("select-id_"),
       sortedOptionsByChecked: null,
     };
 
@@ -133,7 +142,7 @@ class Select extends Component {
     const { multi, value, labelKey } = this.props;
 
     if (!value) {
-      return '';
+      return "";
     }
 
     if (value?.displayNames?.default || value?.displayName) {
@@ -149,10 +158,10 @@ class Select extends Component {
           }
           // if there are no labels on value item
           // then try to extract these labels from select options
-          const option = this.options.find((it) => it?.id && (it?.id === v?.id));
+          const option = this.options.find((it) => it?.id && it?.id === v?.id);
           return option?.[labelKey] ?? option?.label;
         })
-        .join(', ');
+        .join(", ");
     }
 
     return value.label ?? value.name;
@@ -172,11 +181,7 @@ class Select extends Component {
         tooltipValue,
         tooltipDefaultValue ?? tooltipValue,
       );
-      return (
-        <div className="p-1">
-          {tooltipTranslatedLabel}
-        </div>
-      );
+      return <div className="p-1">{tooltipTranslatedLabel}</div>;
     }
 
     const valueLabel = this.getValueLabel();
@@ -188,22 +193,18 @@ class Select extends Component {
       );
       return (
         <div className="p-1">
-          {`${placeholderTranslatedLabel}${valueLabel ? `: ${valueLabel}` : ''}`}
+          {`${placeholderTranslatedLabel}${valueLabel ? `: ${valueLabel}` : ""}`}
         </div>
       );
     }
 
-    return (
-      <div className="p-1">
-        {valueLabel}
-      </div>
-    );
+    return <div className="p-1">{valueLabel}</div>;
   }
 
   mapOptions(values) {
-    return (_.map(values, (value) => {
+    return _.map(values, (value) => {
       const newValue = value;
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         return { value, label: value };
       }
       if (value.options) {
@@ -216,7 +217,7 @@ class Select extends Component {
         newValue.value = value[this.props.valueKey];
       }
       return newValue;
-    }));
+    });
   }
 
   handleChange(value) {
@@ -232,20 +233,23 @@ class Select extends Component {
   sortOptionsByChecked(options, checkedValues) {
     const groupByChecked = () => {
       if (options?.length) {
-        return options.reduce((acc, curr) => {
-          // If checked values contain current option, add it to checked options
-          if (checkedValues?.some((val) => val.id === curr.id)) {
+        return options.reduce(
+          (acc, curr) => {
+            // If checked values contain current option, add it to checked options
+            if (checkedValues?.some((val) => val.id === curr.id)) {
+              return {
+                ...acc,
+                checked: [...acc.checked, curr],
+              };
+            }
+            // If checked values don't contain current option, add it to unchecked
             return {
               ...acc,
-              checked: [...acc.checked, curr],
+              unchecked: [...acc.unchecked, curr],
             };
-          }
-          // If checked values don't contain current option, add it to unchecked
-          return {
-            ...acc,
-            unchecked: [...acc.unchecked, curr],
-          };
-        }, { checked: [], unchecked: [] });
+          },
+          { checked: [], unchecked: [] },
+        );
       }
       return { checked: [], unchecked: [] };
     };
@@ -258,19 +262,42 @@ class Select extends Component {
 
   render() {
     const {
-      options: selectOptions, value: selectValue = this.state.value,
-      multi = false, delimiter = ';', async = false, showValueTooltip, showLabelTooltip,
-      clearable = true, arrowLeft, arrowUp, arrowRight, arrowDown, fieldRef, onTabPress,
-      onEnterPress, customSelectComponents, optionRenderer, classNamePrefix,
-      showSelectedOptionColor, scrollableParentContainerClassName, onKeyDown, ...attributes
+      options: selectOptions,
+      value: selectValue = this.state.value,
+      multi = false,
+      delimiter = ";",
+      async = false,
+      showValueTooltip,
+      showLabelTooltip,
+      clearable = true,
+      arrowLeft,
+      arrowUp,
+      arrowRight,
+      arrowDown,
+      fieldRef,
+      onTabPress,
+      onEnterPress,
+      customSelectComponents,
+      optionRenderer,
+      classNamePrefix,
+      showSelectedOptionColor,
+      scrollableParentContainerClassName,
+      onKeyDown,
+      ...attributes
     } = this.props;
     const { formatValue, className, showLabel = false } = attributes;
 
     let value = selectValue || null;
 
-    if (selectValue && typeof selectValue === 'string') {
-      const selectedOption = _.find(this.options, (o) => o.value === selectValue);
-      value = { value: selectValue, label: selectedOption ? selectedOption.label : '' };
+    if (selectValue && typeof selectValue === "string") {
+      const selectedOption = _.find(
+        this.options,
+        (o) => o.value === selectValue,
+      );
+      value = {
+        value: selectValue,
+        label: selectedOption ? selectedOption.label : "",
+      };
     }
 
     if (!multi) {
@@ -297,8 +324,11 @@ class Select extends Component {
 
     if (attributes.disabled && this.props.value && showLabel) {
       // eslint-disable-next-line no-nested-ternary
-      const formattedValue = formatValue ? formatValue(this.props.value)
-        : (this.props.value.label ? this.props.value.label : this.props.value);
+      const formattedValue = formatValue
+        ? formatValue(this.props.value)
+        : this.props.value.label
+          ? this.props.value.label
+          : this.props.value;
       return (
         <div id={`${this.state.id}-container`}>
           <Tooltip
@@ -331,7 +361,9 @@ class Select extends Component {
       return (
         <Translate
           id={attributes.placeholder}
-          defaultMessage={attributes.defaultPlaceholder ?? attributes.placeholder}
+          defaultMessage={
+            attributes.defaultPlaceholder ?? attributes.placeholder
+          }
         />
       );
     };
@@ -348,7 +380,9 @@ class Select extends Component {
       if (fieldValue?.displayName || showLabelTooltip) {
         return false;
       }
-      const hasFieldValue = Array.isArray(fieldValue) ? fieldValue.length : fieldValue;
+      const hasFieldValue = Array.isArray(fieldValue)
+        ? fieldValue.length
+        : fieldValue;
       return !(showValueTooltip && hasFieldValue);
     };
 
@@ -361,7 +395,10 @@ class Select extends Component {
     };
 
     return (
-      <div id={`${this.state.id}-container`} data-testid="custom-select-element">
+      <div
+        id={`${this.state.id}-container`}
+        data-testid="custom-select-element"
+      >
         <Tooltip
           html={this.getTooltipHtml()}
           disabled={isTooltipDisabled()}
@@ -378,7 +415,10 @@ class Select extends Component {
             closeMenuOnScroll={closeMenuOnScroll}
             placeholder={getPlaceholder()}
             isDisabled={attributes.disabled}
-            options={(value?.length && this.state.sortedOptionsByChecked) || this.options}
+            options={
+              (value?.length && this.state.sortedOptionsByChecked) ||
+              this.options
+            }
             isMulti={multi}
             isClearable={clearable}
             title=""
@@ -397,50 +437,60 @@ class Select extends Component {
             }}
             ref={fieldRef}
             classNamePrefix={classNamePrefix}
-            loadingMessage={() => this.props.translate('react.default.loading.label', 'Loading...')}
-            noOptionsMessage={() => (async
-              ? this.props.translate('react.default.select.noResultsFound.label', 'No results found')
-              : this.props.translate('react.default.select.typeToSearch.label', 'Type to search'))}
+            loadingMessage={() =>
+              this.props.translate("react.default.loading.label", "Loading...")
+            }
+            noOptionsMessage={() =>
+              async
+                ? this.props.translate(
+                    "react.default.select.noResultsFound.label",
+                    "No results found",
+                  )
+                : this.props.translate(
+                    "react.default.select.typeToSearch.label",
+                    "Type to search",
+                  )
+            }
             onKeyDown={(event) => {
               if (this.props.onKeyDown) {
                 this.props.onKeyDown(event);
               }
 
               switch (event.keyCode) {
-                case 37: /* arrow left */
+                case 37 /* arrow left */:
                   if (arrowLeft) {
                     arrowLeft();
                     event.preventDefault();
                     event.stopPropagation();
                   }
                   break;
-                case 38: /* arrow up */
+                case 38 /* arrow up */:
                   if (arrowUp) {
                     arrowUp();
                     event.preventDefault();
                     event.stopPropagation();
                   }
                   break;
-                case 39: /* arrow right */
+                case 39 /* arrow right */:
                   if (arrowRight) {
                     arrowRight();
                     event.preventDefault();
                     event.stopPropagation();
                   }
                   break;
-                case 40: /* arrow down */
+                case 40 /* arrow down */:
                   if (arrowDown) {
                     arrowDown();
                     event.preventDefault();
                     event.stopPropagation();
                   }
                   break;
-                case 9: /* Tab key */
+                case 9 /* Tab key */:
                   if (onTabPress) {
                     onTabPress(event);
                   }
                   break;
-                case 13: /* Enter key */
+                case 13 /* Enter key */:
                   if (onEnterPress) {
                     onEnterPress(event);
                   }
@@ -465,10 +515,14 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps)(Select);
 
 Select.propTypes = {
-  options: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string,
-    PropTypes.shape({})])).isRequired,
-  value: PropTypes.oneOfType([PropTypes.string,
-    PropTypes.shape({}), PropTypes.any]),
+  options: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.shape({})]),
+  ).isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({}),
+    PropTypes.any,
+  ]),
   onChange: PropTypes.func,
   onMenuClose: PropTypes.func,
   multi: PropTypes.bool,
@@ -480,8 +534,11 @@ Select.propTypes = {
   tooltipValue: PropTypes.string,
   tooltipDefaultValue: PropTypes.string,
   placeholder: PropTypes.string,
-  initialValue: PropTypes.oneOfType([PropTypes.string,
-    PropTypes.shape({}), PropTypes.any]),
+  initialValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({}),
+    PropTypes.any,
+  ]),
   arrowLeft: PropTypes.func,
   arrowUp: PropTypes.func,
   arrowRight: PropTypes.func,
@@ -512,9 +569,9 @@ Select.defaultProps = {
   multi: false,
   clearable: true,
   async: false,
-  delimiter: ';',
-  placeholder: '',
-  defaultPlaceholder: '',
+  delimiter: ";",
+  placeholder: "",
+  defaultPlaceholder: "",
   initialValue: null,
   showValueTooltip: false,
   showLabelTooltip: false,
@@ -531,12 +588,12 @@ Select.defaultProps = {
   valueRenderer: null,
   showSelectedOptionColor: false,
   customSelectComponents: {},
-  classNamePrefix: 'react-select',
+  classNamePrefix: "react-select",
   labelKey: null,
   valueKey: null,
   nullOption: false,
-  nullOptionLabel: '',
-  nullOptionDefaultLabel: 'null',
+  nullOptionLabel: "",
+  nullOptionDefaultLabel: "null",
   scrollableParentContainerClassName: null,
   onKeyDown: null,
 };

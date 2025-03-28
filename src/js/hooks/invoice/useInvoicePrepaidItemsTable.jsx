@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 
-import _ from 'lodash';
-import { RiDeleteBinLine, RiPencilLine } from 'react-icons/ri';
+import _ from "lodash";
+import { RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
 
-import prepaymentInvoiceApi from 'api/services/PrepaymentInvoiceApi';
-import prepaymentInvoiceItemApi from 'api/services/PrepaymentInvoiceItemApi';
-import InvoiceStatus from 'consts/invoiceStatus';
-import useSpinner from 'hooks/useSpinner';
-import useTranslate from 'hooks/useTranslate';
+import prepaymentInvoiceApi from "api/services/PrepaymentInvoiceApi";
+import prepaymentInvoiceItemApi from "api/services/PrepaymentInvoiceItemApi";
+import InvoiceStatus from "consts/invoiceStatus";
+import useSpinner from "hooks/useSpinner";
+import useTranslate from "hooks/useTranslate";
 
 const useInvoicePrepaidItemsTable = ({
   invoiceItems,
@@ -24,11 +24,10 @@ const useInvoicePrepaidItemsTable = ({
   // Function reverting data to the version stored in editableRows state.
   // Used for reverting information after fetching new data.
   const revertQuantityToEdited = () => {
-    Object.entries(editableRows)
-      .forEach(([id, data]) => {
-        updateInvoiceItemData()(id, 'quantity')(data?.quantity);
-        updateInvoiceItemData()(id, 'unitPrice')(data?.unitPrice);
-      });
+    Object.entries(editableRows).forEach(([id, data]) => {
+      updateInvoiceItemData()(id, "quantity")(data?.quantity);
+      updateInvoiceItemData()(id, "unitPrice")(data?.unitPrice);
+    });
   };
 
   // Triggering revertQuantityToEdited after delete (delete action needs refetch
@@ -40,16 +39,20 @@ const useInvoicePrepaidItemsTable = ({
   const isEditable = (rowId) => rowId in editableRows;
 
   // Returns lines which should be sent for updating invoice items
-  const getEditedInvoiceItems = () => invoiceItems
-    .filter((item) => isEditable(item.id))
-    .map((item) => (item?.orderAdjustment
-      ? {
-        id: item.id,
-        unitPrice: item.unitPrice,
-      } : {
-        id: item.id,
-        quantity: item.quantity,
-      }));
+  const getEditedInvoiceItems = () =>
+    invoiceItems
+      .filter((item) => isEditable(item.id))
+      .map((item) =>
+        item?.orderAdjustment
+          ? {
+              id: item.id,
+              unitPrice: item.unitPrice,
+            }
+          : {
+              id: item.id,
+              quantity: item.quantity,
+            },
+      );
 
   const deletePrepaidInvoiceItem = async (invoiceItemId) => {
     spinner.show();
@@ -70,7 +73,10 @@ const useInvoicePrepaidItemsTable = ({
     try {
       const invoiceItemsToUpdate = getEditedInvoiceItems();
       if (invoiceItemsToUpdate.length) {
-        await prepaymentInvoiceApi.updateInvoiceItems(invoiceId, invoiceItemsToUpdate);
+        await prepaymentInvoiceApi.updateInvoiceItems(
+          invoiceId,
+          invoiceItemsToUpdate,
+        );
       }
       callback?.();
     } catch {
@@ -78,11 +84,7 @@ const useInvoicePrepaidItemsTable = ({
     }
   };
 
-  const markRowAsEditable = ({
-    rowId,
-    quantity,
-    unitPrice,
-  }) => {
+  const markRowAsEditable = ({ rowId, quantity, unitPrice }) => {
     setEditableRows((rows) => ({
       ...rows,
       [rowId]: {
@@ -94,22 +96,23 @@ const useInvoicePrepaidItemsTable = ({
 
   const actions = (row) => {
     const removeAction = {
-      defaultLabel: 'Remove',
-      label: 'react.default.button.remove.label',
+      defaultLabel: "Remove",
+      label: "react.default.button.remove.label",
       leftIcon: <RiDeleteBinLine />,
-      variant: 'danger',
+      variant: "danger",
       onClick: () => deletePrepaidInvoiceItem(row.id),
     };
 
     const editAction = {
-      defaultLabel: 'Edit',
-      label: 'react.default.button.edit.label',
+      defaultLabel: "Edit",
+      label: "react.default.button.edit.label",
       leftIcon: <RiPencilLine />,
-      onClick: () => markRowAsEditable({
-        rowId: row.id,
-        quantity: row.quantity,
-        unitPrice: row.unitPrice,
-      }),
+      onClick: () =>
+        markRowAsEditable({
+          rowId: row.id,
+          quantity: row.quantity,
+          unitPrice: row.unitPrice,
+        }),
     };
 
     return row?.isCanceled || (row?.orderAdjustment && row?.unitPrice === 0)
@@ -124,11 +127,14 @@ const useInvoicePrepaidItemsTable = ({
 
   const validateQuantity = (row) => {
     if (
-      _.toInteger(row?.quantityAvailableToInvoice) < row?.quantity
-      || _.toInteger(row?.quantity) <= 0
+      _.toInteger(row?.quantityAvailableToInvoice) < row?.quantity ||
+      _.toInteger(row?.quantity) <= 0
     ) {
-      setInvalidRows((rows) => ([...rows, row?.id]));
-      return translate('react.invoice.errors.quantityToInvoice.label', 'Wrong quantity to invoice value');
+      setInvalidRows((rows) => [...rows, row?.id]);
+      return translate(
+        "react.invoice.errors.quantityToInvoice.label",
+        "Wrong quantity to invoice value",
+      );
     }
 
     setInvalidRows((rows) => rows.filter((rowId) => row.id !== rowId));
@@ -137,15 +143,21 @@ const useInvoicePrepaidItemsTable = ({
 
   // validation for order adjustments
   const validateUnitPrice = (row) => {
-    const haveUnitPricesDifferentSigns = (row.amount > 0 && row.unitPrice < 0)
-                                                || (row?.amount < 0 && row.unitPrice > 0);
+    const haveUnitPricesDifferentSigns =
+      (row.amount > 0 && row.unitPrice < 0) ||
+      (row?.amount < 0 && row.unitPrice > 0);
     const { unitPriceAvailableToInvoice: unitPrice, amount } = row;
     const unitPriceAvailableToInvoice = Math.abs(unitPrice) + Math.abs(amount);
-    if (!row.unitPrice
-      || unitPriceAvailableToInvoice < Math.abs(row.unitPrice)
-      || haveUnitPricesDifferentSigns) {
-      setInvalidRows((rows) => ([...rows, row?.id]));
-      return translate('react.invoice.errors.unitPrice.label', 'Wrong amount to invoice value');
+    if (
+      !row.unitPrice ||
+      unitPriceAvailableToInvoice < Math.abs(row.unitPrice) ||
+      haveUnitPricesDifferentSigns
+    ) {
+      setInvalidRows((rows) => [...rows, row?.id]);
+      return translate(
+        "react.invoice.errors.unitPrice.label",
+        "Wrong amount to invoice value",
+      );
     }
 
     setInvalidRows((rows) => rows.filter((rowId) => row.id !== rowId));
@@ -164,10 +176,7 @@ const useInvoicePrepaidItemsTable = ({
     return validateQuantity(row);
   };
 
-  const updateRow = (
-    rowId,
-    data,
-  ) =>
+  const updateRow = (rowId, data) =>
     setEditableRows((rows) => ({
       ...rows,
       [rowId]: {
@@ -176,10 +185,15 @@ const useInvoicePrepaidItemsTable = ({
       },
     }));
 
-  const isActionMenuVisible = (invoiceStatus, isPrepaymentInvoice, isInverseItem) =>
-    !isInverseItem && !isPrepaymentInvoice && (
-      invoiceStatus === InvoiceStatus.PENDING || invoiceStatus === InvoiceStatus.SUBMITTED
-    );
+  const isActionMenuVisible = (
+    invoiceStatus,
+    isPrepaymentInvoice,
+    isInverseItem,
+  ) =>
+    !isInverseItem &&
+    !isPrepaymentInvoice &&
+    (invoiceStatus === InvoiceStatus.PENDING ||
+      invoiceStatus === InvoiceStatus.SUBMITTED);
 
   // Removing all information about edited lines
   const clearEditedState = () => {

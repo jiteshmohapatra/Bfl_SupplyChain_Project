@@ -1,31 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { RiInformationLine } from 'react-icons/ri';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { RiInformationLine } from "react-icons/ri";
 
-import PreferenceTypeModal from 'components/productSupplier/modals/PreferenceTypeModal';
-import Translate from 'utils/Translate';
+import PreferenceTypeModal from "components/productSupplier/modals/PreferenceTypeModal";
+import Translate from "utils/Translate";
 
 const getLabel = (productSupplierPreferences) => {
   if (!productSupplierPreferences.length) {
     return {
-      id: 'react.productSupplier.preferenceType.none.label',
-      defaultMessage: 'None',
+      id: "react.productSupplier.preferenceType.none.label",
+      defaultMessage: "None",
     };
   }
   if (productSupplierPreferences.length > 1) {
     return {
-      id: 'react.productSupplier.preferenceType.multiple.label',
-      defaultMessage: 'Multiple',
+      id: "react.productSupplier.preferenceType.multiple.label",
+      defaultMessage: "Multiple",
       icon: <RiInformationLine />,
-      className: 'cell-content',
+      className: "cell-content",
     };
   }
   return productSupplierPreferences[0].preferenceType?.name;
 };
 
-const PreferenceTypeColumn = ({ productSupplierPreferences, productSupplierId }) => {
+const PreferenceTypeColumn = ({
+  productSupplierPreferences,
+  productSupplierId,
+}) => {
   const [preferenceTypeModalData, setPreferenceTypeModalData] = useState([]);
   const label = getLabel(productSupplierPreferences);
 
@@ -44,15 +47,14 @@ const PreferenceTypeColumn = ({ productSupplierPreferences, productSupplierId })
         onClick={onCellClick}
         role="presentation"
       >
-        {_.isObject(label)
-          ? (
-            <>
-              <Translate id={label.id} defaultMessage={label.defaultMessage} />
-              {' '}
-              {label?.icon}
-            </>
-          )
-          : label}
+        {_.isObject(label) ? (
+          <>
+            <Translate id={label.id} defaultMessage={label.defaultMessage} />{" "}
+            {label?.icon}
+          </>
+        ) : (
+          label
+        )}
       </span>
       <PreferenceTypeModal
         productSupplierId={productSupplierId}
@@ -67,34 +69,38 @@ const PreferenceTypeColumn = ({ productSupplierPreferences, productSupplierId })
 export default PreferenceTypeColumn;
 
 PreferenceTypeColumn.propTypes = {
-  productSupplierPreferences: PropTypes.arrayOf(PropTypes.shape({
-    destinationParty: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      code: PropTypes.string,
-      dateCreated: PropTypes.string,
-      lastUpdated: PropTypes.string,
-      partyType: PropTypes.shape({
+  productSupplierPreferences: PropTypes.arrayOf(
+    PropTypes.shape({
+      destinationParty: PropTypes.shape({
         id: PropTypes.string.isRequired,
         name: PropTypes.string,
+        description: PropTypes.string,
         code: PropTypes.string,
-        partyTypeCode: PropTypes.string,
+        dateCreated: PropTypes.string,
+        lastUpdated: PropTypes.string,
+        partyType: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          name: PropTypes.string,
+          code: PropTypes.string,
+          partyTypeCode: PropTypes.string,
+        }),
+        roles: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.string,
+            roleType: PropTypes.string,
+            startDate: PropTypes.string,
+            endDate: PropTypes.string,
+          }),
+        ),
+        sequences: PropTypes.arrayOf(PropTypes.shape({})),
       }),
-      roles: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string,
-        roleType: PropTypes.string,
-        startDate: PropTypes.string,
-        endDate: PropTypes.string,
-      })),
-      sequences: PropTypes.arrayOf(PropTypes.shape({})),
+      preferenceType: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        dateCreated: PropTypes.string,
+        lastUpdated: PropTypes.string,
+        name: PropTypes.string,
+      }),
     }),
-    preferenceType: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      dateCreated: PropTypes.string,
-      lastUpdated: PropTypes.string,
-      name: PropTypes.string,
-    }),
-  })).isRequired,
+  ).isRequired,
   productSupplierId: PropTypes.string.isRequired,
 };

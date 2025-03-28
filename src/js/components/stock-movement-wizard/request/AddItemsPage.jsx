@@ -1,39 +1,42 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import fileDownload from 'js-file-download';
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import Alert from 'react-s-alert';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import fileDownload from "js-file-download";
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import Alert from "react-s-alert";
 
-import { fetchUsers, hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import ButtonField from 'components/form-elements/ButtonField';
-import LabelField from 'components/form-elements/LabelField';
-import ProductSelectField from 'components/form-elements/ProductSelectField';
-import TextField from 'components/form-elements/TextField';
-import notification from 'components/Layout/notifications/notification';
-import ActivityCode from 'consts/activityCode';
-import { DASHBOARD_URL, STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import NotificationType from 'consts/notificationTypes';
-import RequisitionStatus from 'consts/requisitionStatus';
-import apiClient from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { isRequestFromWard, supports } from 'utils/supportedActivitiesUtils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchUsers, hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import ButtonField from "components/form-elements/ButtonField";
+import LabelField from "components/form-elements/LabelField";
+import ProductSelectField from "components/form-elements/ProductSelectField";
+import TextField from "components/form-elements/TextField";
+import notification from "components/Layout/notifications/notification";
+import ActivityCode from "consts/activityCode";
+import { DASHBOARD_URL, STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import NotificationType from "consts/notificationTypes";
+import RequisitionStatus from "consts/requisitionStatus";
+import apiClient from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import { isRequestFromWard, supports } from "utils/supportedActivitiesUtils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 function addButton({
   // eslint-disable-next-line react/prop-types
-  addRow, getSortOrder, newItemAdded, updateTotalCount,
+  addRow,
+  getSortOrder,
+  newItemAdded,
+  updateTotalCount,
 }) {
   return (
     <button
@@ -47,7 +50,10 @@ function addButton({
     >
       <span>
         <i className="fa fa-plus pr-2" />
-        <Translate id="react.default.button.addLine.label" defaultMessage="Add line" />
+        <Translate
+          id="react.default.button.addLine.label"
+          defaultMessage="Add line"
+        />
       </span>
     </button>
   );
@@ -57,23 +63,23 @@ function addButton({
 // where quantityRequested is calculated by subtracting one of below from QOH
 const RequestFromWardTypes = {
   MANUAL: {
-    calculateQtyRequestedFrom: 'monthlyDemand',
+    calculateQtyRequestedFrom: "monthlyDemand",
   },
   STOCKLIST_PUSH_TYPE: {
-    calculateQtyRequestedFrom: 'quantityAllowed',
+    calculateQtyRequestedFrom: "quantityAllowed",
   },
   STOCKLIST_PULL_TYPE: {
-    calculateQtyRequestedFrom: 'demandPerReplenishmentPeriod',
+    calculateQtyRequestedFrom: "demandPerReplenishmentPeriod",
   },
 };
 
 const FIELDS = {
   product: {
     type: ProductSelectField,
-    label: 'react.stockMovement.requestedProduct.label',
-    defaultMessage: 'Requested product',
-    headerAlign: 'left',
-    flexWidth: '9',
+    label: "react.stockMovement.requestedProduct.label",
+    defaultMessage: "Requested product",
+    headerAlign: "left",
+    flexWidth: "9",
     attributes: {
       showSelectedOptionColor: true,
       includeUom: true,
@@ -81,122 +87,145 @@ const FIELDS = {
   },
   quantityOnHand: {
     type: LabelField,
-    label: 'react.stockMovement.quantityOnHand.label',
-    defaultMessage: 'QoH',
-    flexWidth: '1.7',
+    label: "react.stockMovement.quantityOnHand.label",
+    defaultMessage: "QoH",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   quantityOnHandAtRequestSite: {
     type: TextField,
-    flexWidth: '1.7',
-    label: 'react.stockMovement.quantityOnHandAtRequestSite.label',
-    defaultMessage: 'QOH at Request Site',
+    flexWidth: "1.7",
+    label: "react.stockMovement.quantityOnHandAtRequestSite.label",
+    defaultMessage: "QOH at Request Site",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   quantityAvailable: {
     type: LabelField,
-    label: 'react.stockMovement.available.label',
-    defaultMessage: 'Available',
-    flexWidth: '1.7',
+    label: "react.stockMovement.available.label",
+    defaultMessage: "Available",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   quantityAllowed: {
     type: LabelField,
-    label: 'react.stockMovement.maxQuantity.label',
-    defaultMessage: 'Max Qty',
-    flexWidth: '1.7',
+    label: "react.stockMovement.maxQuantity.label",
+    defaultMessage: "Max Qty",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   monthlyDemand: {
     type: LabelField,
-    label: 'react.stockMovement.demandPerMonth.label',
-    defaultMessage: 'Demand per Month',
-    flexWidth: '1.7',
+    label: "react.stockMovement.demandPerMonth.label",
+    defaultMessage: "Demand per Month",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   quantityRequested: {
     type: TextField,
-    label: 'react.stockMovement.neededQuantity.label',
-    defaultMessage: 'Needed Qty',
-    flexWidth: '1.7',
+    label: "react.stockMovement.neededQuantity.label",
+    defaultMessage: "Needed Qty",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   comments: {
     type: TextField,
-    label: 'react.stockMovement.comments.label',
-    defaultMessage: 'Comments',
-    flexWidth: '1.7',
+    label: "react.stockMovement.comments.label",
+    defaultMessage: "Comments",
+    flexWidth: "1.7",
     getDynamicAttr: ({
-      addRow, rowCount, rowIndex, getSortOrder,
-      updateTotalCount, updateRow, values,
+      addRow,
+      rowCount,
+      rowIndex,
+      getSortOrder,
+      updateTotalCount,
+      updateRow,
+      values,
     }) => ({
-      onTabPress: rowCount === rowIndex + 1 ? () => {
-        updateTotalCount(1);
-        addRow({ sortOrder: getSortOrder() });
-      } : null,
-      arrowRight: rowCount === rowIndex + 1 ? () => {
-        updateTotalCount(1);
-        addRow({ sortOrder: getSortOrder() });
-      } : null,
-      arrowDown: rowCount === rowIndex + 1 ? () => () => {
-        updateTotalCount(1);
-        addRow({ sortOrder: getSortOrder() });
-      } : null,
+      onTabPress:
+        rowCount === rowIndex + 1
+          ? () => {
+              updateTotalCount(1);
+              addRow({ sortOrder: getSortOrder() });
+            }
+          : null,
+      arrowRight:
+        rowCount === rowIndex + 1
+          ? () => {
+              updateTotalCount(1);
+              addRow({ sortOrder: getSortOrder() });
+            }
+          : null,
+      arrowDown:
+        rowCount === rowIndex + 1
+          ? () => () => {
+              updateTotalCount(1);
+              addRow({ sortOrder: getSortOrder() });
+            }
+          : null,
       onBlur: () => updateRow(values, rowIndex),
     }),
   },
   demandPerReplenishmentPeriod: {
     type: LabelField,
-    label: 'react.stockMovement.demandPerReplenishmentPeriod.label',
-    defaultMessage: 'Demand per Replenishment Period',
-    flexWidth: '1.7',
+    label: "react.stockMovement.demandPerReplenishmentPeriod.label",
+    defaultMessage: "Demand per Replenishment Period",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
   demandPerRequestPeriod: {
     type: LabelField,
-    label: 'react.stockMovement.demandPerRequestPeriod.label',
-    defaultMessage: 'Demand per Request Period',
-    flexWidth: '1.7',
+    label: "react.stockMovement.demandPerRequestPeriod.label",
+    defaultMessage: "Demand per Request Period",
+    flexWidth: "1.7",
     attributes: {
-      type: 'number',
+      type: "number",
     },
   },
 };
 
 const DELETE_BUTTON_FIELD = {
   type: ButtonField,
-  label: 'react.default.button.delete.label',
-  defaultMessage: 'Delete',
-  flexWidth: '1',
-  fieldKey: '',
-  buttonLabel: 'react.default.button.delete.label',
-  buttonDefaultMessage: 'Delete',
+  label: "react.default.button.delete.label",
+  defaultMessage: "Delete",
+  flexWidth: "1",
+  fieldKey: "",
+  buttonLabel: "react.default.button.delete.label",
+  buttonDefaultMessage: "Delete",
   getDynamicAttr: ({
-    fieldValue, removeItem, removeRow, updateTotalCount,
+    fieldValue,
+    removeItem,
+    removeRow,
+    updateTotalCount,
   }) => ({
-    onClick: fieldValue && fieldValue.id ? () => {
-      removeItem(fieldValue.id).then(() => {
-        updateTotalCount(-1);
-        removeRow();
-      });
-    } : () => { updateTotalCount(-1); removeRow(); },
+    onClick:
+      fieldValue && fieldValue.id
+        ? () => {
+            removeItem(fieldValue.id).then(() => {
+              updateTotalCount(-1);
+              removeRow();
+            });
+          }
+        : () => {
+            updateTotalCount(-1);
+            removeRow();
+          },
   }),
   attributes: {
-    className: 'btn btn-outline-danger',
+    className: "btn btn-outline-danger",
   },
 };
 
@@ -217,17 +246,22 @@ const NO_STOCKLIST_FIELDS = {
     fields: {
       product: {
         ...FIELDS.product,
-        fieldKey: '',
-        flexWidth: '9.5',
+        fieldKey: "",
+        flexWidth: "9.5",
         getDynamicAttr: ({
-          rowIndex, rowCount, updateProductData, values, originId, focusField,
+          rowIndex,
+          rowCount,
+          updateProductData,
+          values,
+          originId,
+          focusField,
         }) => ({
           onChange: (value) => updateProductData(value, values, rowIndex),
           autoFocus: rowIndex === rowCount - 1,
           locationId: originId,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityRequested');
+              focusField(rowIndex, "quantityRequested");
             }
           },
         }),
@@ -237,11 +271,9 @@ const NO_STOCKLIST_FIELDS = {
       monthlyDemand: FIELDS.monthlyDemand,
       quantityRequested: {
         ...FIELDS.quantityRequested,
-        flexWidth: '2.5',
-        fieldKey: '',
-        getDynamicAttr: ({
-          updateRow, values, rowIndex,
-        }) => ({
+        flexWidth: "2.5",
+        fieldKey: "",
+        getDynamicAttr: ({ updateRow, values, rowIndex }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
@@ -257,16 +289,21 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
     fields: {
       product: {
         ...FIELDS.product,
-        fieldKey: 'disabled',
+        fieldKey: "disabled",
         getDynamicAttr: ({
-          fieldValue, rowIndex, rowCount, newItem, originId, focusField,
+          fieldValue,
+          rowIndex,
+          rowCount,
+          newItem,
+          originId,
+          focusField,
         }) => ({
           locationId: originId,
           disabled: !!fieldValue,
           autoFocus: newItem && rowIndex === rowCount - 1,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityRequested');
+              focusField(rowIndex, "quantityRequested");
             }
           },
         }),
@@ -276,9 +313,7 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
       quantityAvailable: FIELDS.quantityAvailable,
       quantityRequested: {
         ...FIELDS.quantityRequested,
-        getDynamicAttr: ({
-          rowIndex, values, updateRow,
-        }) => ({
+        getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
@@ -294,16 +329,21 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
     fields: {
       product: {
         ...FIELDS.product,
-        fieldKey: 'disabled',
+        fieldKey: "disabled",
         getDynamicAttr: ({
-          fieldValue, rowIndex, rowCount, newItem, originId, focusField,
+          fieldValue,
+          rowIndex,
+          rowCount,
+          newItem,
+          originId,
+          focusField,
         }) => ({
           locationId: originId,
           disabled: !!fieldValue,
           autoFocus: newItem && rowIndex === rowCount - 1,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityRequested');
+              focusField(rowIndex, "quantityRequested");
             }
           },
         }),
@@ -324,40 +364,49 @@ const REQUEST_FROM_WARD_STOCKLIST_FIELDS_PUSH_TYPE = {
     fields: {
       product: {
         ...FIELDS.product,
-        fieldKey: 'disabled',
+        fieldKey: "disabled",
         getDynamicAttr: ({
-          fieldValue, rowIndex, rowCount, newItem, originId, focusField,
+          fieldValue,
+          rowIndex,
+          rowCount,
+          newItem,
+          originId,
+          focusField,
         }) => ({
           locationId: originId,
           disabled: !!fieldValue,
           autoFocus: newItem && rowIndex === rowCount - 1,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityOnHand');
+              focusField(rowIndex, "quantityOnHand");
             }
           },
         }),
       },
       quantityAllowed: {
         ...FIELDS.quantityAllowed,
-        headerTooltip: 'react.stockMovement.tooltip.maxQuantity.label',
-        headerAlign: 'right',
+        headerTooltip: "react.stockMovement.tooltip.maxQuantity.label",
+        headerAlign: "right",
         attributes: {
           ...FIELDS.quantityAllowed.attributes,
-          cellClassName: 'text-right',
+          cellClassName: "text-right",
         },
       },
       quantityOnHand: {
         ...FIELDS.quantityOnHand,
         type: TextField,
-        headerTooltip: 'react.stockMovement.tooltip.quantityOnHand.label',
-        headerAlign: 'right',
+        headerTooltip: "react.stockMovement.tooltip.quantityOnHand.label",
+        headerAlign: "right",
         attributes: {
           ...FIELDS.quantityOnHand.attributes,
-          cellClassName: 'text-right',
+          cellClassName: "text-right",
         },
         getDynamicAttr: ({
-          fieldValue, rowIndex, values, updateRow, calculateQtyRequested,
+          fieldValue,
+          rowIndex,
+          values,
+          updateRow,
+          calculateQtyRequested,
         }) => ({
           onBlur: () => {
             const valuesWithUpdatedQtyRequested = calculateQtyRequested(
@@ -372,26 +421,24 @@ const REQUEST_FROM_WARD_STOCKLIST_FIELDS_PUSH_TYPE = {
       },
       quantityRequested: {
         ...FIELDS.quantityRequested,
-        headerAlign: 'right',
+        headerAlign: "right",
         required: true,
-        headerTooltip: 'react.stockMovement.tooltip.quantityRequested.label',
+        headerTooltip: "react.stockMovement.tooltip.quantityRequested.label",
         attributes: {
           ...FIELDS.quantityRequested.attributes,
-          cellClassName: 'text-right',
+          cellClassName: "text-right",
         },
-        getDynamicAttr: ({
-          rowIndex, values, updateRow,
-        }) => ({
+        getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       comments: {
         ...FIELDS.comments,
-        headerTooltip: 'react.stockMovement.tooltip.comments.label',
-        headerAlign: 'left',
+        headerTooltip: "react.stockMovement.tooltip.comments.label",
+        headerAlign: "left",
         attributes: {
           ...FIELDS.comments.attributes,
-          cellClassName: 'text-left',
+          cellClassName: "text-left",
         },
       },
       deleteButton: DELETE_BUTTON_FIELD,
@@ -405,47 +452,59 @@ const REQUEST_FROM_WARD_STOCKLIST_FIELDS_PULL_TYPE = {
     fields: {
       product: {
         ...FIELDS.product,
-        fieldKey: 'disabled',
-        flexWidth: '2',
+        fieldKey: "disabled",
+        flexWidth: "2",
         getDynamicAttr: ({
-          fieldValue, rowIndex, rowCount, newItem, originId, focusField,
+          fieldValue,
+          rowIndex,
+          rowCount,
+          newItem,
+          originId,
+          focusField,
         }) => ({
           locationId: originId,
           disabled: !!fieldValue,
           autoFocus: newItem && rowIndex === rowCount - 1,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityOnHand');
+              focusField(rowIndex, "quantityOnHand");
             }
           },
         }),
       },
       demandPerReplenishmentPeriod: {
         type: LabelField,
-        label: 'react.stockMovement.demandPerRequestPeriod.label',
-        defaultMessage: 'Demand per Request Period',
-        flexWidth: '1',
-        headerAlign: 'right',
-        headerTooltip: 'react.stockMovement.demandPerRequestPeriod.headerTooltip.label',
-        headerDefaultTooltip: 'The average of your previous requests for this product.',
+        label: "react.stockMovement.demandPerRequestPeriod.label",
+        defaultMessage: "Demand per Request Period",
+        flexWidth: "1",
+        headerAlign: "right",
+        headerTooltip:
+          "react.stockMovement.demandPerRequestPeriod.headerTooltip.label",
+        headerDefaultTooltip:
+          "The average of your previous requests for this product.",
         attributes: {
-          type: 'number',
-          className: 'text-right',
+          type: "number",
+          className: "text-right",
         },
       },
       quantityOnHand: {
         ...FIELDS.quantityOnHandAtRequestSite,
-        label: 'react.stockMovement.quantityOnHand.label',
-        defaultMessage: 'QOH',
-        flexWidth: '0.6',
-        headerAlign: 'right',
-        headerTooltip: 'react.stockMovement.quantityOnHand.headerTooltip.label',
-        headerDefaultTooltip: 'Enter your current quantity on hand for this product',
+        label: "react.stockMovement.quantityOnHand.label",
+        defaultMessage: "QOH",
+        flexWidth: "0.6",
+        headerAlign: "right",
+        headerTooltip: "react.stockMovement.quantityOnHand.headerTooltip.label",
+        headerDefaultTooltip:
+          "Enter your current quantity on hand for this product",
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({
-          fieldValue, rowIndex, values, updateRow, calculateQtyRequested,
+          fieldValue,
+          rowIndex,
+          values,
+          updateRow,
+          calculateQtyRequested,
         }) => ({
           onBlur: () => {
             const valuesWithUpdatedQtyRequested = calculateQtyRequested(
@@ -460,46 +519,61 @@ const REQUEST_FROM_WARD_STOCKLIST_FIELDS_PULL_TYPE = {
       },
       quantityRequested: {
         type: TextField,
-        label: 'react.stockMovement.neededQuantity.label',
-        defaultMessage: 'Needed Qty',
-        flexWidth: '0.6',
+        label: "react.stockMovement.neededQuantity.label",
+        defaultMessage: "Needed Qty",
+        flexWidth: "0.6",
         required: true,
-        headerAlign: 'right',
-        headerTooltip: 'react.stockMovement.quantityRequested.headerTooltip.label',
-        headerDefaultTooltip: 'Your demand for the request period minus your QOH. Edit as needed.',
+        headerAlign: "right",
+        headerTooltip:
+          "react.stockMovement.quantityRequested.headerTooltip.label",
+        headerDefaultTooltip:
+          "Your demand for the request period minus your QOH. Edit as needed.",
         attributes: {
-          type: 'number',
+          type: "number",
         },
-        getDynamicAttr: ({
-          rowIndex, values, updateRow,
-        }) => ({
+        getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       comments: {
         type: TextField,
-        label: 'react.stockMovement.comments.label',
-        defaultMessage: 'Comments',
-        flexWidth: '1.6',
-        headerAlign: 'left',
-        headerTooltip: 'react.stockMovement.comments.headerTooltip.label',
-        headerDefaultTooltip: 'Leave a comment for the person who will review this request.',
+        label: "react.stockMovement.comments.label",
+        defaultMessage: "Comments",
+        flexWidth: "1.6",
+        headerAlign: "left",
+        headerTooltip: "react.stockMovement.comments.headerTooltip.label",
+        headerDefaultTooltip:
+          "Leave a comment for the person who will review this request.",
         getDynamicAttr: ({
-          addRow, rowCount, rowIndex, getSortOrder,
-          updateTotalCount, updateRow, values,
+          addRow,
+          rowCount,
+          rowIndex,
+          getSortOrder,
+          updateTotalCount,
+          updateRow,
+          values,
         }) => ({
-          onTabPress: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
-          arrowRight: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
-          arrowDown: rowCount === rowIndex + 1 ? () => () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
+          onTabPress:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
+          arrowRight:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
+          arrowDown:
+            rowCount === rowIndex + 1
+              ? () => () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
@@ -514,47 +588,60 @@ const REQUEST_FROM_WARD_FIELDS = {
     fields: {
       product: {
         ...FIELDS.product,
-        fieldKey: 'disabled',
-        flexWidth: '2.4',
+        fieldKey: "disabled",
+        flexWidth: "2.4",
         getDynamicAttr: ({
-          rowIndex, rowCount, updateProductData, values, newItem, originId, focusField,
+          rowIndex,
+          rowCount,
+          updateProductData,
+          values,
+          newItem,
+          originId,
+          focusField,
         }) => ({
           locationId: originId,
           onChange: (value) => updateProductData(value, values, rowIndex),
           autoFocus: newItem && rowIndex === rowCount - 1,
           onExactProductSelected: ({ product }) => {
             if (focusField && product) {
-              focusField(rowIndex, 'quantityOnHand');
+              focusField(rowIndex, "quantityOnHand");
             }
           },
         }),
       },
       monthlyDemand: {
         type: LabelField,
-        label: 'react.stockMovement.demandPerMonth.label',
-        defaultMessage: 'Demand per Month',
-        headerAlign: 'right',
-        flexWidth: '0.8',
-        headerTooltip: 'react.stockMovement.demandPerRequestPeriod.headerTooltip.label',
-        headerDefaultTooltip: 'The average of your previous requests for this product.',
+        label: "react.stockMovement.demandPerMonth.label",
+        defaultMessage: "Demand per Month",
+        headerAlign: "right",
+        flexWidth: "0.8",
+        headerTooltip:
+          "react.stockMovement.demandPerRequestPeriod.headerTooltip.label",
+        headerDefaultTooltip:
+          "The average of your previous requests for this product.",
         attributes: {
-          type: 'number',
-          className: 'text-right',
+          type: "number",
+          className: "text-right",
         },
       },
       quantityOnHand: {
         type: TextField,
-        label: 'react.stockMovement.quantityOnHand.label',
-        defaultMessage: 'QOH',
-        flexWidth: '0.6',
-        headerAlign: 'right',
-        headerTooltip: 'react.stockMovement.quantityOnHand.headerTooltip.label',
-        headerDefaultTooltip: 'Enter your current quantity on hand for this product',
+        label: "react.stockMovement.quantityOnHand.label",
+        defaultMessage: "QOH",
+        flexWidth: "0.6",
+        headerAlign: "right",
+        headerTooltip: "react.stockMovement.quantityOnHand.headerTooltip.label",
+        headerDefaultTooltip:
+          "Enter your current quantity on hand for this product",
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({
-          fieldValue, rowIndex, values, updateRow, calculateQtyRequested,
+          fieldValue,
+          rowIndex,
+          values,
+          updateRow,
+          calculateQtyRequested,
         }) => ({
           onBlur: () => {
             const valuesWithUpdatedQtyRequested = calculateQtyRequested(
@@ -569,46 +656,61 @@ const REQUEST_FROM_WARD_FIELDS = {
       },
       quantityRequested: {
         type: TextField,
-        label: 'react.stockMovement.neededQuantity.label',
-        defaultMessage: 'Needed Qty',
-        flexWidth: '0.6',
+        label: "react.stockMovement.neededQuantity.label",
+        defaultMessage: "Needed Qty",
+        flexWidth: "0.6",
         required: true,
-        headerAlign: 'right',
-        headerTooltip: 'react.stockMovement.quantityRequested.headerTooltip.label',
-        headerDefaultTooltip: 'Your demand for the request period minus your QOH. Edit as needed.',
+        headerAlign: "right",
+        headerTooltip:
+          "react.stockMovement.quantityRequested.headerTooltip.label",
+        headerDefaultTooltip:
+          "Your demand for the request period minus your QOH. Edit as needed.",
         attributes: {
-          type: 'number',
+          type: "number",
         },
-        getDynamicAttr: ({
-          rowIndex, values, updateRow,
-        }) => ({
+        getDynamicAttr: ({ rowIndex, values, updateRow }) => ({
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       comments: {
         type: TextField,
-        label: 'react.stockMovement.comments.label',
-        defaultMessage: 'Comments',
-        flexWidth: '2.4',
-        headerAlign: 'left',
-        headerTooltip: 'react.stockMovement.comments.headerTooltip.label',
-        headerDefaultTooltip: 'Leave a comment for the person who will review this request.',
+        label: "react.stockMovement.comments.label",
+        defaultMessage: "Comments",
+        flexWidth: "2.4",
+        headerAlign: "left",
+        headerTooltip: "react.stockMovement.comments.headerTooltip.label",
+        headerDefaultTooltip:
+          "Leave a comment for the person who will review this request.",
         getDynamicAttr: ({
-          addRow, rowCount, rowIndex, getSortOrder,
-          updateTotalCount, updateRow, values,
+          addRow,
+          rowCount,
+          rowIndex,
+          getSortOrder,
+          updateTotalCount,
+          updateRow,
+          values,
         }) => ({
-          onTabPress: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
-          arrowRight: rowCount === rowIndex + 1 ? () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
-          arrowDown: rowCount === rowIndex + 1 ? () => () => {
-            updateTotalCount(1);
-            addRow({ sortOrder: getSortOrder() });
-          } : null,
+          onTabPress:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
+          arrowRight:
+            rowCount === rowIndex + 1
+              ? () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
+          arrowDown:
+            rowCount === rowIndex + 1
+              ? () => () => {
+                  updateTotalCount(1);
+                  addRow({ sortOrder: getSortOrder() });
+                }
+              : null,
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
@@ -617,7 +719,7 @@ const REQUEST_FROM_WARD_FIELDS = {
   },
 };
 
-const REPLENISHMENT_TYPE_PULL = 'PULL';
+const REPLENISHMENT_TYPE_PULL = "PULL";
 
 function calculateQuantityRequested(values, rowIndex, fieldValue, requestType) {
   const valuesWithUpdatedQtyRequested = values;
@@ -627,9 +729,8 @@ function calculateQuantityRequested(values, rowIndex, fieldValue, requestType) {
   const baseValue = lineItem[requestType.calculateQtyRequestedFrom];
   if (baseValue && fieldValue) {
     const value = baseValue - fieldValue;
-    valuesWithUpdatedQtyRequested.lineItems[rowIndex].quantityRequested = value >= 0
-      ? value
-      : 0;
+    valuesWithUpdatedQtyRequested.lineItems[rowIndex].quantityRequested =
+      value >= 0 ? value : 0;
   }
   return valuesWithUpdatedQtyRequested;
 }
@@ -694,8 +795,11 @@ class AddItemsPage extends Component {
    */
   getFields() {
     if (this.state.isRequestFromWard) {
-      if (_.get(this.state.values.stocklist, 'id')) {
-        if (_.get(this.state.values.replenishmentType, 'name') === REPLENISHMENT_TYPE_PULL) {
+      if (_.get(this.state.values.stocklist, "id")) {
+        if (
+          _.get(this.state.values.replenishmentType, "name") ===
+          REPLENISHMENT_TYPE_PULL
+        ) {
           return REQUEST_FROM_WARD_STOCKLIST_FIELDS_PULL_TYPE;
         }
         return REQUEST_FROM_WARD_STOCKLIST_FIELDS_PUSH_TYPE;
@@ -703,8 +807,11 @@ class AddItemsPage extends Component {
       return REQUEST_FROM_WARD_FIELDS;
     }
 
-    if (_.get(this.state.values.stocklist, 'id')) {
-      if (_.get(this.state.values.replenishmentType, 'name') === REPLENISHMENT_TYPE_PULL) {
+    if (_.get(this.state.values.stocklist, "id")) {
+      if (
+        _.get(this.state.values.replenishmentType, "name") ===
+        REPLENISHMENT_TYPE_PULL
+      ) {
         return STOCKLIST_FIELDS_PULL_TYPE;
       }
       return STOCKLIST_FIELDS_PUSH_TYPE;
@@ -721,50 +828,62 @@ class AddItemsPage extends Component {
    */
   getLineItemsToBeSaved(lineItems) {
     // First find items that are new and should be added (don't have status code)
-    const lineItemsToBeAdded = _.filter(lineItems, (item) =>
-      !item.statusCode && item.quantityRequested && item.quantityRequested !== '0' && item.product);
+    const lineItemsToBeAdded = _.filter(
+      lineItems,
+      (item) =>
+        !item.statusCode &&
+        item.quantityRequested &&
+        item.quantityRequested !== "0" &&
+        item.product,
+    );
     // Then get a list of items that already exist in this request (have status code)
     const lineItemsWithStatus = _.filter(lineItems, (item) => item.statusCode);
     const lineItemsToBeUpdated = [];
     // For each already existing items - find the ones that have changed
     _.forEach(lineItemsWithStatus, (item) => {
-      const oldItem = _.find(this.state.currentLineItems, (old) => old.id === item.id);
+      const oldItem = _.find(
+        this.state.currentLineItems,
+        (old) => old.id === item.id,
+      );
       const oldQty = parseInt(oldItem.quantityRequested, 10);
       const newQty = parseInt(item.quantityRequested, 10);
       const oldQtyOnHand = parseInt(oldItem.quantityOnHand, 10);
       const newQtyOnHand = parseInt(newQty.quantityOnHand, 10);
       // Intersection of keys common to both objects (excluding product key)
       const keyIntersection = _.remove(
-        _.intersection(
-          _.keys(oldItem),
-          _.keys(item),
-        ),
-        (key) => key !== 'product',
+        _.intersection(_.keys(oldItem), _.keys(item)),
+        (key) => key !== "product",
       );
 
       if (
-        (this.state.values.origin.type === 'SUPPLIER' || !this.state.values.hasManageInventory)
-        && (
-          !_.isEqual(_.pick(item, keyIntersection), _.pick(oldItem, keyIntersection))
-          || (item.product.id !== oldItem.product.id)
-        )
+        (this.state.values.origin.type === "SUPPLIER" ||
+          !this.state.values.hasManageInventory) &&
+        (!_.isEqual(
+          _.pick(item, keyIntersection),
+          _.pick(oldItem, keyIntersection),
+        ) ||
+          item.product.id !== oldItem.product.id)
       ) {
         lineItemsToBeUpdated.push(item);
-      } else if (newQty !== oldQty || !item.quantityRequested
-        || (oldItem.comments !== item.comments && !_.isNil(item.comments))
-        || oldQtyOnHand !== newQtyOnHand) {
+      } else if (
+        newQty !== oldQty ||
+        !item.quantityRequested ||
+        (oldItem.comments !== item.comments && !_.isNil(item.comments)) ||
+        oldQtyOnHand !== newQtyOnHand
+      ) {
         lineItemsToBeUpdated.push(item);
       }
     });
 
     const mapPropertiesOfItemsToBeAdded = (item) => {
       const itemQuantityCounted = item.quantityOnHand
-        ? { quantityCounted: parseInt(item.quantityOnHand, 10) } : {};
+        ? { quantityCounted: parseInt(item.quantityOnHand, 10) }
+        : {};
       return {
         product: { id: item.product.id },
         quantityRequested: item.quantityRequested,
         sortOrder: item.sortOrder,
-        comments: !_.isNil(item.comments) ? item.comments : '',
+        comments: !_.isNil(item.comments) ? item.comments : "",
         ...itemQuantityCounted,
       };
     };
@@ -791,90 +910,110 @@ class AddItemsPage extends Component {
     const { data } = response.data;
     let lineItemsData;
 
-    const isPullType = _.get(this.state.values.replenishmentType, 'name') === REPLENISHMENT_TYPE_PULL;
-    const isRequestOrigin = this.props.currentLocationId === this.state.values.origin.id;
+    const isPullType =
+      _.get(this.state.values.replenishmentType, "name") ===
+      REPLENISHMENT_TYPE_PULL;
+    const isRequestOrigin =
+      this.props.currentLocationId === this.state.values.origin.id;
 
     if (this.state.values.lineItems.length === 0 && !data.length) {
       lineItemsData = new Array(1).fill({ sortOrder: 100 });
-    } else if (this.state.isRequestFromWard && _.get(this.state.values.stocklist, 'id')) {
-      lineItemsData = _.map(
-        data,
-        (val) => {
-          const {
-            quantityRequested,
-            demandPerReplenishmentPeriod,
-            quantityOnHand,
-            quantityAllowed,
-          } = val;
+    } else if (
+      this.state.isRequestFromWard &&
+      _.get(this.state.values.stocklist, "id")
+    ) {
+      lineItemsData = _.map(data, (val) => {
+        const {
+          quantityRequested,
+          demandPerReplenishmentPeriod,
+          quantityOnHand,
+          quantityAllowed,
+        } = val;
 
-          let qtyRequested = 0;
-          if (quantityRequested) qtyRequested = quantityRequested;
-          else if (isPullType) qtyRequested = demandPerReplenishmentPeriod - quantityOnHand;
-          else qtyRequested = quantityAllowed;
+        let qtyRequested = 0;
+        if (quantityRequested) qtyRequested = quantityRequested;
+        else if (isPullType)
+          qtyRequested = demandPerReplenishmentPeriod - quantityOnHand;
+        else qtyRequested = quantityAllowed;
 
-          return {
-            ...val,
-            quantityOnHand: val.quantityCounted,
-            disabled: true,
-            quantityRequested: qtyRequested >= 0 ? qtyRequested : 0,
-          };
-        },
-      );
+        return {
+          ...val,
+          quantityOnHand: val.quantityCounted,
+          disabled: true,
+          quantityRequested: qtyRequested >= 0 ? qtyRequested : 0,
+        };
+      });
     } else if (isPullType) {
-      lineItemsData = _.map(
-        data,
-        (val) => {
-          const { quantityRequested, demandPerReplenishmentPeriod, quantityAvailable } = val;
-          const qtyRequested = quantityRequested
-            || demandPerReplenishmentPeriod - quantityAvailable;
-          return {
-            ...val,
-            disabled: true,
-            quantityRequested: qtyRequested >= 0 ? qtyRequested : 0,
-            quantityOnHand: this.state.isRequestFromWard || isRequestOrigin
-              ? val.quantityCounted : val.quantityOnHand,
-          };
-        },
-      );
-    } else {
-      lineItemsData = _.map(
-        data,
-        (val) => ({
+      lineItemsData = _.map(data, (val) => {
+        const {
+          quantityRequested,
+          demandPerReplenishmentPeriod,
+          quantityAvailable,
+        } = val;
+        const qtyRequested =
+          quantityRequested || demandPerReplenishmentPeriod - quantityAvailable;
+        return {
           ...val,
           disabled: true,
-          quantityOnHand: this.state.isRequestFromWard || isRequestOrigin
-            ? val.quantityCounted : val.quantityOnHand,
-        }),
-      );
+          quantityRequested: qtyRequested >= 0 ? qtyRequested : 0,
+          quantityOnHand:
+            this.state.isRequestFromWard || isRequestOrigin
+              ? val.quantityCounted
+              : val.quantityOnHand,
+        };
+      });
+    } else {
+      lineItemsData = _.map(data, (val) => ({
+        ...val,
+        disabled: true,
+        quantityOnHand:
+          this.state.isRequestFromWard || isRequestOrigin
+            ? val.quantityCounted
+            : val.quantityOnHand,
+      }));
     }
 
     const sortOrder = _.toInteger(_.last(lineItemsData).sortOrder) + 100;
-    this.setState((prev) => ({
-      currentLineItems: this.props.isPaginated
-        ? _.uniqBy(_.concat(prev.currentLineItems, data), 'id') : data,
-      values: {
-        ...prev.values,
-        lineItems: this.props.isPaginated
-          ? _.uniqBy(_.concat(prev.values.lineItems, lineItemsData), 'id') : lineItemsData,
+    this.setState(
+      (prev) => ({
+        currentLineItems: this.props.isPaginated
+          ? _.uniqBy(_.concat(prev.currentLineItems, data), "id")
+          : data,
+        values: {
+          ...prev.values,
+          lineItems: this.props.isPaginated
+            ? _.uniqBy(_.concat(prev.values.lineItems, lineItemsData), "id")
+            : lineItemsData,
+        },
+        sortOrder,
+      }),
+      () => {
+        if (
+          !_.isNull(startIndex) &&
+          this.state.values.lineItems.length !== this.state.totalCount
+        ) {
+          this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
+        }
+        this.props.hideSpinner();
       },
-      sortOrder,
-    }), () => {
-      if (!_.isNull(startIndex) && this.state.values.lineItems.length !== this.state.totalCount) {
-        this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
-      }
-      this.props.hideSpinner();
-    });
+    );
   }
 
   inactiveProductValidation({ lineItems, callback }) {
-    const printError = (lineItem, idx) => `${idx + 1}: ${this.props.translate('react.stockMovement.product.label', 'Product')} ${lineItem?.productCode} 
-      ${this.props.translate('react.stockMovement.product.inactive.validation.label', 'has been discontinued. Please remove it from the requisition')}`;
+    const printError = (
+      lineItem,
+      idx,
+    ) => `${idx + 1}: ${this.props.translate("react.stockMovement.product.label", "Product")} ${lineItem?.productCode} 
+      ${this.props.translate("react.stockMovement.product.inactive.validation.label", "has been discontinued. Please remove it from the requisition")}`;
     const inactiveProducts = lineItems
       .filter((lineItem) => !lineItem.product?.active)
       .map(printError);
     if (inactiveProducts.length) {
       return notification(NotificationType.ERROR_FILLED)({
-        message: this.props.translate('react.default.error.validationError.label', 'Validation error'),
+        message: this.props.translate(
+          "react.default.error.validationError.label",
+          "Validation error",
+        ),
         detailsArray: inactiveProducts,
       });
     }
@@ -901,25 +1040,28 @@ class AddItemsPage extends Component {
   validate(values) {
     const errors = {};
     errors.lineItems = [];
-    const date = moment(this.props.minimumExpirationDate, 'MM/DD/YYYY');
+    const date = moment(this.props.minimumExpirationDate, "MM/DD/YYYY");
     _.forEach(values.lineItems, (item, key) => {
       const rowErrors = {};
       if (!_.isNil(item.product)) {
-        if ((_.isNil(item.quantityRequested) || item.quantityRequested < 0)) {
-          rowErrors.quantityRequested = 'react.stockMovement.error.enterQuantity.label';
+        if (_.isNil(item.quantityRequested) || item.quantityRequested < 0) {
+          rowErrors.quantityRequested =
+            "react.stockMovement.error.enterQuantity.label";
         }
       }
       if (!_.isEmpty(item.boxName) && _.isEmpty(item.palletName)) {
-        rowErrors.boxName = 'react.stockMovement.error.boxWithoutPallet.label';
+        rowErrors.boxName = "react.stockMovement.error.boxWithoutPallet.label";
       }
-      const dateRequested = moment(item.expirationDate, 'MM/DD/YYYY');
+      const dateRequested = moment(item.expirationDate, "MM/DD/YYYY");
       if (date.diff(dateRequested) > 0) {
-        rowErrors.expirationDate = 'react.stockMovement.error.invalidDate.label';
+        rowErrors.expirationDate =
+          "react.stockMovement.error.invalidDate.label";
       }
 
       if (this.state.isRequestFromWard) {
-        if ((_.isNil(item.quantityRequested) || item.quantityRequested < 0)) {
-          rowErrors.quantityRequested = 'react.stockMovement.error.enterQuantity.label';
+        if (_.isNil(item.quantityRequested) || item.quantityRequested < 0) {
+          rowErrors.quantityRequested =
+            "react.stockMovement.error.enterQuantity.label";
         }
       }
       if (!_.isEmpty(rowErrors)) {
@@ -941,7 +1083,10 @@ class AddItemsPage extends Component {
    * @public
    */
   exportTemplate(formValues) {
-    const lineItems = _.filter(formValues.lineItems, (item) => !_.isEmpty(item));
+    const lineItems = _.filter(
+      formValues.lineItems,
+      (item) => !_.isEmpty(item),
+    );
 
     this.saveItemsAndExportTemplate(formValues, lineItems);
   }
@@ -958,11 +1103,14 @@ class AddItemsPage extends Component {
     this.props.showSpinner();
     return this.saveRequisitionItemsInCurrentStep(lineItems)
       .then(() => {
-        apiClient.get(url, { responseType: 'blob' })
-          .then((response) => {
-            fileDownload(response.data, `ItemList${movementNumber ? `-${movementNumber}` : ''}.csv`, 'text/csv');
-            this.props.hideSpinner();
-          });
+        apiClient.get(url, { responseType: "blob" }).then((response) => {
+          fileDownload(
+            response.data,
+            `ItemList${movementNumber ? `-${movementNumber}` : ""}.csv`,
+            "text/csv",
+          );
+          this.props.hideSpinner();
+        });
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -978,16 +1126,17 @@ class AddItemsPage extends Component {
     const file = event.target.files[0];
     const { stockMovementId } = this.state.values;
 
-    formData.append('importFile', file.slice(0, file.size, 'text/csv'));
+    formData.append("importFile", file.slice(0, file.size, "text/csv"));
     const config = {
       headers: {
-        'content-type': 'multipart/form-data',
+        "content-type": "multipart/form-data",
       },
     };
 
     const url = `/stockMovement/importCsv/${stockMovementId}`;
 
-    return apiClient.post(url, formData, config)
+    return apiClient
+      .post(url, formData, config)
       .then(() => {
         this.setState((prev) => ({
           values: {
@@ -1009,23 +1158,26 @@ class AddItemsPage extends Component {
    */
   confirmSave(onConfirm) {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.message.confirmSave.label', 'Confirm save'),
+      title: this.props.translate(
+        "react.stockMovement.message.confirmSave.label",
+        "Confirm save",
+      ),
       message: this.state.isRequestFromWard
         ? this.props.translate(
-          'react.stockMovement.QOHWillNotBeSaved.message',
-          'If there are any empty or zero quantity lines, those lines will be deleted. Are you sure you want to proceed?',
-        )
+            "react.stockMovement.QOHWillNotBeSaved.message",
+            "If there are any empty or zero quantity lines, those lines will be deleted. Are you sure you want to proceed?",
+          )
         : this.props.translate(
-          'react.stockMovement.confirmSave.message',
-          'Are you sure you want to save? There are some lines with empty or zero quantity, those lines will be deleted.',
-        ),
+            "react.stockMovement.confirmSave.message",
+            "Are you sure you want to save? There are some lines with empty or zero quantity, those lines will be deleted.",
+          ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -1039,7 +1191,10 @@ class AddItemsPage extends Component {
    */
   confirmTransition(onConfirm, items) {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.confirmTransition.label', 'You have entered the same code twice. Do you want to continue?'),
+      title: this.props.translate(
+        "react.stockMovement.confirmTransition.label",
+        "You have entered the same code twice. Do you want to continue?",
+      ),
       message: _.map(items, (item) => (
         <p key={item.sortOrder}>
           {`${item.product.productCode} ${item.product.displayNames?.default || item.product.name} ${item.quantityRequested}`}
@@ -1047,11 +1202,11 @@ class AddItemsPage extends Component {
       )),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -1080,11 +1235,15 @@ class AddItemsPage extends Component {
   fetchLineItems() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?stepNumber=2`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
-        this.setState({
-          totalCount: response.data.data.length,
-        }, () => this.setLineItems(response, null));
+        this.setState(
+          {
+            totalCount: response.data.data.length,
+          },
+          () => this.setLineItems(response, null),
+        );
       })
       .catch((err) => err);
   }
@@ -1101,9 +1260,13 @@ class AddItemsPage extends Component {
   fetchAddItemsPageData() {
     this.props.showSpinner();
     const url = `/api/stockMovements/${this.state.values.stockMovementId}`;
-    apiClient.get(url)
+    apiClient
+      .get(url)
       .then((resp) => {
-        const { data: { hasManageInventory, statusCode }, totalCount } = resp.data;
+        const {
+          data: { hasManageInventory, statusCode },
+          totalCount,
+        } = resp.data;
 
         this.setState((prev) => ({
           values: {
@@ -1128,10 +1291,9 @@ class AddItemsPage extends Component {
       isFirstPageLoaded: true,
     });
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?offset=${startIndex}&max=${this.props.pageSize}&stepNumber=2`;
-    apiClient.get(url)
-      .then((response) => {
-        this.setLineItems(response, startIndex);
-      });
+    apiClient.get(url).then((response) => {
+      this.setLineItems(response, startIndex);
+    });
   }
 
   /**
@@ -1140,11 +1302,20 @@ class AddItemsPage extends Component {
    * @public
    */
   nextPage(formValues) {
-    const lineItems = _.filter(formValues.lineItems, (val) => !_.isEmpty(val) && val.product);
+    const lineItems = _.filter(
+      formValues.lineItems,
+      (val) => !_.isEmpty(val) && val.product,
+    );
 
-    if (_.some(lineItems, (item) => !item.quantityRequested || item.quantityRequested === '0')) {
+    if (
+      _.some(
+        lineItems,
+        (item) => !item.quantityRequested || item.quantityRequested === "0",
+      )
+    ) {
       this.confirmSave(() =>
-        this.checkDuplicatesSaveAndTransitionToNextStep(formValues, lineItems));
+        this.checkDuplicatesSaveAndTransitionToNextStep(formValues, lineItems),
+      );
     } else {
       this.checkDuplicatesSaveAndTransitionToNextStep(formValues, lineItems);
     }
@@ -1161,7 +1332,13 @@ class AddItemsPage extends Component {
     });
     const itemsWithSameCode = _.filter(itemsMap, (item) => item.length > 1);
 
-    if (_.some(itemsMap, (item) => item.length > 1) && !(this.state.values.origin.type === 'SUPPLIER' || !this.state.values.hasManageInventory)) {
+    if (
+      _.some(itemsMap, (item) => item.length > 1) &&
+      !(
+        this.state.values.origin.type === "SUPPLIER" ||
+        !this.state.values.hasManageInventory
+      )
+    ) {
       this.confirmTransition(
         () => this.saveAndTransitionToNextStep(formValues, lineItems),
         _.reduce(itemsWithSameCode, (a, b) => a.concat(b), []),
@@ -1180,14 +1357,17 @@ class AddItemsPage extends Component {
   saveAndTransitionToNextStep(formValues, lineItems) {
     this.props.showSpinner();
 
-    if (formValues.origin.type === 'SUPPLIER' || !formValues.hasManageInventory) {
+    if (
+      formValues.origin.type === "SUPPLIER" ||
+      !formValues.hasManageInventory
+    ) {
       this.saveRequisitionItems(lineItems)
         .then((resp) => {
           let values = formValues;
           if (resp) {
             values = { ...formValues, lineItems: resp.data.data.lineItems };
           }
-          this.transitionToNextStep('CHECKING')
+          this.transitionToNextStep("CHECKING")
             .then(() => {
               this.props.nextPage(values);
             })
@@ -1201,7 +1381,7 @@ class AddItemsPage extends Component {
           if (resp) {
             values = { ...formValues, lineItems: resp.data.data.lineItems };
           }
-          this.transitionToNextStep('VERIFYING')
+          this.transitionToNextStep("VERIFYING")
             .then(() => {
               this.props.nextPage(values);
             })
@@ -1225,24 +1405,36 @@ class AddItemsPage extends Component {
     };
 
     if (payload.lineItems.length) {
-      return apiClient.post(updateItemsUrl, payload)
+      return apiClient
+        .post(updateItemsUrl, payload)
         .then(() => this.fetchAddItemsPageData())
-        .catch(() => Promise.reject(new Error('react.stockMovement.error.saveRequisitionItems.label')));
+        .catch(() =>
+          Promise.reject(
+            new Error("react.stockMovement.error.saveRequisitionItems.label"),
+          ),
+        );
     }
 
     return Promise.resolve();
   }
 
   submitRequest(lineItems) {
-    const nonEmptyLineItems = _.filter(lineItems, (val) => !_.isEmpty(val) && val.product);
-    this.saveRequisitionItems(nonEmptyLineItems)
-      .then(() => {
-        if (supports(this.state.values.origin?.supportedActivities, ActivityCode.APPROVE_REQUEST)) {
-          this.transitionToNextStep(RequisitionStatus.PENDING_APPROVAL);
-        } else {
-          this.transitionToNextStep(RequisitionStatus.REQUESTED);
-        }
-      });
+    const nonEmptyLineItems = _.filter(
+      lineItems,
+      (val) => !_.isEmpty(val) && val.product,
+    );
+    this.saveRequisitionItems(nonEmptyLineItems).then(() => {
+      if (
+        supports(
+          this.state.values.origin?.supportedActivities,
+          ActivityCode.APPROVE_REQUEST,
+        )
+      ) {
+        this.transitionToNextStep(RequisitionStatus.PENDING_APPROVAL);
+      } else {
+        this.transitionToNextStep(RequisitionStatus.REQUESTED);
+      }
+    });
   }
 
   /**
@@ -1258,15 +1450,30 @@ class AddItemsPage extends Component {
       lineItems: itemsToSave,
     };
     if (payload.lineItems.length) {
-      return apiClient.post(updateItemsUrl, payload)
-        .then(() => this.setState((prev) => ({
-          currentLineItems: [],
-          values: { ...prev.values, lineItems: [] },
-          sortOrder: 0,
-          newItem: false,
-          totalCount: 0,
-        }), () => this.fetchAllData()))
-        .catch(() => Promise.reject(new Error(this.props.translate('react.stockMovement.error.saveRequisitionItems.label', 'Could not save requisition items'))));
+      return apiClient
+        .post(updateItemsUrl, payload)
+        .then(() =>
+          this.setState(
+            (prev) => ({
+              currentLineItems: [],
+              values: { ...prev.values, lineItems: [] },
+              sortOrder: 0,
+              newItem: false,
+              totalCount: 0,
+            }),
+            () => this.fetchAllData(),
+          ),
+        )
+        .catch(() =>
+          Promise.reject(
+            new Error(
+              this.props.translate(
+                "react.stockMovement.error.saveRequisitionItems.label",
+                "Could not save requisition items",
+              ),
+            ),
+          ),
+        );
     }
     return Promise.resolve();
   }
@@ -1277,8 +1484,14 @@ class AddItemsPage extends Component {
    * @public
    */
   save(formValues) {
-    const lineItems = _.filter(formValues.lineItems, (item) => !_.isEmpty(item));
-    const zeroedLines = _.some(lineItems, (item) => !item.quantityRequested || item.quantityRequested === '0');
+    const lineItems = _.filter(
+      formValues.lineItems,
+      (item) => !_.isEmpty(item),
+    );
+    const zeroedLines = _.some(
+      lineItems,
+      (item) => !item.quantityRequested || item.quantityRequested === "0",
+    );
     if (zeroedLines || this.state.isRequestFromWard) {
       this.confirmSave(() => this.saveItems(lineItems));
     } else {
@@ -1289,26 +1502,32 @@ class AddItemsPage extends Component {
   cancelRequest() {
     confirmAlert({
       title: this.props.translate(
-        'react.stockMovement.request.confirmCancellation.label',
-        'Confirm request cancellation',
+        "react.stockMovement.request.confirmCancellation.label",
+        "Confirm request cancellation",
       ),
       message: this.props.translate(
-        'react.stockMovement.request.confirmCancellation.message.label',
-        'Are you sure you want to delete current request ?',
+        "react.stockMovement.request.confirmCancellation.message.label",
+        "Are you sure you want to delete current request ?",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: () => {
             this.props.showSpinner();
-            apiClient.delete(`/api/stockMovements/${this.state.values.stockMovementId}`)
+            apiClient
+              .delete(
+                `/api/stockMovements/${this.state.values.stockMovementId}`,
+              )
               .then((response) => {
                 if (response.status === 204) {
                   this.props.hideSpinner();
-                  Alert.success(this.props.translate(
-                    'react.stockMovement.request.successfullyDeleted.label',
-                    'Request was successfully deleted',
-                  ), { timeout: 3000 });
+                  Alert.success(
+                    this.props.translate(
+                      "react.stockMovement.request.successfullyDeleted.label",
+                      "Request was successfully deleted",
+                    ),
+                    { timeout: 3000 },
+                  );
                   if (this.state.isRequestFromWard) {
                     this.props.history.push(DASHBOARD_URL.base);
                   } else {
@@ -1320,7 +1539,7 @@ class AddItemsPage extends Component {
           },
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -1337,7 +1556,10 @@ class AddItemsPage extends Component {
       this.props.showSpinner();
       return this.saveRequisitionItemsInCurrentStep(lineItems)
         .then(() => {
-          if (!this.props.supportedActivities.includes('MANAGE_INVENTORY') && this.props.supportedActivities.includes('SUBMIT_REQUEST')) {
+          if (
+            !this.props.supportedActivities.includes("MANAGE_INVENTORY") &&
+            this.props.supportedActivities.includes("SUBMIT_REQUEST")
+          ) {
             this.props.history.push(DASHBOARD_URL.base);
           } else {
             this.props.history.push(STOCK_MOVEMENT_URL.listInbound());
@@ -1349,8 +1571,14 @@ class AddItemsPage extends Component {
     };
     const errors = this.validate(formValues).lineItems;
     if (!errors.length) {
-      const lineItems = _.filter(formValues.lineItems, (item) => !_.isEmpty(item));
-      const zeroedLines = _.some(lineItems, (item) => !item.quantityRequested || item.quantityRequested === '0');
+      const lineItems = _.filter(
+        formValues.lineItems,
+        (item) => !_.isEmpty(item),
+      );
+      const zeroedLines = _.some(
+        lineItems,
+        (item) => !item.quantityRequested || item.quantityRequested === "0",
+      );
       if (zeroedLines || this.state.isRequestFromWard) {
         this.confirmSave(() => {
           saveAndRedirect(lineItems);
@@ -1360,16 +1588,22 @@ class AddItemsPage extends Component {
       }
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmExit.label', 'Confirm save'),
+        title: this.props.translate(
+          "react.stockMovement.confirmExit.label",
+          "Confirm save",
+        ),
         message: this.props.translate(
-          'react.stockMovement.confirmExit.message',
-          'Validation errors occurred. Are you sure you want to exit and lose unsaved data?',
+          "react.stockMovement.confirmExit.message",
+          "Validation errors occurred. Are you sure you want to exit and lose unsaved data?",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
+            label: this.props.translate("react.default.yes.label", "Yes"),
             onClick: () => {
-              if (!this.props.supportedActivities.includes('MANAGE_INVENTORY') && this.props.supportedActivities.includes('SUBMIT_REQUEST')) {
+              if (
+                !this.props.supportedActivities.includes("MANAGE_INVENTORY") &&
+                this.props.supportedActivities.includes("SUBMIT_REQUEST")
+              ) {
                 this.props.history.push(DASHBOARD_URL.base);
               } else {
                 this.props.history.push(STOCK_MOVEMENT_URL.listInbound());
@@ -1377,7 +1611,7 @@ class AddItemsPage extends Component {
             },
           },
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
           },
         ],
       });
@@ -1394,7 +1628,13 @@ class AddItemsPage extends Component {
     return this.saveRequisitionItemsInCurrentStep(lineItems)
       .then(() => {
         this.props.hideSpinner();
-        Alert.success(this.props.translate('react.stockMovement.alert.saveSuccess.label', 'Changes saved successfully'), { timeout: 3000 });
+        Alert.success(
+          this.props.translate(
+            "react.stockMovement.alert.saveSuccess.label",
+            "Changes saved successfully",
+          ),
+          { timeout: 3000 },
+        );
       })
       .catch(() => {
         this.props.hideSpinner();
@@ -1407,18 +1647,21 @@ class AddItemsPage extends Component {
    */
   refresh() {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.message.confirmRefresh.label', 'Confirm refresh'),
+      title: this.props.translate(
+        "react.stockMovement.message.confirmRefresh.label",
+        "Confirm refresh",
+      ),
       message: this.props.translate(
-        'react.stockMovement.confirmRefresh.message',
-        'Are you sure you want to refresh? Your progress since last save will be lost.',
+        "react.stockMovement.confirmRefresh.message",
+        "Are you sure you want to refresh? Your progress since last save will be lost.",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: () => this.fetchAllData(),
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -1432,11 +1675,12 @@ class AddItemsPage extends Component {
   removeItem(itemId) {
     const removeItemsUrl = `/api/stockMovementItems/${itemId}/removeItem`;
 
-    return apiClient.delete(removeItemsUrl)
-      .catch(() => {
-        this.props.hideSpinner();
-        return Promise.reject(new Error('react.stockMovement.error.deleteRequisitionItem.label'));
-      });
+    return apiClient.delete(removeItemsUrl).catch(() => {
+      this.props.hideSpinner();
+      return Promise.reject(
+        new Error("react.stockMovement.error.deleteRequisitionItem.label"),
+      );
+    });
   }
 
   /**
@@ -1446,7 +1690,8 @@ class AddItemsPage extends Component {
   removeAll() {
     const removeItemsUrl = `/api/stockMovements/${this.state.values.stockMovementId}/removeAllItems`;
 
-    return apiClient.delete(removeItemsUrl)
+    return apiClient
+      .delete(removeItemsUrl)
       .then(() => {
         this.setState((prev) => ({
           totalCount: 1,
@@ -1459,7 +1704,9 @@ class AddItemsPage extends Component {
       })
       .catch(() => {
         this.fetchLineItems();
-        return Promise.reject(new Error('react.stockMovement.error.deleteRequisitionItem.label'));
+        return Promise.reject(
+          new Error("react.stockMovement.error.deleteRequisitionItem.label"),
+        );
       });
   }
 
@@ -1474,14 +1721,17 @@ class AddItemsPage extends Component {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/status`;
     const payload = { status };
     const { movementNumber } = this.state.values;
-    if (this.state.values.statusCode === 'CREATED') {
+    if (this.state.values.statusCode === "CREATED") {
       await apiClient.post(url, payload);
     }
     const translatedSubmitMessage = this.props.translate(
-      'react.stockMovement.request.submitMessage.label',
-      'Thank you for submitting your request. You can check the status of your request using stock movement number',
+      "react.stockMovement.request.submitMessage.label",
+      "Thank you for submitting your request. You can check the status of your request using stock movement number",
     );
-    if (!this.props.supportedActivities.includes('MANAGE_INVENTORY') && this.props.supportedActivities.includes('SUBMIT_REQUEST')) {
+    if (
+      !this.props.supportedActivities.includes("MANAGE_INVENTORY") &&
+      this.props.supportedActivities.includes("SUBMIT_REQUEST")
+    ) {
       this.props.history.push(DASHBOARD_URL.base);
     } else {
       this.props.history.push(STOCK_MOVEMENT_URL.listInbound());
@@ -1508,7 +1758,10 @@ class AddItemsPage extends Component {
     };
     if (!invalid) {
       const lineItems = _.filter(values.lineItems, (item) => !_.isEmpty(item));
-      const zeroedLines = _.some(lineItems, (item) => !item.quantityRequested || item.quantityRequested === '0');
+      const zeroedLines = _.some(
+        lineItems,
+        (item) => !item.quantityRequested || item.quantityRequested === "0",
+      );
       if (zeroedLines || this.state.isRequestFromWard) {
         this.confirmSave(() => {
           saveAndRedirect(lineItems);
@@ -1518,14 +1771,26 @@ class AddItemsPage extends Component {
       }
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmPreviousPage.label', 'Validation error'),
-        message: this.props.translate('react.stockMovement.confirmPreviousPage.message.label', 'Cannot save due to validation error on page'),
+        title: this.props.translate(
+          "react.stockMovement.confirmPreviousPage.label",
+          "Validation error",
+        ),
+        message: this.props.translate(
+          "react.stockMovement.confirmPreviousPage.message.label",
+          "Cannot save due to validation error on page",
+        ),
         buttons: [
           {
-            label: this.props.translate('react.stockMovement.confirmPreviousPage.correctError.label', 'Correct error'),
+            label: this.props.translate(
+              "react.stockMovement.confirmPreviousPage.correctError.label",
+              "Correct error",
+            ),
           },
           {
-            label: this.props.translate('react.stockMovement.confirmPreviousPage.continue.label', 'Continue (lose unsaved work)'),
+            label: this.props.translate(
+              "react.stockMovement.confirmPreviousPage.continue.label",
+              "Continue (lose unsaved work)",
+            ),
             onClick: () => this.props.previousPage(values),
           },
         ],
@@ -1538,18 +1803,22 @@ class AddItemsPage extends Component {
       if (this.state.isRequestFromWard) {
         const url = `/api/products/${product.id}/productDemand?originId=${this.state.values.origin.id}&destinationId=${this.state.values.destination.id}`;
 
-        apiClient.get(url)
+        apiClient
+          .get(url)
           .then((response) => {
             const monthlyDemand = parseFloat(response.data.monthlyDemand);
-            const quantityRequested = monthlyDemand - (response.data.quantityOnHand || 0);
+            const quantityRequested =
+              monthlyDemand - (response.data.quantityOnHand || 0);
             this.setState({
               values: update(values, {
                 lineItems: {
                   [index]: {
                     product: { $set: product },
-                    quantityOnHand: { $set: '' },
+                    quantityOnHand: { $set: "" },
                     monthlyDemand: { $set: monthlyDemand },
-                    quantityRequested: { $set: quantityRequested >= 0 ? quantityRequested : 0 },
+                    quantityRequested: {
+                      $set: quantityRequested >= 0 ? quantityRequested : 0,
+                    },
                   },
                 },
               }),
@@ -1559,11 +1828,15 @@ class AddItemsPage extends Component {
       } else {
         const url = `/api/products/${product.id}/productAvailabilityAndDemand?locationId=${this.state.values.destination.id}`;
 
-        apiClient.get(url)
+        apiClient
+          .get(url)
           .then((response) => {
-            const { monthlyDemand, quantityAvailable, quantityOnHand } = response.data;
-            const quantityRequested = monthlyDemand - quantityAvailable > 0
-              ? monthlyDemand - quantityAvailable : 0;
+            const { monthlyDemand, quantityAvailable, quantityOnHand } =
+              response.data;
+            const quantityRequested =
+              monthlyDemand - quantityAvailable > 0
+                ? monthlyDemand - quantityAvailable
+                : 0;
             this.setState({
               values: update(values, {
                 lineItems: {
@@ -1586,10 +1859,10 @@ class AddItemsPage extends Component {
           lineItems: {
             [index]: {
               product: { $set: null },
-              quantityOnHand: { $set: '' },
-              quantityAvailable: { $set: '' },
-              monthlyDemand: { $set: '' },
-              quantityRequested: { $set: '' },
+              quantityOnHand: { $set: "" },
+              quantityAvailable: { $set: "" },
+              monthlyDemand: { $set: "" },
+              quantityRequested: { $set: "" },
             },
           },
         }),
@@ -1610,17 +1883,22 @@ class AddItemsPage extends Component {
             <span className="buttons-container">
               <label
                 htmlFor="csvInput"
-                className={`float-right mb-1 btn btn-outline-secondary align-self-end ml-1 btn-xs ${this.state.isRequestFromWard ? 'disabled' : ''}`}
-                title={this.state.isRequestFromWard ? 'Temporarily disabled' : ''}
+                className={`float-right mb-1 btn btn-outline-secondary align-self-end ml-1 btn-xs ${this.state.isRequestFromWard ? "disabled" : ""}`}
+                title={
+                  this.state.isRequestFromWard ? "Temporarily disabled" : ""
+                }
               >
                 <span>
                   <i className="fa fa-download pr-2" />
-                  <Translate id="react.default.button.importTemplate.label" defaultMessage="Import template" />
+                  <Translate
+                    id="react.default.button.importTemplate.label"
+                    defaultMessage="Import template"
+                  />
                 </span>
                 <input
                   id="csvInput"
                   type="file"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   onChange={this.importTemplate}
                   disabled={this.state.isRequestFromWard}
                   onClick={(event) => {
@@ -1637,7 +1915,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-upload pr-2" />
-                  <Translate id="react.default.button.exportTemplate.label" defaultMessage="Export template" />
+                  <Translate
+                    id="react.default.button.exportTemplate.label"
+                    defaultMessage="Export template"
+                  />
                 </span>
               </button>
               <button
@@ -1647,7 +1928,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-refresh pr-2" />
-                  <Translate id="react.default.button.refresh.label" defaultMessage="Reload" />
+                  <Translate
+                    id="react.default.button.refresh.label"
+                    defaultMessage="Reload"
+                  />
                 </span>
               </button>
               <button
@@ -1658,7 +1942,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-save pr-2" />
-                  <Translate id="react.default.button.save.label" defaultMessage="Save" />
+                  <Translate
+                    id="react.default.button.save.label"
+                    defaultMessage="Save"
+                  />
                 </span>
               </button>
               <button
@@ -1669,7 +1956,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-sign-out pr-2" />
-                  <Translate id="react.default.button.saveAndExit.label" defaultMessage="Save and exit" />
+                  <Translate
+                    id="react.default.button.saveAndExit.label"
+                    defaultMessage="Save and exit"
+                  />
                 </span>
               </button>
               <button
@@ -1680,7 +1970,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-remove pr-2" />
-                  <Translate id="react.default.button.deleteAll.label" defaultMessage="Delete all" />
+                  <Translate
+                    id="react.default.button.deleteAll.label"
+                    defaultMessage="Delete all"
+                  />
                 </span>
               </button>
               <button
@@ -1690,7 +1983,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-remove pr-2" />
-                  <Translate id="react.stockMovement.request.cancel.label" defaultMessage="Cancel Request" />
+                  <Translate
+                    id="react.stockMovement.request.cancel.label"
+                    defaultMessage="Cancel Request"
+                  />
                 </span>
               </button>
             </span>
@@ -1715,7 +2011,8 @@ class AddItemsPage extends Component {
                     isFirstPageLoaded: this.state.isFirstPageLoaded,
                     updateProductData: this.updateProductData,
                     calculateQtyRequested: this.calculateQuantityRequested,
-                  }))}
+                  }),
+                )}
               </div>
               <div className="submit-buttons">
                 <button
@@ -1724,23 +2021,43 @@ class AddItemsPage extends Component {
                   onClick={() => this.previousPage(values, invalid)}
                   className="btn btn-outline-primary btn-form btn-xs"
                 >
-                  <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+                  <Translate
+                    id="react.default.button.previous.label"
+                    defaultMessage="Previous"
+                  />
                 </button>
                 <button
                   type="submit"
-                  onClick={() => this.inactiveProductValidation({
-                    lineItems: values.lineItems,
-                    callback: () => this.submitRequest(values.lineItems),
-                  })}
+                  onClick={() =>
+                    this.inactiveProductValidation({
+                      lineItems: values.lineItems,
+                      callback: () => this.submitRequest(values.lineItems),
+                    })
+                  }
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                   disabled={
-                    invalid || !_.some(values.lineItems, (item) =>
-                      item.product && _.parseInt(item.quantityRequested))
+                    invalid ||
+                    !_.some(
+                      values.lineItems,
+                      (item) =>
+                        item.product && _.parseInt(item.quantityRequested),
+                    )
                   }
                 >
-                  {supports(origin?.supportedActivities, ActivityCode.APPROVE_REQUEST)
-                    ? <Translate id="react.default.button.submitForApproval.label" defaultMessage="Submit for approval" />
-                    : <Translate id="react.default.button.submitRequest.label" defaultMessage="Submit request" />}
+                  {supports(
+                    origin?.supportedActivities,
+                    ActivityCode.APPROVE_REQUEST,
+                  ) ? (
+                    <Translate
+                      id="react.default.button.submitForApproval.label"
+                      defaultMessage="Submit for approval"
+                    />
+                  ) : (
+                    <Translate
+                      id="react.default.button.submitRequest.label"
+                      defaultMessage="Submit request"
+                    />
+                  )}
                 </button>
               </div>
             </form>
@@ -1753,7 +2070,8 @@ class AddItemsPage extends Component {
 
 const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   minimumExpirationDate: state.session.minimumExpirationDate,
   isPaginated: state.session.isPaginated,
   pageSize: state.session.pageSize,
@@ -1767,7 +2085,9 @@ const mapDispatchToProps = {
   fetchUsers,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddItemsPage));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(AddItemsPage),
+);
 
 AddItemsPage.propTypes = {
   /** Initial component's data */

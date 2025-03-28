@@ -1,16 +1,20 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
+import _ from "lodash";
 
-import useTranslate from 'hooks/useTranslate';
+import useTranslate from "hooks/useTranslate";
 
 const groupBinLocationsByZone = (binLocations) => {
   const translate = useTranslate();
-  const groupedByZone = _.groupBy(binLocations, (bin) => bin.zoneId || 'no-zone');
+  const groupedByZone = _.groupBy(
+    binLocations,
+    (bin) => bin.zoneId || "no-zone",
+  );
 
   return Object.entries(groupedByZone)
     .map(([zoneKey, bins]) => {
-      const zoneName = bins[0].zoneName || translate('react.cycleCount.noZone', 'No Zone');
+      const zoneName =
+        bins[0].zoneName || translate("react.cycleCount.noZone", "No Zone");
 
       return {
         id: `zone-${zoneKey}`,
@@ -28,10 +32,10 @@ const groupBinLocationsByZone = (binLocations) => {
       };
     })
     .sort((a, b) => {
-      if (a.id === 'no-zone') {
+      if (a.id === "no-zone") {
         return 1;
       }
-      if (b.id === 'no-zone') {
+      if (b.id === "no-zone") {
         return -1;
       }
       return a.name.localeCompare(b.name);

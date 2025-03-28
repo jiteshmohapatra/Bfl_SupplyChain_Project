@@ -1,14 +1,13 @@
-import React from 'react';
+import React from "react";
 
-import ProductSupplierFormHeader
-  from 'components/productSupplier/create/ProductSupplierFormHeader';
-import ProductSupplierFormMain from 'components/productSupplier/create/ProductSupplierFormMain';
-import useProductSupplierForm from 'hooks/productSupplier/form/useProductSupplierForm';
-import useTranslation from 'hooks/useTranslation';
-import PageWrapper from 'wrappers/PageWrapper';
+import ProductSupplierFormHeader from "components/productSupplier/create/ProductSupplierFormHeader";
+import ProductSupplierFormMain from "components/productSupplier/create/ProductSupplierFormMain";
+import useProductSupplierForm from "hooks/productSupplier/form/useProductSupplierForm";
+import useTranslation from "hooks/useTranslation";
+import PageWrapper from "wrappers/PageWrapper";
 
 const ProductSupplierForm = () => {
-  useTranslation('productSupplier');
+  useTranslation("productSupplier");
 
   const {
     isValid,
@@ -25,9 +24,7 @@ const ProductSupplierForm = () => {
   return (
     <PageWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <ProductSupplierFormHeader
-          isValid={isValid}
-        />
+        <ProductSupplierFormHeader isValid={isValid} />
         <ProductSupplierFormMain
           formProps={{
             control,

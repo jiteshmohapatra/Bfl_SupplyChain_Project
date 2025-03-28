@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import _ from 'lodash';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import _ from "lodash";
 
-const getIcon = (iconName) => _.trimStart(iconName, ['fa', '-']);
+const getIcon = (iconName) => _.trimStart(iconName, ["fa", "-"]);
 
 const renderHandlingIcons = (handlingIcons) => {
   if (!handlingIcons || handlingIcons.length === 0) {
@@ -11,7 +11,10 @@ const renderHandlingIcons = (handlingIcons) => {
   }
 
   return (
-    <span data-testid="product-handling-icons" className="d-flex align-items-center">
+    <span
+      data-testid="product-handling-icons"
+      className="d-flex align-items-center"
+    >
       {_.map(handlingIcons, (handlingIcon) => {
         if (!handlingIcon || !getIcon(handlingIcon.icon)) {
           return null;
@@ -20,7 +23,7 @@ const renderHandlingIcons = (handlingIcons) => {
           <FontAwesomeIcon
             className="ml-1"
             icon={getIcon(handlingIcon.icon)}
-            color={handlingIcon.color ? handlingIcon.color : 'inherit'}
+            color={handlingIcon.color ? handlingIcon.color : "inherit"}
           />
         );
       })}

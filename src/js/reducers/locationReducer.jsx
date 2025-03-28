@@ -1,4 +1,4 @@
-import { FETCH_LOCATION_TYPES } from 'actions/types';
+import { FETCH_LOCATION_TYPES } from "actions/types";
 
 const initialState = {
   locationTypes: [],

@@ -1,11 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import {
-  RiAlertLine, RiCheckboxCircleLine, RiCloseLine, RiErrorWarningFill, RiInformationLine,
-} from 'react-icons/ri';
+  RiAlertLine,
+  RiCheckboxCircleLine,
+  RiCloseLine,
+  RiErrorWarningFill,
+  RiInformationLine,
+} from "react-icons/ri";
 
-import NotificationType from 'consts/notificationTypes';
+import NotificationType from "consts/notificationTypes";
 
 const defaultStartIcon = {
   [NotificationType.SUCCESS]: <RiCheckboxCircleLine />,
@@ -15,7 +19,13 @@ const defaultStartIcon = {
 };
 
 const CustomAlert = ({
-  message, classNames, customFields, id, styles, condition, handleClose,
+  message,
+  classNames,
+  customFields,
+  id,
+  styles,
+  condition,
+  handleClose,
 }) => {
   // Show default start icon for already existing Alerts,
   // which are not called by notification(), but Alert
@@ -27,21 +37,24 @@ const CustomAlert = ({
   };
 
   return (
-    <div className={`${classNames} ${!customFields?.details ? 'no-details' : ''}`} id={id} style={styles}>
+    <div
+      className={`${classNames} ${!customFields?.details ? "no-details" : ""}`}
+      id={id}
+      style={styles}
+    >
       <div className="s-alert-box-inner">
-        <div className="alert-start-icon">
-          {getIcon()}
-        </div>
+        <div className="alert-start-icon">{getIcon()}</div>
         <span className="alert-title">{message}</span>
-        {customFields?.detailsArray?.length
-          ? (
-            <div className="d-flex flex-column array-errors-wrapper">
-              {customFields.detailsArray
-                .filter(Boolean)
-                .map((detail) => (<p key={detail}>{detail}</p>))}
-            </div>
-          ) : null}
-        {customFields?.details && <span className="alert-details">{customFields?.details}</span>}
+        {customFields?.detailsArray?.length ? (
+          <div className="d-flex flex-column array-errors-wrapper">
+            {customFields.detailsArray.filter(Boolean).map((detail) => (
+              <p key={detail}>{detail}</p>
+            ))}
+          </div>
+        ) : null}
+        {customFields?.details && (
+          <span className="alert-details">{customFields?.details}</span>
+        )}
         <div className="alert-close-icon">
           <span role="presentation" onClick={handleClose}>
             <RiCloseLine />

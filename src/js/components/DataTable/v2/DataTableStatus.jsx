@@ -1,16 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import useTranslate from 'hooks/useTranslate';
+import useTranslate from "hooks/useTranslate";
 
 const DataTableStatus = ({ defaultMessage, label, shouldDisplay }) => {
   const translate = useTranslate();
 
   return shouldDisplay ? (
-    <div className="rt-noData">
-      {translate(label, defaultMessage)}
-    </div>
+    <div className="rt-noData">{translate(label, defaultMessage)}</div>
   ) : null;
 };
 

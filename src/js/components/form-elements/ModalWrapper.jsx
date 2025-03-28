@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import Modal from 'react-modal';
+import arrayMutators from "final-form-arrays";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Form } from "react-final-form";
+import Modal from "react-modal";
 
-import { renderFormField } from 'utils/form-utils';
-import Translate from 'utils/Translate';
+import { renderFormField } from "utils/form-utils";
+import Translate from "utils/Translate";
 
 class ModalWrapper extends Component {
   constructor(props) {
@@ -43,105 +43,98 @@ class ModalWrapper extends Component {
 
     return (
       <div className={this.props.wrapperClassName}>
-        {
-          this.props.renderButton
-            ? this.props.renderButton({ openModal: this.openModal })
-            : (
-              <button
-                type="button"
-                className={`btn-xs ${this.props.btnOpenClassName}`}
-                style={this.props.btnOpenStyle}
-                disabled={this.props.btnOpenDisabled}
-                onClick={() => this.openModal()}
-              >
-                {
-                  this.props.btnOpenIcon
-                  && <i className={`fa ${this.props.btnOpenIcon} mr-1`} aria-hidden="true" />
-                }
-                {
-                  this.props.btnOpenText && !this.props.btnOpenAsIcon
-                  && (
-                  <Translate
-                    id={this.props.btnOpenText}
-                    defaultMessage={this.props.btnOpenDefaultText}
-                  />
-                  )
-                }
-              </button>
-            )
-        }
+        {this.props.renderButton ? (
+          this.props.renderButton({ openModal: this.openModal })
+        ) : (
+          <button
+            type="button"
+            className={`btn-xs ${this.props.btnOpenClassName}`}
+            style={this.props.btnOpenStyle}
+            disabled={this.props.btnOpenDisabled}
+            onClick={() => this.openModal()}
+          >
+            {this.props.btnOpenIcon && (
+              <i
+                className={`fa ${this.props.btnOpenIcon} mr-1`}
+                aria-hidden="true"
+              />
+            )}
+            {this.props.btnOpenText && !this.props.btnOpenAsIcon && (
+              <Translate
+                id={this.props.btnOpenText}
+                defaultMessage={this.props.btnOpenDefaultText}
+              />
+            )}
+          </button>
+        )}
         <Modal
           isOpen={this.props.showModal || this.state.showModal}
           onRequestClose={this.closeModal}
           className="modal-content-custom"
           shouldCloseOnOverlayClick={false}
         >
-          <div className={this.props.bodyContainerClassName} style={this.props.bodyContainerStyle}>
-            {
-            typeof Title === 'string'
-              ? (
-                <h5 className="text-center">
-                  {' '}
-                  <Translate id={Title} defaultMessage={defaultTitleMessage} />
-                </h5>
-              )
-              : <Title />
-          }
+          <div
+            className={this.props.bodyContainerClassName}
+            style={this.props.bodyContainerStyle}
+          >
+            {typeof Title === "string" ? (
+              <h5 className="text-center">
+                {" "}
+                <Translate id={Title} defaultMessage={defaultTitleMessage} />
+              </h5>
+            ) : (
+              <Title />
+            )}
             <hr />
             <Form
               onSubmit={(values) => this.save(values)}
               initialValues={this.props.initialValues}
               validate={this.props.validate}
               mutators={{ ...arrayMutators }}
-              render={({ handleSubmit, values }) =>
-                (
-                  <form id="modalForm" onSubmit={handleSubmit}>
+              render={({ handleSubmit, values }) => (
+                <form id="modalForm" onSubmit={handleSubmit}>
+                  {this.props.children}
+                  {this.props.renderBodyWithValues(values)}
 
-                    {this.props.children}
-                    {this.props.renderBodyWithValues(values)}
+                  {_.map(this.props.fields, (fieldConfig, fieldName) =>
+                    renderFormField(fieldConfig, fieldName, {
+                      ...this.props.formProps,
+                      values,
+                    }),
+                  )}
 
-                    {_.map(
-                      this.props.fields,
-                      (fieldConfig, fieldName) =>
-                        renderFormField(
-                          fieldConfig,
-                          fieldName,
-                          { ...this.props.formProps, values },
-                        ),
-                    )}
+                  <hr />
 
-                    <hr />
-
-                    <div
-                      className={this.props.btnContainerClassName}
-                      role="group"
-                      style={this.props.btnContainerStyle}
+                  <div
+                    className={this.props.btnContainerClassName}
+                    role="group"
+                    style={this.props.btnContainerStyle}
+                  >
+                    <button
+                      type="button"
+                      className={this.props.btnCancelClassName}
+                      style={this.props.btnCancelStyle}
+                      onClick={() => this.closeModal()}
                     >
-                      <button
-                        type="button"
-                        className={this.props.btnCancelClassName}
-                        style={this.props.btnCancelStyle}
-                        onClick={() => this.closeModal()}
-                      >
-                        <Translate
-                          id={this.props.btnCancelText}
-                          defaultMessage={this.props.btnCancelDefaultText}
-                        />
-                      </button>
-                      <button
-                        type="submit"
-                        className={this.props.btnSaveClassName}
-                        style={this.props.btnSaveStyle}
-                        disabled={this.props.btnSaveDisabled}
-                      >
-                        <Translate
-                          id={this.props.btnSaveText}
-                          defaultMessage={this.props.btnSaveDefaultText}
-                        />
-                      </button>
-                    </div>
-                  </form>
-                )}
+                      <Translate
+                        id={this.props.btnCancelText}
+                        defaultMessage={this.props.btnCancelDefaultText}
+                      />
+                    </button>
+                    <button
+                      type="submit"
+                      className={this.props.btnSaveClassName}
+                      style={this.props.btnSaveStyle}
+                      disabled={this.props.btnSaveDisabled}
+                    >
+                      <Translate
+                        id={this.props.btnSaveText}
+                        defaultMessage={this.props.btnSaveDefaultText}
+                      />
+                    </button>
+                  </div>
+                </form>
+              )}
             />
           </div>
         </Modal>
@@ -163,10 +156,7 @@ ModalWrapper.propTypes = {
   btnOpenIcon: PropTypes.string,
 
   /** Modal title property */
-  title: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.func,
-  ]).isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   defaultTitleMessage: PropTypes.string.isRequired,
 
   /** Modal body container properties */
@@ -213,32 +203,32 @@ ModalWrapper.propTypes = {
 };
 
 ModalWrapper.defaultProps = {
-  btnOpenText: 'react.default.button.open.label',
-  btnOpenDefaultText: 'Open',
-  btnOpenClassName: 'btn btn-outline-primary',
+  btnOpenText: "react.default.button.open.label",
+  btnOpenDefaultText: "Open",
+  btnOpenClassName: "btn btn-outline-primary",
   btnOpenStyle: {},
   btnOpenDisabled: false,
   btnOpenAsIcon: false,
-  btnOpenIcon: '',
+  btnOpenIcon: "",
 
   children: null,
-  bodyContainerClassName: 'modal-body-container',
+  bodyContainerClassName: "modal-body-container",
   bodyContainerStyle: {},
 
-  btnContainerClassName: 'btn-group float-right',
+  btnContainerClassName: "btn-group float-right",
   btnContainerStyle: {},
 
   wrapperClassName: null,
 
-  btnSaveText: 'react.default.button.save.label',
-  btnSaveDefaultText: 'Save',
-  btnSaveClassName: 'btn btn-outline-success',
+  btnSaveText: "react.default.button.save.label",
+  btnSaveDefaultText: "Save",
+  btnSaveClassName: "btn btn-outline-success",
   btnSaveStyle: {},
   btnSaveDisabled: false,
 
-  btnCancelText: 'react.default.button.cancel.label',
-  btnCancelDefaultText: 'Cancel',
-  btnCancelClassName: 'btn btn-outline-secondary',
+  btnCancelText: "react.default.button.cancel.label",
+  btnCancelDefaultText: "Cancel",
+  btnCancelClassName: "btn btn-outline-secondary",
   btnCancelStyle: {},
 
   renderButton: undefined,

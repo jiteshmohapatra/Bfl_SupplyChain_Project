@@ -1,11 +1,18 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 const Checkbox = ({
-  value, indeterminate, custom, fieldRef, withLabel, label, defaultMessage, ...props
+  value,
+  indeterminate,
+  custom,
+  fieldRef,
+  withLabel,
+  label,
+  defaultMessage,
+  ...props
 }) => {
   const onChange = (event) => {
     const { checked } = event.target;
@@ -34,7 +41,10 @@ const Checkbox = ({
 
   if (withLabel) {
     return (
-      <div data-testid="with-label-checkbox" className="d-flex align-items-center">
+      <div
+        data-testid="with-label-checkbox"
+        className="d-flex align-items-center"
+      >
         <input
           type="checkbox"
           ref={(elem) => {
@@ -50,7 +60,7 @@ const Checkbox = ({
           {...props}
           onChange={onChange}
         />
-        <label htmlFor={props.id} style={{ margin: '0 0 0 5px' }}>
+        <label htmlFor={props.id} style={{ margin: "0 0 0 5px" }}>
           <Translate id={label} defaultMessage={defaultMessage || label} />
         </label>
       </div>
@@ -96,9 +106,9 @@ Checkbox.defaultProps = {
   value: null,
   indeterminate: false,
   custom: false,
-  id: '',
+  id: "",
   fieldRef: undefined,
   withLabel: false,
-  label: '',
-  defaultMessage: '',
+  label: "",
+  defaultMessage: "",
 };

@@ -1,4 +1,4 @@
-import { SET_SCROLL_TO_BOTTOM } from 'actions/types';
+import { SET_SCROLL_TO_BOTTOM } from "actions/types";
 
 const initialState = {
   scrollToBottom: false,

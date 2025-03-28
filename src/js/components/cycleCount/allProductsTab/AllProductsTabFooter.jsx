@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import { Tooltip } from 'react-tippy';
+import { Tooltip } from "react-tippy";
 
-import Button from 'components/form-elements/Button';
-import useTranslate from 'hooks/useTranslate';
+import Button from "components/form-elements/Button";
+import useTranslate from "hooks/useTranslate";
 
 const AllProductsTabFooter = () => {
   const translate = useTranslate();
@@ -13,14 +13,14 @@ const AllProductsTabFooter = () => {
       <Tooltip
         theme="transparent"
         duration="250"
-        html={(
+        html={
           <div className="custom-tooltip">
             {translate(
-              'react.cycleCount.table.refreshSuggestionTooltip.label',
-              'Click here to manually refresh the All Products table data. It will erase the current suggestion ranking and generate a new one.',
+              "react.cycleCount.table.refreshSuggestionTooltip.label",
+              "Click here to manually refresh the All Products table data. It will erase the current suggestion ranking and generate a new one.",
             )}
           </div>
-        )}
+        }
       >
         <Button
           className="suggestion-button"
@@ -30,13 +30,11 @@ const AllProductsTabFooter = () => {
         />
       </Tooltip>
       <p>
-        {translate('react.cycleCount.table.lastRefresh', 'Last refresh')}
-        {' '}
+        {translate("react.cycleCount.table.lastRefresh", "Last refresh")}{" "}
         <span>12/01/2024</span>
       </p>
       <p>
-        {translate('react.cycleCount.table.refreshPeriod', 'Refresh period')}
-        {' '}
+        {translate("react.cycleCount.table.refreshPeriod", "Refresh period")}{" "}
         <span>12/01/2024-12/07/2024</span>
       </p>
     </div>

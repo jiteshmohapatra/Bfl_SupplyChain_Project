@@ -1,14 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import Button from 'components/form-elements/Button';
-import useDraftInfoBar from 'hooks/cycleCount/useDraftInfoBar';
-import Translate from 'utils/Translate';
+import Button from "components/form-elements/Button";
+import useDraftInfoBar from "hooks/cycleCount/useDraftInfoBar";
+import Translate from "utils/Translate";
 
 const CycleCountDraftInfoBar = () => {
-  const {
-    continueDraft,
-    discardDraft,
-  } = useDraftInfoBar();
+  const { continueDraft, discardDraft } = useDraftInfoBar();
   return (
     <div className="d-flex justify-content-between align-items-center draft-modal">
       <div>

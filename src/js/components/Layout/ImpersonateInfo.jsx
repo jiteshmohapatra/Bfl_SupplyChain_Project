@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiShieldUserLine } from 'react-icons/ri';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { RiShieldUserLine } from "react-icons/ri";
+import { connect } from "react-redux";
 
-import Button from 'components/form-elements/Button';
-import Translate from 'utils/Translate';
+import Button from "components/form-elements/Button";
+import Translate from "utils/Translate";
 
 const ImpersonateInfo = ({ currentUserName }) => (
   <div
@@ -16,8 +16,11 @@ const ImpersonateInfo = ({ currentUserName }) => (
     <div className="info d-flex align-items-center">
       <RiShieldUserLine />
       <span>
-        <Translate id="react.default.impersonate.label" defaultMessage="You are impersonating user" />
-&nbsp;
+        <Translate
+          id="react.default.impersonate.label"
+          defaultMessage="You are impersonating user"
+        />
+        &nbsp;
         <span className="font-weight-bold">{currentUserName}</span>
       </span>
     </div>

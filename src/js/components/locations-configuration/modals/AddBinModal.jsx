@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import apiClient, { flattenRequest } from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import apiClient, { flattenRequest } from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
 class AddBinModal extends Component {
   constructor(props) {
@@ -22,20 +22,37 @@ class AddBinModal extends Component {
 
   handleSubmit(values) {
     this.props.showSpinner();
-    apiClient.post('/api/locations/', flattenRequest({
-      ...values,
-      parentLocation: { id: this.props.locationId },
-      locationType: { id: values.locationType.id },
-      zone: values.zoneLocation && { id: values.zoneLocation.id },
-    }))
+    apiClient
+      .post(
+        "/api/locations/",
+        flattenRequest({
+          ...values,
+          parentLocation: { id: this.props.locationId },
+          locationType: { id: values.locationType.id },
+          zone: values.zoneLocation && { id: values.zoneLocation.id },
+        }),
+      )
       .then(() => {
         this.props.hideSpinner();
-        Alert.success(this.props.translate('react.locationsConfiguration.addBin.success.label', 'Bin location has been created successfully!'), { timeout: 3000 });
+        Alert.success(
+          this.props.translate(
+            "react.locationsConfiguration.addBin.success.label",
+            "Bin location has been created successfully!",
+          ),
+          { timeout: 3000 },
+        );
         this.props.addBinLocation();
       })
       .catch(() => {
         this.props.hideSpinner();
-        return Promise.reject(new Error(this.props.translate('react.locationsConfiguration.addBin.error.label', 'Could not add bin location')));
+        return Promise.reject(
+          new Error(
+            this.props.translate(
+              "react.locationsConfiguration.addBin.error.label",
+              "Could not add bin location",
+            ),
+          ),
+        );
       });
   }
 
@@ -45,9 +62,11 @@ class AddBinModal extends Component {
         onSave={(values) => this.handleSubmit(values)}
         fields={this.props.FIELDS}
         validate={this.props.validate}
-        initialValues={this.props.binTypes.length === 1
-          ? { ...this.state.values, locationType: this.props.binTypes[0] }
-          : this.state.values}
+        initialValues={
+          this.props.binTypes.length === 1
+            ? { ...this.state.values, locationType: this.props.binTypes[0] }
+            : this.state.values
+        }
         formProps={{
           binTypes: this.props.binTypes,
           zoneData: this.props.zoneData,
@@ -60,7 +79,7 @@ class AddBinModal extends Component {
         btnOpenDefaultText="Add Bin Location"
         btnOpenIcon="fa-plus"
         btnContainerClassName="d-flex justify-content-end"
-        btnContainerStyle={{ gap: '3px' }}
+        btnContainerStyle={{ gap: "3px" }}
         btnSaveClassName="btn btn-primary"
         btnCancelClassName="btn btn-outline-primary"
       >

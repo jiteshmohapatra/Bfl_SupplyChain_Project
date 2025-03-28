@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Numbers from 'components/dashboard/Numbers';
-import TableCard from 'components/dashboard/TableCard';
+import Numbers from "components/dashboard/Numbers";
+import TableCard from "components/dashboard/TableCard";
 
 const NumbersTableCard = (props) => (
   <div className="numbers-table-card">

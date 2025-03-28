@@ -1,16 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiInformationLine } from 'react-icons/all';
-import { useDispatch } from 'react-redux';
+import PropTypes from "prop-types";
+import { RiInformationLine } from "react-icons/all";
+import { useDispatch } from "react-redux";
 
-import { showInfoBarModal } from 'actions';
-import { InfoBarVersionBoxVariant } from 'consts/infoBar';
-import Translate from 'utils/Translate';
+import { showInfoBarModal } from "actions";
+import { InfoBarVersionBoxVariant } from "consts/infoBar";
+import Translate from "utils/Translate";
 
-const InfoBarVersionBox = ({
-  versionLabel, withIcon, variant, name,
-}) => {
+const InfoBarVersionBox = ({ versionLabel, withIcon, variant, name }) => {
   const dispatch = useDispatch();
 
   return (
@@ -20,7 +18,10 @@ const InfoBarVersionBox = ({
       onClick={() => dispatch(showInfoBarModal(name))}
     >
       {withIcon && <RiInformationLine />}
-      <Translate id={versionLabel?.label} defaultMessage={versionLabel?.defaultLabel} />
+      <Translate
+        id={versionLabel?.label}
+        defaultMessage={versionLabel?.defaultLabel}
+      />
     </button>
   );
 };

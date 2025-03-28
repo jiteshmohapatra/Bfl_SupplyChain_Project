@@ -1,4 +1,4 @@
-@import "src/css/colors";
+@import "../css/colors";
 
 body {
   overflow-x: hidden;
@@ -10,7 +10,7 @@ body {
   font-size: 1.5em !important;
   font-weight: bold;
   color: $gray-zeta !important;
-  font-family: "Trebuchet MS", Trebuchet, Calibri, Tahoma, Segoe;
+  font-family: "Trebuchet MS", Trebuchet, Calibri, Tahoma, Segoe, serif;
   text-transform: lowercase;
 }
 

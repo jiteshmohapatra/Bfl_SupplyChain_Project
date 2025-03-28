@@ -1,34 +1,30 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Button from 'components/form-elements/Button';
-import Section from 'components/Layout/v2/Section';
-import OutboundImportBasicDetails
-  from 'components/stock-movement-wizard/outboundImport/subsections/OutboundImportBasicDetails';
-import OutboundImportDropzone
-  from 'components/stock-movement-wizard/outboundImport/subsections/OutboundImportDropzone';
-import OutboundImportSendingOptions
-  from 'components/stock-movement-wizard/outboundImport/subsections/OutboundImportSendingOptions';
-import useScrollToBottom from 'hooks/outboundImport/useScrollToBottom';
-import { FormErrorPropType } from 'utils/propTypes';
+import Button from "components/form-elements/Button";
+import Section from "components/Layout/v2/Section";
+import OutboundImportBasicDetails from "components/stock-movement-wizard/outboundImport/subsections/OutboundImportBasicDetails";
+import OutboundImportDropzone from "components/stock-movement-wizard/outboundImport/subsections/OutboundImportDropzone";
+import OutboundImportSendingOptions from "components/stock-movement-wizard/outboundImport/subsections/OutboundImportSendingOptions";
+import useScrollToBottom from "hooks/outboundImport/useScrollToBottom";
+import { FormErrorPropType } from "utils/propTypes";
 
-const OutboundImportDetails = ({
-  control,
-  errors,
-  isValid,
-  trigger,
-}) => {
+const OutboundImportDetails = ({ control, errors, isValid, trigger }) => {
   const { nextButtonRef } = useScrollToBottom();
   return (
     <Section
       title={{
-        label: 'react.outboundImport.form.details.label',
-        defaultMessage: 'Details',
+        label: "react.outboundImport.form.details.label",
+        defaultMessage: "Details",
       }}
     >
       <OutboundImportBasicDetails control={control} errors={errors} />
-      <OutboundImportSendingOptions control={control} errors={errors} trigger={trigger} />
+      <OutboundImportSendingOptions
+        control={control}
+        errors={errors}
+        trigger={trigger}
+      />
       <OutboundImportDropzone control={control} errors={errors} />
       <Button
         label="react.outboundImport.form.next.label"

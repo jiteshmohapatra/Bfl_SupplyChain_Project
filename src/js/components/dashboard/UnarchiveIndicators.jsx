@@ -1,23 +1,21 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import ReactLoading from 'react-loading';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import ReactLoading from "react-loading";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { getRandomColor } from 'consts/dataFormat/colorMapping';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { getRandomColor } from "consts/dataFormat/colorMapping";
+import { translateWithDefaultMessage } from "utils/Translate";
 
 const Numbers = () => {
-  const colors = ['green', 'yellow', 'red'];
+  const colors = ["green", "yellow", "red"];
   const classColor = `circle ${colors[_.random(0, colors.length - 1)]}`;
 
   return (
     <div className="value">
-      <div className={classColor} />
-      {' '}
-      {_.random(3, 95)}
+      <div className={classColor} /> {_.random(3, 95)}
     </div>
   );
 };
@@ -64,24 +62,32 @@ const ArchivedNumber = (props) => (
 const ArchivedGraph = (props) => {
   let graph;
 
-  if (props.type === 'line') {
-    graph = <i className="fa fa-line-chart" style={{ color: getRandomColor() }} />;
-  } else if (props.type === 'bar') {
-    graph = <i className="fa fa-bar-chart" style={{ color: getRandomColor() }} />;
-  } else if (props.type === 'numbersCustomColors') {
-    graph = <i className="fa fa-bar-chart" style={{ color: getRandomColor() }} />;
-  } else if (props.type === 'doughnut') {
-    graph = <i className="fa fa-pie-chart" style={{ color: getRandomColor() }} />;
-  } else if (props.type === 'horizontalBar') {
+  if (props.type === "line") {
+    graph = (
+      <i className="fa fa-line-chart" style={{ color: getRandomColor() }} />
+    );
+  } else if (props.type === "bar") {
+    graph = (
+      <i className="fa fa-bar-chart" style={{ color: getRandomColor() }} />
+    );
+  } else if (props.type === "numbersCustomColors") {
+    graph = (
+      <i className="fa fa-bar-chart" style={{ color: getRandomColor() }} />
+    );
+  } else if (props.type === "doughnut") {
+    graph = (
+      <i className="fa fa-pie-chart" style={{ color: getRandomColor() }} />
+    );
+  } else if (props.type === "horizontalBar") {
     graph = (
       <i
         className="fa fa-bar-chart horizontal-bar"
         style={{ color: getRandomColor() }}
       />
     );
-  } else if (props.type === 'numbers') {
+  } else if (props.type === "numbers") {
     graph = <Numbers />;
-  } else if (props.type === 'loading') {
+  } else if (props.type === "loading") {
     graph = (
       <ReactLoading
         type="bubbles"
@@ -90,9 +96,9 @@ const ArchivedGraph = (props) => {
         width="40px"
       />
     );
-  } else if (props.type === 'error') {
+  } else if (props.type === "error") {
     graph = <i className="fa fa-repeat" />;
-  } else if (props.type === 'table' || props.type === 'numberTable') {
+  } else if (props.type === "table" || props.type === "numberTable") {
     graph = <i className="fa fa-table" style={{ color: getRandomColor() }} />;
   }
 
@@ -113,7 +119,7 @@ const ArchivedGraph = (props) => {
 const ArchivedIndicators = (props) => (
   <div>
     {props.widgets.map((value, index) =>
-      (value.type === 'number' ? (
+      value.type === "number" ? (
         <ArchivedNumber
           key={`item-${value.widgetId}`}
           index={index}
@@ -136,7 +142,8 @@ const ArchivedIndicators = (props) => (
           size={props.size}
           translate={props.translate}
         />
-      )))}
+      ),
+    )}
   </div>
 );
 
@@ -144,7 +151,8 @@ const UnarchiveIndicators = (props) => {
   const data = [...props.graphData, ...props.numberData];
   const dashboardWidgets = _.chain(data)
     .filter((widget) => widget && widget.widgetId)
-    .map((widget) => widget.widgetId).value();
+    .map((widget) => widget.widgetId)
+    .value();
   const archivedWidgets = _.chain(props.dashboardConfig.dashboardWidgets)
     .omit(dashboardWidgets)
     .map((widget, widgetId) => ({ ...widget, widgetId }))
@@ -155,20 +163,30 @@ const UnarchiveIndicators = (props) => {
   return (
     <div
       className={
-        props.showPopout ? 'unarchived-items popover-active' : 'unarchived-items'
+        props.showPopout
+          ? "unarchived-items popover-active"
+          : "unarchived-items"
       }
     >
-      <div className="unarchive" role="button" tabIndex={0} onClick={props.unarchiveHandler} onKeyDown={props.unarchiveHandler}>
+      <div
+        className="unarchive"
+        role="button"
+        tabIndex={0}
+        onClick={props.unarchiveHandler}
+        onKeyDown={props.unarchiveHandler}
+      >
         <span>
-          Archived Indicators (
-          {size}
-          )
-          {' '}
-          <i className="fa fa-archive" />
+          Archived Indicators ({size}) <i className="fa fa-archive" />
         </span>
       </div>
       <div className="unarchive-popover">
-        <span role="button" tabIndex={0} className="close-button" onClick={props.unarchiveHandler} onKeyDown={props.unarchiveHandler}>
+        <span
+          role="button"
+          tabIndex={0}
+          className="close-button"
+          onClick={props.unarchiveHandler}
+          onKeyDown={props.unarchiveHandler}
+        >
           &times;
         </span>
         <ul className="unarchived-list">
@@ -189,7 +207,7 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default (connect(mapStateToProps)(UnarchiveIndicators));
+export default connect(mapStateToProps)(UnarchiveIndicators);
 
 UnarchiveIndicators.propTypes = {
   graphData: PropTypes.arrayOf(PropTypes.shape({})).isRequired,

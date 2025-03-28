@@ -1,49 +1,52 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { connect } from 'react-redux';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import CheckboxField from 'components/form-elements/CheckboxField';
-import DateField from 'components/form-elements/DateField';
-import LabelField from 'components/form-elements/LabelField';
-import TableRowWithSubfields from 'components/form-elements/TableRowWithSubfields';
-import TextField from 'components/form-elements/TextField';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import DateFormat from 'consts/dateFormat';
-import apiClient, { flattenRequest, parseResponse } from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { formatProductDisplayName, getReceivingPayloadContainers } from 'utils/form-values-utils';
-import Translate from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import CheckboxField from "components/form-elements/CheckboxField";
+import DateField from "components/form-elements/DateField";
+import LabelField from "components/form-elements/LabelField";
+import TableRowWithSubfields from "components/form-elements/TableRowWithSubfields";
+import TextField from "components/form-elements/TextField";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import DateFormat from "consts/dateFormat";
+import apiClient, { flattenRequest, parseResponse } from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import {
+  formatProductDisplayName,
+  getReceivingPayloadContainers,
+} from "utils/form-values-utils";
+import Translate from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
 const SHIPMENT_FIELDS = {
-  'origin.name': {
-    label: 'react.partialReceiving.origin.label',
-    defaultMessage: 'Origin',
+  "origin.name": {
+    label: "react.partialReceiving.origin.label",
+    defaultMessage: "Origin",
     type: (params) => <TextField {...params} />,
     attributes: {
       disabled: true,
     },
   },
-  'destination.name': {
-    label: 'react.partialReceiving.destination.label',
-    defaultMessage: 'Destination',
+  "destination.name": {
+    label: "react.partialReceiving.destination.label",
+    defaultMessage: "Destination",
     type: (params) => <TextField {...params} />,
     attributes: {
       disabled: true,
     },
   },
   dateShipped: {
-    label: 'react.partialReceiving.shippedOn.label',
-    defaultMessage: 'Shipped on',
+    label: "react.partialReceiving.shippedOn.label",
+    defaultMessage: "Shipped on",
     type: (params) => <DateField {...params} />,
     attributes: {
       localizeDate: true,
@@ -52,17 +55,17 @@ const SHIPMENT_FIELDS = {
     },
   },
   dateDelivered: {
-    label: 'react.partialReceiving.deliveredOn.label',
-    defaultMessage: 'Delivered on',
+    label: "react.partialReceiving.deliveredOn.label",
+    defaultMessage: "Delivered on",
     type: (params) => <DateField {...params} />,
     attributes: {
       localizeDate: true,
       localizedDateFormat: DateFormat.DEFAULT,
       // It's necessary for properly setting up the time part of the localized date format
-      dateFormat: 'MM/DD/YYYY HH:mm Z',
+      dateFormat: "MM/DD/YYYY HH:mm Z",
       required: true,
       showTimeSelect: true,
-      autoComplete: 'off',
+      autoComplete: "off",
     },
   },
 };
@@ -71,47 +74,55 @@ const TABLE_FIELDS = {
   containers: {
     type: ArrayField,
     rowComponent: TableRowWithSubfields,
-    subfieldKey: 'shipmentItems',
-    headerFontSize: '0.775rem',
+    subfieldKey: "shipmentItems",
+    headerFontSize: "0.775rem",
     fields: {
-      'parentContainer.name': {
-        fieldKey: '',
-        flexWidth: '1',
-        type: (params) => (!params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.packLevel1.label',
-        defaultMessage: 'Pack level 1',
+      "parentContainer.name": {
+        fieldKey: "",
+        flexWidth: "1",
+        type: (params) =>
+          !params.subfield ? <LabelField {...params} /> : null,
+        label: "react.partialReceiving.packLevel1.label",
+        defaultMessage: "Pack level 1",
         attributes: {
-          formatValue: (fieldValue) => (_.get(fieldValue, 'parentContainer.name') || _.get(fieldValue, 'container.name') || 'Unpacked'),
+          formatValue: (fieldValue) =>
+            _.get(fieldValue, "parentContainer.name") ||
+            _.get(fieldValue, "container.name") ||
+            "Unpacked",
         },
       },
-      'container.name': {
-        fieldKey: '',
-        flexWidth: '1',
-        type: (params) => (!params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.packLevel2.label',
-        defaultMessage: 'Pack level 2',
+      "container.name": {
+        fieldKey: "",
+        flexWidth: "1",
+        type: (params) =>
+          !params.subfield ? <LabelField {...params} /> : null,
+        label: "react.partialReceiving.packLevel2.label",
+        defaultMessage: "Pack level 2",
         attributes: {
-          formatValue: (fieldValue) => (_.get(fieldValue, 'parentContainer.name') ? _.get(fieldValue, 'container.name') || '' : ''),
+          formatValue: (fieldValue) =>
+            _.get(fieldValue, "parentContainer.name")
+              ? _.get(fieldValue, "container.name") || ""
+              : "",
         },
       },
-      'product.productCode': {
+      "product.productCode": {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.code.label',
-        defaultMessage: 'Code',
-        headerAlign: 'left',
-        flexWidth: '1',
+        label: "react.partialReceiving.code.label",
+        defaultMessage: "Code",
+        headerAlign: "left",
+        flexWidth: "1",
         attributes: {
-          className: 'text-left ml-1',
+          className: "text-left ml-1",
         },
       },
       product: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.product.label',
-        defaultMessage: 'Product',
-        headerAlign: 'left',
-        flexWidth: '4',
+        label: "react.partialReceiving.product.label",
+        defaultMessage: "Product",
+        headerAlign: "left",
+        flexWidth: "4",
         attributes: {
-          className: 'text-left ml-1',
+          className: "text-left ml-1",
           showValueTooltip: true,
           formatValue: formatProductDisplayName,
         },
@@ -121,24 +132,25 @@ const TABLE_FIELDS = {
       },
       lotNumber: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.lotSerialNo.label',
-        defaultMessage: 'Lot/Serial No.',
-        flexWidth: '1',
+        label: "react.partialReceiving.lotSerialNo.label",
+        defaultMessage: "Lot/Serial No.",
+        flexWidth: "1",
       },
       expirationDate: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.expirationDate.label',
-        defaultMessage: 'Expiration date',
-        flexWidth: '1',
+        label: "react.partialReceiving.expirationDate.label",
+        defaultMessage: "Expiration date",
+        flexWidth: "1",
         getDynamicAttr: ({ formatLocalizedDate }) => ({
-          formatValue: (value) => (value ? formatLocalizedDate(value, DateFormat.COMMON) : value),
+          formatValue: (value) =>
+            value ? formatLocalizedDate(value, DateFormat.COMMON) : value,
         }),
       },
       binLocation: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.binLocation.label',
-        defaultMessage: 'Bin Location',
-        flexWidth: '1.5',
+        label: "react.partialReceiving.binLocation.label",
+        defaultMessage: "Bin Location",
+        flexWidth: "1.5",
         getDynamicAttr: ({ hasBinLocationSupport }) => ({
           hide: !hasBinLocationSupport,
         }),
@@ -146,58 +158,85 @@ const TABLE_FIELDS = {
           showValueTooltip: true,
           formatValue: (fieldValue) => (
             <div className="d-flex">
-              {fieldValue.zoneName ? <div className="text-truncate" style={{ minWidth: 30, flexShrink: 20 }}>{fieldValue.zoneName}</div> : ''}
-              <div className="text-truncate">{fieldValue.zoneName ? `: ${fieldValue.name}` : fieldValue.name}</div>
+              {fieldValue.zoneName ? (
+                <div
+                  className="text-truncate"
+                  style={{ minWidth: 30, flexShrink: 20 }}
+                >
+                  {fieldValue.zoneName}
+                </div>
+              ) : (
+                ""
+              )}
+              <div className="text-truncate">
+                {fieldValue.zoneName ? `: ${fieldValue.name}` : fieldValue.name}
+              </div>
             </div>
           ),
         },
       },
-      'recipient.name': {
+      "recipient.name": {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.recipient.label',
-        defaultMessage: 'Recipient',
-        flexWidth: '1.5',
+        label: "react.partialReceiving.recipient.label",
+        defaultMessage: "Recipient",
+        flexWidth: "1.5",
       },
       quantityReceiving: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.receivingNow.label',
-        defaultMessage: 'Receiving now',
-        flexWidth: '1',
+        label: "react.partialReceiving.receivingNow.label",
+        defaultMessage: "Receiving now",
+        flexWidth: "1",
         attributes: {
-          cellClassName: 'text-right',
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          cellClassName: "text-right",
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
         },
       },
       quantityRemaining: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.remaining.label',
-        defaultMessage: 'Remaining',
-        fieldKey: '',
-        flexWidth: '1',
+        label: "react.partialReceiving.remaining.label",
+        defaultMessage: "Remaining",
+        fieldKey: "",
+        flexWidth: "1",
         attributes: {
-          cellClassName: 'text-right',
-          formatValue: (fieldValue) => (fieldValue && fieldValue.quantityRemaining ? fieldValue.quantityRemaining.toLocaleString('en-US') : fieldValue.quantityRemaining),
+          cellClassName: "text-right",
+          formatValue: (fieldValue) =>
+            fieldValue && fieldValue.quantityRemaining
+              ? fieldValue.quantityRemaining.toLocaleString("en-US")
+              : fieldValue.quantityRemaining,
         },
         getDynamicAttr: ({ fieldValue }) => ({
-          className: fieldValue && (fieldValue.cancelRemaining || !fieldValue.quantityRemaining) ? 'strike-through' : 'text-danger',
+          className:
+            fieldValue &&
+            (fieldValue.cancelRemaining || !fieldValue.quantityRemaining)
+              ? "strike-through"
+              : "text-danger",
         }),
       },
       cancelRemaining: {
-        fieldKey: 'quantityRemaining',
-        type: (params) => (params.subfield ? <CheckboxField {...params} /> : null),
-        label: 'react.partialReceiving.cancelRemaining.label',
-        defaultMessage: 'Cancel remaining',
-        flexWidth: '1',
-        getDynamicAttr: ({ saveDisabled, fieldValue, hasPartialReceivingSupport }) => ({
-          disabled: saveDisabled || _.toInteger(fieldValue) <= 0 || !hasPartialReceivingSupport,
+        fieldKey: "quantityRemaining",
+        type: (params) =>
+          params.subfield ? <CheckboxField {...params} /> : null,
+        label: "react.partialReceiving.cancelRemaining.label",
+        defaultMessage: "Cancel remaining",
+        flexWidth: "1",
+        getDynamicAttr: ({
+          saveDisabled,
+          fieldValue,
+          hasPartialReceivingSupport,
+        }) => ({
+          disabled:
+            saveDisabled ||
+            _.toInteger(fieldValue) <= 0 ||
+            !hasPartialReceivingSupport,
           hide: !hasPartialReceivingSupport,
         }),
       },
       comment: {
         type: (params) => (params.subfield ? <LabelField {...params} /> : null),
-        label: 'react.partialReceiving.comment.label',
-        defaultMessage: 'Comment',
-        flexWidth: '1',
+        label: "react.partialReceiving.comment.label",
+        defaultMessage: "Comment",
+        flexWidth: "1",
       },
     },
   },
@@ -206,19 +245,22 @@ const TABLE_FIELDS = {
 function validate(values) {
   const errors = {};
   errors.containers = [];
-  const dateDelivered = moment(values.dateDelivered, 'MM/DD/YYYY');
+  const dateDelivered = moment(values.dateDelivered, "MM/DD/YYYY");
 
   if (!values.dateDelivered) {
-    errors.dateDelivered = 'react.default.error.requiredField.label';
+    errors.dateDelivered = "react.default.error.requiredField.label";
   }
   if (moment().diff(dateDelivered) < 0) {
-    errors.dateDelivered = 'react.partialReceiving.error.futureDate.label';
+    errors.dateDelivered = "react.partialReceiving.error.futureDate.label";
   }
   _.forEach(values.containers, (container, key) => {
     errors.containers[key] = { shipmentItems: [] };
     _.forEach(container.shipmentItems, (item, key2) => {
       if (item.quantityReceiving < 0) {
-        errors.containers[key].shipmentItems[key2] = { quantityReceiving: 'react.partialReceiving.error.quantityToReceiveNegative.label' };
+        errors.containers[key].shipmentItems[key2] = {
+          quantityReceiving:
+            "react.partialReceiving.error.quantityToReceiveNegative.label",
+        };
       }
     });
   });
@@ -253,19 +295,29 @@ class ReceivingCheckScreen extends Component {
 
   onSubmit(formValues) {
     const isBinLocationChosen = !_.some(formValues.containers, (container) =>
-      _.some(container.shipmentItems, (shipmentItem) => _.isNull(shipmentItem.binLocation.id)));
+      _.some(container.shipmentItems, (shipmentItem) =>
+        _.isNull(shipmentItem.binLocation.id),
+      ),
+    );
 
-    if (!isBinLocationChosen && this.props.hasBinLocationSupport && !(formValues.shipmentStatus === 'RECEIVED')) {
+    if (
+      !isBinLocationChosen &&
+      this.props.hasBinLocationSupport &&
+      !(formValues.shipmentStatus === "RECEIVED")
+    ) {
       this.confirmReceive(formValues);
     } else {
-      this.save({
-        ...formValues,
-        receiptStatus: 'COMPLETED',
-      }, () => {
-        this.setState({ completed: true });
-        const { requisition, shipmentId } = formValues;
-        window.location = STOCK_MOVEMENT_URL.show(requisition || shipmentId);
-      });
+      this.save(
+        {
+          ...formValues,
+          receiptStatus: "COMPLETED",
+        },
+        () => {
+          this.setState({ completed: true });
+          const { requisition, shipmentId } = formValues;
+          window.location = STOCK_MOVEMENT_URL.show(requisition || shipmentId);
+        },
+      );
     }
   }
 
@@ -277,7 +329,8 @@ class ReceivingCheckScreen extends Component {
     this.props.showSpinner();
     const url = `/api/partialReceiving/${this.props.match.params.shipmentId}?stepNumber=2&sort=${this.props.sort}`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
         const values = parseResponse(response.data.data);
 
@@ -288,12 +341,18 @@ class ReceivingCheckScreen extends Component {
               .map((item) => {
                 if (item.receiptItemId && item.quantityRemaining > 0) {
                   return {
-                    ...item, cancelRemaining: true,
+                    ...item,
+                    cancelRemaining: true,
                   };
                 }
                 return item;
               })
-              .filter((item) => !_.isNil(item.quantityReceiving) && item.quantityReceiving !== '').value(),
+              .filter(
+                (item) =>
+                  !_.isNil(item.quantityReceiving) &&
+                  item.quantityReceiving !== "",
+              )
+              .value(),
           }));
         }
 
@@ -306,25 +365,34 @@ class ReceivingCheckScreen extends Component {
 
   confirmReceive(formValues) {
     confirmAlert({
-      title: this.props.translate('react.partialReceiving.message.confirmReceive.label', 'Confirm receiving'),
+      title: this.props.translate(
+        "react.partialReceiving.message.confirmReceive.label",
+        "Confirm receiving",
+      ),
       message: this.props.translate(
-        'react.partialReceiving.confirmReceive.message',
-        'Are you sure you want to receive? There are some lines with empty bin locations.',
+        "react.partialReceiving.confirmReceive.message",
+        "Are you sure you want to receive? There are some lines with empty bin locations.",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
-          onClick: () => this.save({
-            ...formValues,
-            receiptStatus: 'COMPLETED',
-          }, () => {
-            this.setState({ completed: true });
-            const { requisition, shipmentId } = formValues;
-            window.location = STOCK_MOVEMENT_URL.show(requisition || shipmentId);
-          }),
+          label: this.props.translate("react.default.yes.label", "Yes"),
+          onClick: () =>
+            this.save(
+              {
+                ...formValues,
+                receiptStatus: "COMPLETED",
+              },
+              () => {
+                this.setState({ completed: true });
+                const { requisition, shipmentId } = formValues;
+                window.location = STOCK_MOVEMENT_URL.show(
+                  requisition || shipmentId,
+                );
+              },
+            ),
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -332,23 +400,29 @@ class ReceivingCheckScreen extends Component {
 
   cancelAllRemaining() {
     const containers = update(this.state.values.containers, {
-      $apply: (items) => (!items ? [] : items.map((item) => update(item, {
-        shipmentItems: {
-          $apply: (shipmentItems) => (!shipmentItems ? [] : shipmentItems.map((shipmentItem) => (
-            {
-              ...shipmentItem,
-              cancelRemaining: shipmentItem.quantityRemaining > 0,
-            }
-          ))),
-        },
-      }))),
+      $apply: (items) =>
+        !items
+          ? []
+          : items.map((item) =>
+              update(item, {
+                shipmentItems: {
+                  $apply: (shipmentItems) =>
+                    !shipmentItems
+                      ? []
+                      : shipmentItems.map((shipmentItem) => ({
+                          ...shipmentItem,
+                          cancelRemaining: shipmentItem.quantityRemaining > 0,
+                        })),
+                },
+              }),
+            ),
     });
 
     const { values } = this.state;
     const parsedValues = JSON.parse(JSON.stringify(values));
     parsedValues.containers = containers;
     this.setState({ values: parsedValues });
-    window.setFormValue('containers', containers);
+    window.setFormValue("containers", containers);
   }
 
   saveAndExit(formValues) {
@@ -386,7 +460,8 @@ class ReceivingCheckScreen extends Component {
         this.props.hideSpinner();
 
         this.setState({ values: {} }, () =>
-          this.setState({ values: parseResponse(response.data.data) }));
+          this.setState({ values: parseResponse(response.data.data) }),
+        );
         if (callback) {
           callback();
         }
@@ -395,8 +470,7 @@ class ReceivingCheckScreen extends Component {
   }
 
   prevPage(values) {
-    this.saveValues(values)
-      .then(() => this.props.previousPage(values));
+    this.saveValues(values).then(() => this.props.previousPage(values));
   }
 
   render() {
@@ -424,36 +498,49 @@ class ReceivingCheckScreen extends Component {
                       type="button"
                       className="btn btn-outline-secondary float-right btn-form btn-xs"
                       onClick={() => this.saveAndExit(this.state.values)}
-                      disabled={this.state.completed || !_.size(this.state.values.containers)}
+                      disabled={
+                        this.state.completed ||
+                        !_.size(this.state.values.containers)
+                      }
                     >
                       <span>
                         <i className="fa fa-sign-out pr-2" />
-                        <Translate id="react.default.button.saveAndExit.label" defaultMessage="Save and exit" />
+                        <Translate
+                          id="react.default.button.saveAndExit.label"
+                          defaultMessage="Save and exit"
+                        />
                       </span>
                     </button>
                     <button
                       type="button"
                       className="btn btn-outline-secondary float-right btn-form btn-xs"
                       onClick={() => this.onSave()}
-                      disabled={this.state.completed || !_.size(this.state.values.containers)}
+                      disabled={
+                        this.state.completed ||
+                        !_.size(this.state.values.containers)
+                      }
                     >
-                      <Translate id="react.default.button.save.label" defaultMessage="Save" />
+                      <Translate
+                        id="react.default.button.save.label"
+                        defaultMessage="Save"
+                      />
                     </button>
-                    {this.props.hasPartialReceivingSupport
-                      ? (
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger float-right btn-form btn-xs"
-                          onClick={() => this.cancelAllRemaining()}
-                          disabled={this.state.completed || !_.size(this.state.values.containers)}
-                        >
-                          <Translate
-                            id="react.partialReceiving.cancelAllRemaining.label"
-                            defaultMessage="Cancel all remaining"
-                          />
-                        </button>
-                      )
-                      : null}
+                    {this.props.hasPartialReceivingSupport ? (
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger float-right btn-form btn-xs"
+                        onClick={() => this.cancelAllRemaining()}
+                        disabled={
+                          this.state.completed ||
+                          !_.size(this.state.values.containers)
+                        }
+                      >
+                        <Translate
+                          id="react.partialReceiving.cancelAllRemaining.label"
+                          defaultMessage="Cancel all remaining"
+                        />
+                      </button>
+                    ) : null}
                   </span>
                   <div className="form-title">
                     <Translate
@@ -463,35 +550,54 @@ class ReceivingCheckScreen extends Component {
                   </div>
                   {_.map(SHIPMENT_FIELDS, (fieldConfig, fieldName) =>
                     renderFormField(fieldConfig, fieldName, {
-                      saveDisabled: this.state.completed
-                    || !_.size(this.state.values.containers),
+                      saveDisabled:
+                        this.state.completed ||
+                        !_.size(this.state.values.containers),
                       hasBinLocationSupport: this.props.hasBinLocationSupport,
-                      hasPartialReceivingSupport: this.props.hasPartialReceivingSupport,
-                    }))}
+                      hasPartialReceivingSupport:
+                        this.props.hasPartialReceivingSupport,
+                    }),
+                  )}
                 </div>
                 <div className="my-2 table-form" data-testid="items-table">
                   {_.map(TABLE_FIELDS, (fieldConfig, fieldName) =>
                     renderFormField(fieldConfig, fieldName, {
-                      saveDisabled: this.state.completed
-                    || !_.size(this.state.values.containers),
+                      saveDisabled:
+                        this.state.completed ||
+                        !_.size(this.state.values.containers),
                       saveAndExit: this.onExit,
                       hasBinLocationSupport: this.props.hasBinLocationSupport,
                       cancelAllRemaining: this.cancelAllRemaining,
-                      hasPartialReceivingSupport: this.props.hasPartialReceivingSupport,
+                      hasPartialReceivingSupport:
+                        this.props.hasPartialReceivingSupport,
                       formatLocalizedDate: this.props.formatLocalizedDate,
                       values,
-                    }))}
+                    }),
+                  )}
                 </div>
                 <div className="submit-buttons">
-                  <button type="button" className="btn btn-outline-primary btn-form btn-xs" onClick={() => this.prevPage(values)}>
-                    <Translate id="react.partialReceiving.backToEdit.label" defaultMessage="Back to edit" />
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary btn-form btn-xs"
+                    onClick={() => this.prevPage(values)}
+                  >
+                    <Translate
+                      id="react.partialReceiving.backToEdit.label"
+                      defaultMessage="Back to edit"
+                    />
                   </button>
                   <button
                     type="submit"
                     className="btn btn-outline-success btn-form float-right btn-xs"
-                    disabled={this.state.completed || !_.size(this.state.values.containers)}
+                    disabled={
+                      this.state.completed ||
+                      !_.size(this.state.values.containers)
+                    }
                   >
-                    <Translate id="react.partialReceiving.receiveShipment.label" defaultMessage="Receive shipment" />
+                    <Translate
+                      id="react.partialReceiving.receiveShipment.label"
+                      defaultMessage="Receive shipment"
+                    />
                   </button>
                 </div>
               </form>
@@ -505,12 +611,14 @@ class ReceivingCheckScreen extends Component {
 
 const mapStateToProps = (state) => ({
   hasBinLocationSupport: state.session.currentLocation.hasBinLocationSupport,
-  hasPartialReceivingSupport: state.session.currentLocation.hasPartialReceivingSupport,
+  hasPartialReceivingSupport:
+    state.session.currentLocation.hasPartialReceivingSupport,
   formatLocalizedDate: formatDate(state.localize),
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner,
+  showSpinner,
+  hideSpinner,
 })(ReceivingCheckScreen);
 
 ReceivingCheckScreen.propTypes = {

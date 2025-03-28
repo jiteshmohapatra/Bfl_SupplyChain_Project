@@ -1,30 +1,29 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-import Button from 'components/form-elements/Button';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import Translate from 'utils/Translate';
+import Button from "components/form-elements/Button";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import Translate from "utils/Translate";
 
-const StockMovementOutboundHeader = ({ showMyStockMovements, isRequestsOpen }) => (
+const StockMovementOutboundHeader = ({
+  showMyStockMovements,
+  isRequestsOpen,
+}) => (
   <div className="d-flex list-page-header">
     <span className="d-flex align-self-center title">
-      {
-        isRequestsOpen
-          ? (
-            <Translate
-              id="react.stockMovement.request.list.label"
-              defaultMessage="Request List"
-            />
-          )
-          : (
-            <Translate
-              id="react.stockMovement.outbound.list.label"
-              defaultMessage="Outbound Movement List"
-            />
-          )
-      }
+      {isRequestsOpen ? (
+        <Translate
+          id="react.stockMovement.request.list.label"
+          defaultMessage="Request List"
+        />
+      ) : (
+        <Translate
+          id="react.stockMovement.outbound.list.label"
+          defaultMessage="Outbound Movement List"
+        />
+      )}
     </span>
     <div className="d-flex justify-content-end buttons align-items-center">
       <Button
@@ -33,10 +32,7 @@ const StockMovementOutboundHeader = ({ showMyStockMovements, isRequestsOpen }) =
         label="react.stockMovement.myStockMovement.label"
         onClick={showMyStockMovements}
       />
-      <Link
-        className="primary-button"
-        to={STOCK_MOVEMENT_URL.createOutbound()}
-      >
+      <Link className="primary-button" to={STOCK_MOVEMENT_URL.createOutbound()}>
         <Translate
           id="react.stockMovement.createStockMovement.label"
           defaultMessage="Create Stock Movement"

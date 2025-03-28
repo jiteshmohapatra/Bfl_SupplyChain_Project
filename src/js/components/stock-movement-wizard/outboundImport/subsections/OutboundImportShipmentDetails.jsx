@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
 
-import DateField from 'components/form-elements/v2/DateField';
-import SelectField from 'components/form-elements/v2/SelectField';
-import TextInput from 'components/form-elements/v2/TextInput';
-import Subsection from 'components/Layout/v2/Subsection';
-import { FormErrorPropType } from 'utils/propTypes';
+import DateField from "components/form-elements/v2/DateField";
+import SelectField from "components/form-elements/v2/SelectField";
+import TextInput from "components/form-elements/v2/TextInput";
+import Subsection from "components/Layout/v2/Subsection";
+import { FormErrorPropType } from "utils/propTypes";
 
 const OutboundImportShipmentDetails = ({ control, errors }) => (
   <Subsection
     title={{
-      label: 'react.outboundImport.form.shipmentDetails.label',
-      defaultMessage: 'Shipment details',
+      label: "react.outboundImport.form.shipmentDetails.label",
+      defaultMessage: "Shipment details",
     }}
     collapsable={false}
   >
@@ -28,8 +28,8 @@ const OutboundImportShipmentDetails = ({ control, errors }) => (
               disabled
               placeholder="Select"
               title={{
-                id: 'react.stockMovement.origin.label',
-                defaultMessage: 'Origin',
+                id: "react.stockMovement.origin.label",
+                defaultMessage: "Origin",
               }}
               hasErrors={Boolean(errors.origin?.message)}
               errorMessage={errors.origin?.message}
@@ -47,8 +47,8 @@ const OutboundImportShipmentDetails = ({ control, errors }) => (
               disabled
               placeholder="Select"
               title={{
-                id: 'react.stockMovement.destination.label',
-                defaultMessage: 'Destination',
+                id: "react.stockMovement.destination.label",
+                defaultMessage: "Destination",
               }}
               hasErrors={Boolean(errors.destination?.message)}
               errorMessage={errors.destination?.message}
@@ -68,8 +68,8 @@ const OutboundImportShipmentDetails = ({ control, errors }) => (
               disabled
               placeholder="Select"
               title={{
-                id: 'react.stockMovement.shipmentType.label',
-                defaultMessage: 'Shipment type',
+                id: "react.stockMovement.shipmentType.label",
+                defaultMessage: "Shipment type",
               }}
               hasErrors={Boolean(errors.shipmentType?.message)}
               errorMessage={errors.shipmentType?.message}
@@ -86,8 +86,8 @@ const OutboundImportShipmentDetails = ({ control, errors }) => (
               {...field}
               disabled
               title={{
-                id: 'react.stockMovement.trackingNumber.label',
-                defaultMessage: 'Tracking Number',
+                id: "react.stockMovement.trackingNumber.label",
+                defaultMessage: "Tracking Number",
               }}
               errorMessage={errors.trackingNumber?.message}
             />
@@ -103,12 +103,12 @@ const OutboundImportShipmentDetails = ({ control, errors }) => (
               {...field}
               disabled
               title={{
-                id: 'react.stockMovement.shipDate.label',
-                defaultMessage: 'Ship date',
+                id: "react.stockMovement.shipDate.label",
+                defaultMessage: "Ship date",
               }}
               placeholder={{
-                id: 'react.default.dateInput.placeholder.label',
-                default: 'Select a date',
+                id: "react.default.dateInput.placeholder.label",
+                default: "Select a date",
               }}
               showTimeSelect
               errorMessage={errors.dateShipped?.message}
@@ -125,8 +125,8 @@ const OutboundImportShipmentDetails = ({ control, errors }) => (
               {...field}
               disabled
               title={{
-                id: 'react.stockMovement.expectedDeliveryDate.label',
-                defaultMessage: 'Expected Delivery Date',
+                id: "react.stockMovement.expectedDeliveryDate.label",
+                defaultMessage: "Expected Delivery Date",
               }}
               errorMessage={errors.expectedDeliveryDate?.message}
             />

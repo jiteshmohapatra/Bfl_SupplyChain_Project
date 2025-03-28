@@ -8,425 +8,410 @@ API.txt for details.
 
 */
 
-(function($) {
+(function ($) {
+  const options = {
+    xaxis: {
+      timezone: null,		// "browser" for local to the client or timezone for timezone-js
+      timeformat: null,	// format string to use
+      twelveHourClock: false,	// 12 or 24 time in time mode
+      monthNames: null,	// list of names of months
+    },
+  };
 
-	var options = {
-		xaxis: {
-			timezone: null,		// "browser" for local to the client or timezone for timezone-js
-			timeformat: null,	// format string to use
-			twelveHourClock: false,	// 12 or 24 time in time mode
-			monthNames: null	// list of names of months
-		}
-	};
+  // round to nearby lower multiple of base
 
-	// round to nearby lower multiple of base
+  function floorInBase(n, base) {
+    return base * Math.floor(n / base);
+  }
 
-	function floorInBase(n, base) {
-		return base * Math.floor(n / base);
-	}
+  // Returns a string with the date d formatted according to fmt.
+  // A subset of the Open Group's strftime format is supported.
 
-	// Returns a string with the date d formatted according to fmt.
-	// A subset of the Open Group's strftime format is supported.
+  function formatDate(d, fmt, monthNames, dayNames) {
+    if (typeof d.strftime === 'function') {
+      return d.strftime(fmt);
+    }
 
-	function formatDate(d, fmt, monthNames, dayNames) {
+    const leftPad = function (n, pad) {
+      n = `${n}`;
+      pad = `${pad == null ? '0' : pad}`;
+      return n.length == 1 ? pad + n : n;
+    };
 
-		if (typeof d.strftime == "function") {
-			return d.strftime(fmt);
-		}
+    const r = [];
+    let escape = false;
+    const hours = d.getHours();
+    const isAM = hours < 12;
 
-		var leftPad = function(n, pad) {
-			n = "" + n;
-			pad = "" + (pad == null ? "0" : pad);
-			return n.length == 1 ? pad + n : n;
-		};
+    if (monthNames == null) {
+      monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    }
 
-		var r = [];
-		var escape = false;
-		var hours = d.getHours();
-		var isAM = hours < 12;
+    if (dayNames == null) {
+      dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    }
 
-		if (monthNames == null) {
-			monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		}
+    let hours12;
 
-		if (dayNames == null) {
-			dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-		}
+    if (hours > 12) {
+      hours12 = hours - 12;
+    } else if (hours == 0) {
+      hours12 = 12;
+    } else {
+      hours12 = hours;
+    }
 
-		var hours12;
+    for (let i = 0; i < fmt.length; ++i) {
+      let c = fmt.charAt(i);
 
-		if (hours > 12) {
-			hours12 = hours - 12;
-		} else if (hours == 0) {
-			hours12 = 12;
-		} else {
-			hours12 = hours;
-		}
+      if (escape) {
+        switch (c) {
+          case 'a': c = `${dayNames[d.getDay()]}`; break;
+          case 'b': c = `${monthNames[d.getMonth()]}`; break;
+          case 'd': c = leftPad(d.getDate()); break;
+          case 'e': c = leftPad(d.getDate(), ' '); break;
+          case 'h':	// For back-compat with 0.7; remove in 1.0
+          case 'H': c = leftPad(hours); break;
+          case 'I': c = leftPad(hours12); break;
+          case 'l': c = leftPad(hours12, ' '); break;
+          case 'm': c = leftPad(d.getMonth() + 1); break;
+          case 'M': c = leftPad(d.getMinutes()); break;
+            // quarters not in Open Group's strftime specification
+          case 'q':
+            c = `${Math.floor(d.getMonth() / 3) + 1}`; break;
+          case 'S': c = leftPad(d.getSeconds()); break;
+          case 'y': c = leftPad(d.getFullYear() % 100); break;
+          case 'Y': c = `${d.getFullYear()}`; break;
+          case 'p': c = (isAM) ? ('' + 'am') : ('' + 'pm'); break;
+          case 'P': c = (isAM) ? ('' + 'AM') : ('' + 'PM'); break;
+          case 'w': c = `${d.getDay()}`; break;
+        }
+        r.push(c);
+        escape = false;
+      } else if (c == '%') {
+        escape = true;
+      } else {
+        r.push(c);
+      }
+    }
 
-		for (var i = 0; i < fmt.length; ++i) {
+    return r.join('');
+  }
 
-			var c = fmt.charAt(i);
+  // To have a consistent view of time-based data independent of which time
+  // zone the client happens to be in we need a date-like object independent
+  // of time zones.  This is done through a wrapper that only calls the UTC
+  // versions of the accessor methods.
 
-			if (escape) {
-				switch (c) {
-					case 'a': c = "" + dayNames[d.getDay()]; break;
-					case 'b': c = "" + monthNames[d.getMonth()]; break;
-					case 'd': c = leftPad(d.getDate()); break;
-					case 'e': c = leftPad(d.getDate(), " "); break;
-					case 'h':	// For back-compat with 0.7; remove in 1.0
-					case 'H': c = leftPad(hours); break;
-					case 'I': c = leftPad(hours12); break;
-					case 'l': c = leftPad(hours12, " "); break;
-					case 'm': c = leftPad(d.getMonth() + 1); break;
-					case 'M': c = leftPad(d.getMinutes()); break;
-					// quarters not in Open Group's strftime specification
-					case 'q':
-						c = "" + (Math.floor(d.getMonth() / 3) + 1); break;
-					case 'S': c = leftPad(d.getSeconds()); break;
-					case 'y': c = leftPad(d.getFullYear() % 100); break;
-					case 'Y': c = "" + d.getFullYear(); break;
-					case 'p': c = (isAM) ? ("" + "am") : ("" + "pm"); break;
-					case 'P': c = (isAM) ? ("" + "AM") : ("" + "PM"); break;
-					case 'w': c = "" + d.getDay(); break;
-				}
-				r.push(c);
-				escape = false;
-			} else {
-				if (c == "%") {
-					escape = true;
-				} else {
-					r.push(c);
-				}
-			}
-		}
+  function makeUtcWrapper(d) {
+    function addProxyMethod(sourceObj, sourceMethod, targetObj, targetMethod) {
+      sourceObj[sourceMethod] = function () {
+        return targetObj[targetMethod].apply(targetObj, arguments);
+      };
+    }
 
-		return r.join("");
-	}
+    const utc = {
+      date: d,
+    };
 
-	// To have a consistent view of time-based data independent of which time
-	// zone the client happens to be in we need a date-like object independent
-	// of time zones.  This is done through a wrapper that only calls the UTC
-	// versions of the accessor methods.
+    // support strftime, if found
 
-	function makeUtcWrapper(d) {
+    if (d.strftime != undefined) {
+      addProxyMethod(utc, 'strftime', d, 'strftime');
+    }
 
-		function addProxyMethod(sourceObj, sourceMethod, targetObj, targetMethod) {
-			sourceObj[sourceMethod] = function() {
-				return targetObj[targetMethod].apply(targetObj, arguments);
-			};
-		};
+    addProxyMethod(utc, 'getTime', d, 'getTime');
+    addProxyMethod(utc, 'setTime', d, 'setTime');
 
-		var utc = {
-			date: d
-		};
+    const props = ['Date', 'Day', 'FullYear', 'Hours', 'Milliseconds', 'Minutes', 'Month', 'Seconds'];
 
-		// support strftime, if found
+    for (let p = 0; p < props.length; p++) {
+      addProxyMethod(utc, `get${props[p]}`, d, `getUTC${props[p]}`);
+      addProxyMethod(utc, `set${props[p]}`, d, `setUTC${props[p]}`);
+    }
 
-		if (d.strftime != undefined) {
-			addProxyMethod(utc, "strftime", d, "strftime");
-		}
+    return utc;
+  }
 
-		addProxyMethod(utc, "getTime", d, "getTime");
-		addProxyMethod(utc, "setTime", d, "setTime");
+  // select time zone strategy.  This returns a date-like object tied to the
+  // desired timezone
 
-		var props = ["Date", "Day", "FullYear", "Hours", "Milliseconds", "Minutes", "Month", "Seconds"];
+  function dateGenerator(ts, opts) {
+    if (opts.timezone == 'browser') {
+      return new Date(ts);
+    } if (!opts.timezone || opts.timezone == 'utc') {
+      return makeUtcWrapper(new Date(ts));
+    } if (typeof timezoneJS !== 'undefined' && typeof timezoneJS.Date !== 'undefined') {
+      const d = new timezoneJS.Date();
+      // timezone-js is fickle, so be sure to set the time zone before
+      // setting the time.
+      d.setTimezone(opts.timezone);
+      d.setTime(ts);
+      return d;
+    }
+    return makeUtcWrapper(new Date(ts));
+  }
 
-		for (var p = 0; p < props.length; p++) {
-			addProxyMethod(utc, "get" + props[p], d, "getUTC" + props[p]);
-			addProxyMethod(utc, "set" + props[p], d, "setUTC" + props[p]);
-		}
+  // map of app. size of time units in milliseconds
 
-		return utc;
-	};
+  const timeUnitSize = {
+    second: 1000,
+    minute: 60 * 1000,
+    hour: 60 * 60 * 1000,
+    day: 24 * 60 * 60 * 1000,
+    month: 30 * 24 * 60 * 60 * 1000,
+    quarter: 3 * 30 * 24 * 60 * 60 * 1000,
+    year: 365.2425 * 24 * 60 * 60 * 1000,
+  };
 
-	// select time zone strategy.  This returns a date-like object tied to the
-	// desired timezone
+  // the allowed tick sizes, after 1 year we use
+  // an integer algorithm
 
-	function dateGenerator(ts, opts) {
-		if (opts.timezone == "browser") {
-			return new Date(ts);
-		} else if (!opts.timezone || opts.timezone == "utc") {
-			return makeUtcWrapper(new Date(ts));
-		} else if (typeof timezoneJS != "undefined" && typeof timezoneJS.Date != "undefined") {
-			var d = new timezoneJS.Date();
-			// timezone-js is fickle, so be sure to set the time zone before
-			// setting the time.
-			d.setTimezone(opts.timezone);
-			d.setTime(ts);
-			return d;
-		} else {
-			return makeUtcWrapper(new Date(ts));
-		}
-	}
-	
-	// map of app. size of time units in milliseconds
+  const baseSpec = [
+    [1, 'second'], [2, 'second'], [5, 'second'], [10, 'second'],
+    [30, 'second'],
+    [1, 'minute'], [2, 'minute'], [5, 'minute'], [10, 'minute'],
+    [30, 'minute'],
+    [1, 'hour'], [2, 'hour'], [4, 'hour'],
+    [8, 'hour'], [12, 'hour'],
+    [1, 'day'], [2, 'day'], [3, 'day'],
+    [0.25, 'month'], [0.5, 'month'], [1, 'month'],
+    [2, 'month'],
+  ];
 
-	var timeUnitSize = {
-		"second": 1000,
-		"minute": 60 * 1000,
-		"hour": 60 * 60 * 1000,
-		"day": 24 * 60 * 60 * 1000,
-		"month": 30 * 24 * 60 * 60 * 1000,
-		"quarter": 3 * 30 * 24 * 60 * 60 * 1000,
-		"year": 365.2425 * 24 * 60 * 60 * 1000
-	};
+  // we don't know which variant(s) we'll need yet, but generating both is
+  // cheap
 
-	// the allowed tick sizes, after 1 year we use
-	// an integer algorithm
+  const specMonths = baseSpec.concat([[3, 'month'], [6, 'month'],
+    [1, 'year']]);
+  const specQuarters = baseSpec.concat([[1, 'quarter'], [2, 'quarter'],
+    [1, 'year']]);
 
-	var baseSpec = [
-		[1, "second"], [2, "second"], [5, "second"], [10, "second"],
-		[30, "second"], 
-		[1, "minute"], [2, "minute"], [5, "minute"], [10, "minute"],
-		[30, "minute"], 
-		[1, "hour"], [2, "hour"], [4, "hour"],
-		[8, "hour"], [12, "hour"],
-		[1, "day"], [2, "day"], [3, "day"],
-		[0.25, "month"], [0.5, "month"], [1, "month"],
-		[2, "month"]
-	];
+  function init(plot) {
+    plot.hooks.processOptions.push((plot, options) => {
+      $.each(plot.getAxes(), (axisName, axis) => {
+        const opts = axis.options;
 
-	// we don't know which variant(s) we'll need yet, but generating both is
-	// cheap
+        if (opts.mode == 'time') {
+          axis.tickGenerator = function (axis) {
+            const ticks = [];
+            const d = dateGenerator(axis.min, opts);
+            let minSize = 0;
 
-	var specMonths = baseSpec.concat([[3, "month"], [6, "month"],
-		[1, "year"]]);
-	var specQuarters = baseSpec.concat([[1, "quarter"], [2, "quarter"],
-		[1, "year"]]);
+            // make quarter use a possibility if quarters are
+            // mentioned in either of these options
 
-	function init(plot) {
-		plot.hooks.processOptions.push(function (plot, options) {
-			$.each(plot.getAxes(), function(axisName, axis) {
+            const spec = (opts.tickSize && opts.tickSize[1]
+							=== 'quarter')
+							|| (opts.minTickSize && opts.minTickSize[1]
+							=== 'quarter') ? specQuarters : specMonths;
 
-				var opts = axis.options;
+            if (opts.minTickSize != null) {
+              if (typeof opts.tickSize === 'number') {
+                minSize = opts.tickSize;
+              } else {
+                minSize = opts.minTickSize[0] * timeUnitSize[opts.minTickSize[1]];
+              }
+            }
 
-				if (opts.mode == "time") {
-					axis.tickGenerator = function(axis) {
-
-						var ticks = [];
-						var d = dateGenerator(axis.min, opts);
-						var minSize = 0;
-
-						// make quarter use a possibility if quarters are
-						// mentioned in either of these options
-
-						var spec = (opts.tickSize && opts.tickSize[1] ===
-							"quarter") ||
-							(opts.minTickSize && opts.minTickSize[1] ===
-							"quarter") ? specQuarters : specMonths;
-
-						if (opts.minTickSize != null) {
-							if (typeof opts.tickSize == "number") {
-								minSize = opts.tickSize;
-							} else {
-								minSize = opts.minTickSize[0] * timeUnitSize[opts.minTickSize[1]];
-							}
-						}
-
-						for (var i = 0; i < spec.length - 1; ++i) {
-							if (axis.delta < (spec[i][0] * timeUnitSize[spec[i][1]]
+            for (var i = 0; i < spec.length - 1; ++i) {
+              if (axis.delta < (spec[i][0] * timeUnitSize[spec[i][1]]
 											  + spec[i + 1][0] * timeUnitSize[spec[i + 1][1]]) / 2
 								&& spec[i][0] * timeUnitSize[spec[i][1]] >= minSize) {
-								break;
-							}
-						}
+                break;
+              }
+            }
 
-						var size = spec[i][0];
-						var unit = spec[i][1];
+            let size = spec[i][0];
+            let unit = spec[i][1];
 
-						// special-case the possibility of several years
+            // special-case the possibility of several years
 
-						if (unit == "year") {
+            if (unit == 'year') {
+              // if given a minTickSize in years, just use it,
+              // ensuring that it's an integer
 
-							// if given a minTickSize in years, just use it,
-							// ensuring that it's an integer
+              if (opts.minTickSize != null && opts.minTickSize[1] == 'year') {
+                size = Math.floor(opts.minTickSize[0]);
+              } else {
+                const magn = Math.pow(10, Math.floor(Math.log(axis.delta / timeUnitSize.year) / Math.LN10));
+                const norm = (axis.delta / timeUnitSize.year) / magn;
 
-							if (opts.minTickSize != null && opts.minTickSize[1] == "year") {
-								size = Math.floor(opts.minTickSize[0]);
-							} else {
+                if (norm < 1.5) {
+                  size = 1;
+                } else if (norm < 3) {
+                  size = 2;
+                } else if (norm < 7.5) {
+                  size = 5;
+                } else {
+                  size = 10;
+                }
 
-								var magn = Math.pow(10, Math.floor(Math.log(axis.delta / timeUnitSize.year) / Math.LN10));
-								var norm = (axis.delta / timeUnitSize.year) / magn;
+                size *= magn;
+              }
 
-								if (norm < 1.5) {
-									size = 1;
-								} else if (norm < 3) {
-									size = 2;
-								} else if (norm < 7.5) {
-									size = 5;
-								} else {
-									size = 10;
-								}
+              // minimum size for years is 1
 
-								size *= magn;
-							}
+              if (size < 1) {
+                size = 1;
+              }
+            }
 
-							// minimum size for years is 1
+            axis.tickSize = opts.tickSize || [size, unit];
+            const tickSize = axis.tickSize[0];
+            unit = axis.tickSize[1];
 
-							if (size < 1) {
-								size = 1;
-							}
-						}
+            const step = tickSize * timeUnitSize[unit];
 
-						axis.tickSize = opts.tickSize || [size, unit];
-						var tickSize = axis.tickSize[0];
-						unit = axis.tickSize[1];
+            if (unit == 'second') {
+              d.setSeconds(floorInBase(d.getSeconds(), tickSize));
+            } else if (unit == 'minute') {
+              d.setMinutes(floorInBase(d.getMinutes(), tickSize));
+            } else if (unit == 'hour') {
+              d.setHours(floorInBase(d.getHours(), tickSize));
+            } else if (unit == 'month') {
+              d.setMonth(floorInBase(d.getMonth(), tickSize));
+            } else if (unit == 'quarter') {
+              d.setMonth(3 * floorInBase(d.getMonth() / 3,
+                tickSize));
+            } else if (unit == 'year') {
+              d.setFullYear(floorInBase(d.getFullYear(), tickSize));
+            }
 
-						var step = tickSize * timeUnitSize[unit];
+            // reset smaller components
 
-						if (unit == "second") {
-							d.setSeconds(floorInBase(d.getSeconds(), tickSize));
-						} else if (unit == "minute") {
-							d.setMinutes(floorInBase(d.getMinutes(), tickSize));
-						} else if (unit == "hour") {
-							d.setHours(floorInBase(d.getHours(), tickSize));
-						} else if (unit == "month") {
-							d.setMonth(floorInBase(d.getMonth(), tickSize));
-						} else if (unit == "quarter") {
-							d.setMonth(3 * floorInBase(d.getMonth() / 3,
-								tickSize));
-						} else if (unit == "year") {
-							d.setFullYear(floorInBase(d.getFullYear(), tickSize));
-						}
+            d.setMilliseconds(0);
 
-						// reset smaller components
+            if (step >= timeUnitSize.minute) {
+              d.setSeconds(0);
+            }
+            if (step >= timeUnitSize.hour) {
+              d.setMinutes(0);
+            }
+            if (step >= timeUnitSize.day) {
+              d.setHours(0);
+            }
+            if (step >= timeUnitSize.day * 4) {
+              d.setDate(1);
+            }
+            if (step >= timeUnitSize.month * 2) {
+              d.setMonth(floorInBase(d.getMonth(), 3));
+            }
+            if (step >= timeUnitSize.quarter * 2) {
+              d.setMonth(floorInBase(d.getMonth(), 6));
+            }
+            if (step >= timeUnitSize.year) {
+              d.setMonth(0);
+            }
 
-						d.setMilliseconds(0);
+            let carry = 0;
+            let v = Number.NaN;
+            let prev;
 
-						if (step >= timeUnitSize.minute) {
-							d.setSeconds(0);
-						}
-						if (step >= timeUnitSize.hour) {
-							d.setMinutes(0);
-						}
-						if (step >= timeUnitSize.day) {
-							d.setHours(0);
-						}
-						if (step >= timeUnitSize.day * 4) {
-							d.setDate(1);
-						}
-						if (step >= timeUnitSize.month * 2) {
-							d.setMonth(floorInBase(d.getMonth(), 3));
-						}
-						if (step >= timeUnitSize.quarter * 2) {
-							d.setMonth(floorInBase(d.getMonth(), 6));
-						}
-						if (step >= timeUnitSize.year) {
-							d.setMonth(0);
-						}
+            do {
+              prev = v;
+              v = d.getTime();
+              ticks.push(v);
 
-						var carry = 0;
-						var v = Number.NaN;
-						var prev;
+              if (unit == 'month' || unit == 'quarter') {
+                if (tickSize < 1) {
+                  // a bit complicated - we'll divide the
+                  // month/quarter up but we need to take
+                  // care of fractions so we don't end up in
+                  // the middle of a day
 
-						do {
+                  d.setDate(1);
+                  const start = d.getTime();
+                  d.setMonth(d.getMonth()
+										+ (unit == 'quarter' ? 3 : 1));
+                  const end = d.getTime();
+                  d.setTime(v + carry * timeUnitSize.hour + (end - start) * tickSize);
+                  carry = d.getHours();
+                  d.setHours(0);
+                } else {
+                  d.setMonth(d.getMonth()
+										+ tickSize * (unit == 'quarter' ? 3 : 1));
+                }
+              } else if (unit == 'year') {
+                d.setFullYear(d.getFullYear() + tickSize);
+              } else {
+                d.setTime(v + step);
+              }
+            } while (v < axis.max && v != prev);
 
-							prev = v;
-							v = d.getTime();
-							ticks.push(v);
+            return ticks;
+          };
 
-							if (unit == "month" || unit == "quarter") {
-								if (tickSize < 1) {
+          axis.tickFormatter = function (v, axis) {
+            const d = dateGenerator(v, axis.options);
 
-									// a bit complicated - we'll divide the
-									// month/quarter up but we need to take
-									// care of fractions so we don't end up in
-									// the middle of a day
+            // first check global format
 
-									d.setDate(1);
-									var start = d.getTime();
-									d.setMonth(d.getMonth() +
-										(unit == "quarter" ? 3 : 1));
-									var end = d.getTime();
-									d.setTime(v + carry * timeUnitSize.hour + (end - start) * tickSize);
-									carry = d.getHours();
-									d.setHours(0);
-								} else {
-									d.setMonth(d.getMonth() +
-										tickSize * (unit == "quarter" ? 3 : 1));
-								}
-							} else if (unit == "year") {
-								d.setFullYear(d.getFullYear() + tickSize);
-							} else {
-								d.setTime(v + step);
-							}
-						} while (v < axis.max && v != prev);
+            if (opts.timeformat != null) {
+              return formatDate(d, opts.timeformat, opts.monthNames, opts.dayNames);
+            }
 
-						return ticks;
-					};
+            // possibly use quarters if quarters are mentioned in
+            // any of these places
 
-					axis.tickFormatter = function (v, axis) {
+            const useQuarters = (axis.options.tickSize
+								&& axis.options.tickSize[1] == 'quarter')
+							|| (axis.options.minTickSize
+								&& axis.options.minTickSize[1] == 'quarter');
 
-						var d = dateGenerator(v, axis.options);
+            const t = axis.tickSize[0] * timeUnitSize[axis.tickSize[1]];
+            const span = axis.max - axis.min;
+            const suffix = (opts.twelveHourClock) ? ' %p' : '';
+            const hourCode = (opts.twelveHourClock) ? '%I' : '%H';
+            let fmt;
 
-						// first check global format
+            if (t < timeUnitSize.minute) {
+              fmt = `${hourCode}:%M:%S${suffix}`;
+            } else if (t < timeUnitSize.day) {
+              if (span < 2 * timeUnitSize.day) {
+                fmt = `${hourCode}:%M${suffix}`;
+              } else {
+                fmt = `%b %d ${hourCode}:%M${suffix}`;
+              }
+            } else if (t < timeUnitSize.month) {
+              fmt = '%b %d';
+            } else if ((useQuarters && t < timeUnitSize.quarter)
+							|| (!useQuarters && t < timeUnitSize.year)) {
+              if (span < timeUnitSize.year) {
+                fmt = '%b';
+              } else {
+                fmt = '%b %Y';
+              }
+            } else if (useQuarters && t < timeUnitSize.year) {
+              if (span < timeUnitSize.year) {
+                fmt = 'Q%q';
+              } else {
+                fmt = 'Q%q %Y';
+              }
+            } else {
+              fmt = '%Y';
+            }
 
-						if (opts.timeformat != null) {
-							return formatDate(d, opts.timeformat, opts.monthNames, opts.dayNames);
-						}
+            const rt = formatDate(d, fmt, opts.monthNames, opts.dayNames);
 
-						// possibly use quarters if quarters are mentioned in
-						// any of these places
+            return rt;
+          };
+        }
+      });
+    });
+  }
 
-						var useQuarters = (axis.options.tickSize &&
-								axis.options.tickSize[1] == "quarter") ||
-							(axis.options.minTickSize &&
-								axis.options.minTickSize[1] == "quarter");
+  $.plot.plugins.push({
+    init,
+    options,
+    name: 'time',
+    version: '1.0',
+  });
 
-						var t = axis.tickSize[0] * timeUnitSize[axis.tickSize[1]];
-						var span = axis.max - axis.min;
-						var suffix = (opts.twelveHourClock) ? " %p" : "";
-						var hourCode = (opts.twelveHourClock) ? "%I" : "%H";
-						var fmt;
+  // Time-axis support used to be in Flot core, which exposed the
+  // formatDate function on the plot object.  Various plugins depend
+  // on the function, so we need to re-expose it here.
 
-						if (t < timeUnitSize.minute) {
-							fmt = hourCode + ":%M:%S" + suffix;
-						} else if (t < timeUnitSize.day) {
-							if (span < 2 * timeUnitSize.day) {
-								fmt = hourCode + ":%M" + suffix;
-							} else {
-								fmt = "%b %d " + hourCode + ":%M" + suffix;
-							}
-						} else if (t < timeUnitSize.month) {
-							fmt = "%b %d";
-						} else if ((useQuarters && t < timeUnitSize.quarter) ||
-							(!useQuarters && t < timeUnitSize.year)) {
-							if (span < timeUnitSize.year) {
-								fmt = "%b";
-							} else {
-								fmt = "%b %Y";
-							}
-						} else if (useQuarters && t < timeUnitSize.year) {
-							if (span < timeUnitSize.year) {
-								fmt = "Q%q";
-							} else {
-								fmt = "Q%q %Y";
-							}
-						} else {
-							fmt = "%Y";
-						}
-
-						var rt = formatDate(d, fmt, opts.monthNames, opts.dayNames);
-
-						return rt;
-					};
-				}
-			});
-		});
-	}
-
-	$.plot.plugins.push({
-		init: init,
-		options: options,
-		name: 'time',
-		version: '1.0'
-	});
-
-	// Time-axis support used to be in Flot core, which exposed the
-	// formatDate function on the plot object.  Various plugins depend
-	// on the function, so we need to re-expose it here.
-
-	$.plot.formatDate = formatDate;
-	$.plot.dateGenerator = dateGenerator;
-
-})(jQuery);
+  $.plot.formatDate = formatDate;
+  $.plot.dateGenerator = dateGenerator;
+}(jQuery));

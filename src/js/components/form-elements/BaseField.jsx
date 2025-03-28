@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Field } from 'react-final-form';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Field } from "react-final-form";
 
-import { renderField } from 'utils/form-utils';
+import { renderField } from "utils/form-utils";
 
 class BaseField extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class BaseField extends Component {
     }
 
     return !_.isEqualWith(this.props, nextProps, (objValue, othValue) => {
-      if (typeof objValue === 'function' || typeof othValue === 'function') {
+      if (typeof objValue === "function" || typeof othValue === "function") {
         return true;
       }
 
@@ -61,57 +61,76 @@ class BaseField extends Component {
   render() {
     const {
       fieldName,
-      fieldConfig: {
-        label, defaultMessage, getDynamicAttr, attributes = {},
-      },
-      arrayField, fieldValue, fieldRef, focusThis, arrowsNavigation,
+      fieldConfig: { label, defaultMessage, getDynamicAttr, attributes = {} },
+      arrayField,
+      fieldValue,
+      fieldRef,
+      focusThis,
+      arrowsNavigation,
       ...otherProps
     } = this.props;
-    const dynamicAttr = getDynamicAttr ? getDynamicAttr({ ...otherProps, fieldValue }) : {};
+    const dynamicAttr = getDynamicAttr
+      ? getDynamicAttr({ ...otherProps, fieldValue })
+      : {};
     let attr = { ...attributes, ...dynamicAttr, fieldRef };
 
     if (arrowsNavigation) {
       const focusLeft = attr.focusLeft || otherProps.focusLeft;
       const focusRight = attr.focusRight || otherProps.focusRight;
 
-      const arrowLeft = attr.arrowLeft ? attr.arrowLeft : () => {
-        if (focusLeft) {
-          otherProps.focusField(otherProps.rowIndex, focusLeft);
-          return true;
-        }
-        return false;
-      };
-      const arrowRight = attr.arrowRight ? attr.arrowRight : () => {
-        if (focusRight) {
-          otherProps.focusField(otherProps.rowIndex, focusRight);
-          return true;
-        }
-        return false;
-      };
-      const arrowUp = attr.arrowUp ? attr.arrowUp : () => {
-        if (otherProps.rowIndex > 0) {
-          otherProps.focusField(otherProps.rowIndex - 1, focusThis);
-          return true;
-        }
-        return false;
-      };
-      const arrowDown = attr.arrowDown ? attr.arrowDown : () => {
-        if (otherProps.rowIndex < otherProps.rowCount - 1) {
-          otherProps.focusField(otherProps.rowIndex + 1, focusThis);
-          return true;
-        }
-        return false;
-      };
-      const copyDown = attr.copyDown ? attr.copyDown : () => {
-        if (otherProps.rowIndex < otherProps.rowCount - 1) {
-          otherProps.copyDown(otherProps.rowIndex + 1, focusThis);
-          return true;
-        }
-        return false;
-      };
+      const arrowLeft = attr.arrowLeft
+        ? attr.arrowLeft
+        : () => {
+            if (focusLeft) {
+              otherProps.focusField(otherProps.rowIndex, focusLeft);
+              return true;
+            }
+            return false;
+          };
+      const arrowRight = attr.arrowRight
+        ? attr.arrowRight
+        : () => {
+            if (focusRight) {
+              otherProps.focusField(otherProps.rowIndex, focusRight);
+              return true;
+            }
+            return false;
+          };
+      const arrowUp = attr.arrowUp
+        ? attr.arrowUp
+        : () => {
+            if (otherProps.rowIndex > 0) {
+              otherProps.focusField(otherProps.rowIndex - 1, focusThis);
+              return true;
+            }
+            return false;
+          };
+      const arrowDown = attr.arrowDown
+        ? attr.arrowDown
+        : () => {
+            if (otherProps.rowIndex < otherProps.rowCount - 1) {
+              otherProps.focusField(otherProps.rowIndex + 1, focusThis);
+              return true;
+            }
+            return false;
+          };
+      const copyDown = attr.copyDown
+        ? attr.copyDown
+        : () => {
+            if (otherProps.rowIndex < otherProps.rowCount - 1) {
+              otherProps.copyDown(otherProps.rowIndex + 1, focusThis);
+              return true;
+            }
+            return false;
+          };
 
       attr = {
-        ...attr, arrowLeft, arrowRight, arrowUp, arrowDown, copyDown,
+        ...attr,
+        arrowLeft,
+        arrowRight,
+        arrowUp,
+        arrowDown,
+        copyDown,
       };
     }
 
@@ -139,8 +158,11 @@ BaseField.propTypes = {
   }).isRequired,
   renderInput: PropTypes.func.isRequired,
   arrayField: PropTypes.bool,
-  fieldValue: PropTypes.oneOfType([PropTypes.string,
-    PropTypes.shape({}), PropTypes.any]),
+  fieldValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({}),
+    PropTypes.any,
+  ]),
   fieldRef: PropTypes.func,
   focusThis: PropTypes.string,
   arrowsNavigation: PropTypes.bool,

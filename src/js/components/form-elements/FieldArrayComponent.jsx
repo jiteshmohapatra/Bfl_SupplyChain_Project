@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { Tooltip } from "react-tippy";
 
-import TableBody from 'components/form-elements/TableBody';
-import TableBodyVirtualized from 'components/form-elements/TableBodyVirtualized';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import TableBody from "components/form-elements/TableBody";
+import TableBodyVirtualized from "components/form-elements/TableBodyVirtualized";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-tippy/dist/tippy.css';
+import "react-tippy/dist/tippy.css";
 
 class FieldArrayComponent extends Component {
   constructor(props) {
@@ -24,7 +24,10 @@ class FieldArrayComponent extends Component {
   focusField(index, fieldName) {
     const field = _.get(this.fieldRefs, `[${index}].${fieldName}`);
     // 8 - the amount of rows shown in the table on 1360x786 resolution
-    const fieldToScroll = _.get(this.fieldRefs, `[${index - 8 > 0 ? index - 8 : 0}].${fieldName}`);
+    const fieldToScroll = _.get(
+      this.fieldRefs,
+      `[${index - 8 > 0 ? index - 8 : 0}].${fieldName}`,
+    );
 
     if (field) {
       field.focus();
@@ -36,8 +39,14 @@ class FieldArrayComponent extends Component {
 
   copyDown(index, fieldName) {
     const field = _.get(this.fieldRefs, `[${index}].${fieldName}`);
-    const fieldToScroll = _.get(this.fieldRefs, `[${index - 15 > 0 ? index - 15 : 0}].${fieldName}`);
-    const valueToCopy = _.get(this.fieldRefs, `[${index - 1}].${fieldName}.value`);
+    const fieldToScroll = _.get(
+      this.fieldRefs,
+      `[${index - 15 > 0 ? index - 15 : 0}].${fieldName}`,
+    );
+    const valueToCopy = _.get(
+      this.fieldRefs,
+      `[${index - 1}].${fieldName}.value`,
+    );
 
     if (field && valueToCopy && !field.disabled) {
       field.value = valueToCopy;
@@ -49,28 +58,30 @@ class FieldArrayComponent extends Component {
   }
 
   render() {
-    const {
-      fieldsConfig, properties, fields, isPaginated,
-    } = this.props;
+    const { fieldsConfig, properties, fields, isPaginated } = this.props;
     const AddButton = fieldsConfig.addButton;
     const {
-      maxTableHeight, virtualized, overflowStyle = 'scroll', showRowSaveIndicator,
+      maxTableHeight,
+      virtualized,
+      overflowStyle = "scroll",
+      showRowSaveIndicator,
     } = fieldsConfig;
     const addRow = (row = {}, index = null, shouldScroll = true) => {
       if (index === null) {
         const table = document.querySelectorAll('[role="rowgroup"]')[0];
         // lines can also be added on modals and no scroll should be applied then
         if (table && shouldScroll) {
-          table.scrollIntoView({ block: 'end' });
+          table.scrollIntoView({ block: "end" });
         }
         fields.push(row);
-      } else if (typeof fields === 'object') {
+      } else if (typeof fields === "object") {
         fields.insert(index + 1, row);
       } else {
         fields.splice(index + 1, 0, row);
       }
     };
-    const TableBodyComponent = virtualized && isPaginated ? TableBodyVirtualized : TableBody;
+    const TableBodyComponent =
+      virtualized && isPaginated ? TableBodyVirtualized : TableBody;
 
     return (
       <div className="d-flex flex-column">
@@ -86,12 +97,23 @@ class FieldArrayComponent extends Component {
                   className="text-truncate font-size-xs"
                   key={name}
                   style={{
-                    flex: config.fixedWidth ? `0 1 ${config.fixedWidth}` : `${config.flexWidth || '12'} 1 0`,
+                    flex: config.fixedWidth
+                      ? `0 1 ${config.fixedWidth}`
+                      : `${config.flexWidth || "12"} 1 0`,
                     minWidth: 0,
-                    textAlign: config.headerAlign ? config.headerAlign : 'center',
+                    textAlign: config.headerAlign
+                      ? config.headerAlign
+                      : "center",
                   }}
                 >
-                  {config.label && <span className="w-100 mx-1"><Translate id={config.label} defaultMessage={config.defaultLabel} /></span>}
+                  {config.label && (
+                    <span className="w-100 mx-1">
+                      <Translate
+                        id={config.label}
+                        defaultMessage={config.defaultLabel}
+                      />
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -100,36 +122,51 @@ class FieldArrayComponent extends Component {
         <div className="text-center border table-header">
           <div className="d-flex flex-row border-bottom font-weight-bold">
             {_.map(fieldsConfig.fields, (config, name) => {
-              const dynamicAttr = config.getDynamicAttr ? config.getDynamicAttr(properties) : {};
+              const dynamicAttr = config.getDynamicAttr
+                ? config.getDynamicAttr(properties)
+                : {};
               const { hide, headerHtml } = dynamicAttr;
               const flexWidth = dynamicAttr.flexWidth || config.flexWidth;
               const fixedWidth = dynamicAttr.fixedWidth || config.fixedWidth;
               const headerLabel = dynamicAttr.label || config.label;
-              const headerDefaultMessage = dynamicAttr.defaultMessage || config.defaultMessage;
+              const headerDefaultMessage =
+                dynamicAttr.defaultMessage || config.defaultMessage;
 
               if (!hide) {
                 return (
                   <div
                     key={name}
-                    className={`${config.headerClassName ? config.headerClassName : ''}`}
+                    className={`${config.headerClassName ? config.headerClassName : ""}`}
                     style={{
-                      flex: fixedWidth ? `0 1 ${fixedWidth}` : `${flexWidth || '12'} 1 0`,
+                      flex: fixedWidth
+                        ? `0 1 ${fixedWidth}`
+                        : `${flexWidth || "12"} 1 0`,
                       minWidth: 0,
-                      textAlign: config.headerAlign ? config.headerAlign : 'center',
+                      textAlign: config.headerAlign
+                        ? config.headerAlign
+                        : "center",
                     }}
                   >
                     <Tooltip
-                      html={config.headerTooltip ? (
-                        <div>
-                          {this.props.translate(config.headerTooltip, config.headerDefaultTooltip)}
-                        </div>
-                      ) : (headerLabel
-                        && (
-                        <div>
-                          {this.props.translate(headerLabel, headerDefaultMessage)}
-                        </div>
+                      html={
+                        config.headerTooltip ? (
+                          <div>
+                            {this.props.translate(
+                              config.headerTooltip,
+                              config.headerDefaultTooltip,
+                            )}
+                          </div>
+                        ) : (
+                          headerLabel && (
+                            <div>
+                              {this.props.translate(
+                                headerLabel,
+                                headerDefaultMessage,
+                              )}
+                            </div>
+                          )
                         )
-                      )}
+                      }
                       theme="transparent"
                       arrow="true"
                       delay="150"
@@ -137,14 +174,20 @@ class FieldArrayComponent extends Component {
                       hideDelay="50"
                     >
                       <div
-                        className={`mx-2 ${config.multilineHeader ? '' : 'text-truncate'} ${config.required ? 'arrayfield-header-required' : ''}`}
+                        className={`mx-2 ${config.multilineHeader ? "" : "text-truncate"} ${config.required ? "arrayfield-header-required" : ""}`}
                         style={{
-                          fontSize: fieldsConfig.headerFontSize ? fieldsConfig.headerFontSize : '0.875rem',
+                          fontSize: fieldsConfig.headerFontSize
+                            ? fieldsConfig.headerFontSize
+                            : "0.875rem",
                         }}
                       >
-                        { headerHtml && headerHtml() }
-                        { headerLabel && !headerHtml
-                          && <Translate id={headerLabel} defaultMessage={headerDefaultMessage} />}
+                        {headerHtml && headerHtml()}
+                        {headerLabel && !headerHtml && (
+                          <Translate
+                            id={headerLabel}
+                            defaultMessage={headerDefaultMessage}
+                          />
+                        )}
                       </div>
                     </Tooltip>
                   </div>
@@ -156,7 +199,11 @@ class FieldArrayComponent extends Component {
         </div>
         <div
           className="text-center border mb-1 flex-grow-1 table-content"
-          style={{ overflowX: 'hidden', overflowY: virtualized && isPaginated ? 'hidden' : overflowStyle, maxHeight: maxTableHeight }}
+          style={{
+            overflowX: "hidden",
+            overflowY: virtualized && isPaginated ? "hidden" : overflowStyle,
+            maxHeight: maxTableHeight,
+          }}
         >
           <TableBodyComponent
             fields={fields}
@@ -177,23 +224,24 @@ class FieldArrayComponent extends Component {
             }}
           />
         </div>
-        { AddButton
-          && (
+        {AddButton && (
           <div className="text-center add-button">
-            {
-              typeof AddButton === 'string'
-                ? (
-                  <button type="button" className="btn btn-outline-success btn-xs" onClick={() => addRow()}>
-                    <span>
-                      <i className="fa fa-plus pr-2" />
-                      <Translate id={AddButton} />
-                    </span>
-                  </button>
-                )
-                : <AddButton {...properties} addRow={addRow} />
-            }
+            {typeof AddButton === "string" ? (
+              <button
+                type="button"
+                className="btn btn-outline-success btn-xs"
+                onClick={() => addRow()}
+              >
+                <span>
+                  <i className="fa fa-plus pr-2" />
+                  <Translate id={AddButton} />
+                </span>
+              </button>
+            ) : (
+              <AddButton {...properties} addRow={addRow} />
+            )}
           </div>
-          )}
+        )}
       </div>
     );
   }

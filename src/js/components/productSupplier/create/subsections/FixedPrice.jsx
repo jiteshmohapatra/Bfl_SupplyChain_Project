@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
 
-import CheckBox from 'components/form-elements/v2/Checkbox';
-import DateField from 'components/form-elements/v2/DateField';
-import TextInput from 'components/form-elements/v2/TextInput';
-import Subsection from 'components/Layout/v2/Subsection';
-import { FormErrorPropType } from 'utils/propTypes';
+import CheckBox from "components/form-elements/v2/Checkbox";
+import DateField from "components/form-elements/v2/DateField";
+import TextInput from "components/form-elements/v2/TextInput";
+import Subsection from "components/Layout/v2/Subsection";
+import { FormErrorPropType } from "utils/propTypes";
 
 const FixedPrice = ({ control, errors }) => (
   <Subsection
     title={{
-      label: 'react.productSupplier.form.subsection.fixedPrice',
-      defaultMessage: 'Fixed Price',
+      label: "react.productSupplier.form.subsection.fixedPrice",
+      defaultMessage: "Fixed Price",
     }}
     collapsable={false}
   >
@@ -29,12 +29,13 @@ const FixedPrice = ({ control, errors }) => (
               type="number"
               errorMessage={errors.contractPricePrice?.message}
               title={{
-                id: 'react.productSupplier.form.contractPricePrice.title',
-                defaultMessage: 'Contract Price Each',
+                id: "react.productSupplier.form.contractPricePrice.title",
+                defaultMessage: "Contract Price Each",
               }}
               tooltip={{
-                id: 'react.productSupplier.form.contractPricePrice.tooltip',
-                defaultMessage: 'Fixed price per unit guaranteed by a contract with the supplier',
+                id: "react.productSupplier.form.contractPricePrice.tooltip",
+                defaultMessage:
+                  "Fixed price per unit guaranteed by a contract with the supplier",
               }}
             />
           )}
@@ -47,8 +48,8 @@ const FixedPrice = ({ control, errors }) => (
           render={({ field }) => (
             <DateField
               title={{
-                id: 'react.productSupplier.form.contractPriceValidUntil.title',
-                defaultMessage: 'Price Valid Until',
+                id: "react.productSupplier.form.contractPriceValidUntil.title",
+                defaultMessage: "Price Valid Until",
               }}
               errorMessage={errors.contractPriceValidUntil?.message}
               {...field}
@@ -63,12 +64,13 @@ const FixedPrice = ({ control, errors }) => (
           render={({ field }) => (
             <CheckBox
               title={{
-                id: 'react.productSupplier.form.tieredPricing.title',
-                defaultMessage: 'Tiered Pricing',
+                id: "react.productSupplier.form.tieredPricing.title",
+                defaultMessage: "Tiered Pricing",
               }}
               tooltip={{
-                id: 'react.productSupplier.form.tieredPricing.tooltip',
-                defaultMessage: 'Indicates whether the supplier offers lower pricing for meeting specific quantity targets',
+                id: "react.productSupplier.form.tieredPricing.tooltip",
+                defaultMessage:
+                  "Indicates whether the supplier offers lower pricing for meeting specific quantity targets",
               }}
               {...field}
             />

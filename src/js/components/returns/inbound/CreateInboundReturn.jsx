@@ -1,32 +1,32 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Form } from "react-final-form";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-import { hideSpinner, showSpinner } from 'actions';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import { STOCK_TRANSFER_URL } from 'consts/applicationUrls';
-import apiClient, { parseResponse } from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { debounceLocationsFetch } from 'utils/option-utils';
-import Translate from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import { STOCK_TRANSFER_URL } from "consts/applicationUrls";
+import apiClient, { parseResponse } from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import { debounceLocationsFetch } from "utils/option-utils";
+import Translate from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 function validate(values) {
   const errors = {};
   if (!values.description) {
-    errors.description = 'react.default.error.requiredField.label';
+    errors.description = "react.default.error.requiredField.label";
   }
   if (!values.origin) {
-    errors.origin = 'react.default.error.requiredField.label';
+    errors.origin = "react.default.error.requiredField.label";
   }
   if (!values.destination) {
-    errors.destination = 'react.default.error.requiredField.label';
+    errors.destination = "react.default.error.requiredField.label";
   }
   return errors;
 }
@@ -34,8 +34,8 @@ function validate(values) {
 const FIELDS = {
   description: {
     type: TextField,
-    label: 'react.inboundReturns.description.label',
-    defaultMessage: 'Description',
+    label: "react.inboundReturns.description.label",
+    defaultMessage: "Description",
     attributes: {
       required: true,
       autoFocus: true,
@@ -46,8 +46,8 @@ const FIELDS = {
   },
   origin: {
     type: SelectField,
-    label: 'react.inboundReturns.origin.label',
-    defaultMessage: 'Origin',
+    label: "react.inboundReturns.origin.label",
+    defaultMessage: "Origin",
     attributes: {
       required: true,
       async: true,
@@ -65,8 +65,8 @@ const FIELDS = {
   },
   destination: {
     type: SelectField,
-    label: 'react.inboundReturns.destination.label',
-    defaultMessage: 'Destination',
+    label: "react.inboundReturns.destination.label",
+    defaultMessage: "Destination",
     attributes: {
       required: true,
       async: true,
@@ -110,7 +110,10 @@ class CreateInboundReturn extends Component {
   }
 
   componentDidMount() {
-    if (this.props.inboundReturnsTranslationsFetched && this.props.location.id) {
+    if (
+      this.props.inboundReturnsTranslationsFetched &&
+      this.props.location.id
+    ) {
       this.dataFetched = true;
       this.fetchInboundReturn(this.props);
     }
@@ -146,24 +149,28 @@ class CreateInboundReturn extends Component {
     if (props.match.params.inboundReturnId) {
       props.showSpinner();
       const url = `/api/stockTransfers/${props.match.params.inboundReturnId}`;
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((resp) => {
           const values = parseResponse(resp.data.data);
-          this.setState({
-            values: {
-              ...values,
-              origin: {
-                id: values.origin.id,
-                name: values.origin.name,
-                label: values.origin.name,
-              },
-              destination: {
-                id: values.destination.id,
-                name: values.destination.name,
-                label: values.destination.name,
+          this.setState(
+            {
+              values: {
+                ...values,
+                origin: {
+                  id: values.origin.id,
+                  name: values.origin.name,
+                  label: values.origin.name,
+                },
+                destination: {
+                  id: values.destination.id,
+                  name: values.destination.name,
+                  label: values.destination.name,
+                },
               },
             },
-          }, () => props.hideSpinner());
+            () => props.hideSpinner(),
+          );
         })
         .catch(() => props.hideSpinner());
     } else {
@@ -175,10 +182,10 @@ class CreateInboundReturn extends Component {
 
   saveInboundReturns(values) {
     if (
-      values.origin
-      && values.destination
-      && values.description
-      && !this.props.match.params.inboundReturnId
+      values.origin &&
+      values.destination &&
+      values.description &&
+      !this.props.match.params.inboundReturnId
     ) {
       this.props.showSpinner();
 
@@ -186,21 +193,27 @@ class CreateInboundReturn extends Component {
         description: values.description,
         origin: { id: values.origin.id },
         destination: { id: values.destination.id },
-        type: 'RETURN_ORDER',
+        type: "RETURN_ORDER",
       };
 
-      const url = '/api/stockTransfers/';
+      const url = "/api/stockTransfers/";
 
-      apiClient.post(url, payload)
+      apiClient
+        .post(url, payload)
         .then((response) => {
           if (response.data) {
             const resp = parseResponse(response.data.data);
-            this.setState({
-              values: resp,
-            }, () => {
-              this.props.history.push(STOCK_TRANSFER_URL.editInbound(this.state.values.id));
-              this.props.nextPage(this.state.values);
-            });
+            this.setState(
+              {
+                values: resp,
+              },
+              () => {
+                this.props.history.push(
+                  STOCK_TRANSFER_URL.editInbound(this.state.values.id),
+                );
+                this.props.nextPage(this.state.values);
+              },
+            );
           }
         })
         .catch(() => {
@@ -219,28 +232,35 @@ class CreateInboundReturn extends Component {
         initialValues={this.state.values}
         mutators={{
           clearStocklist: (args, state, utils) => {
-            utils.changeValue(state, 'stocklist', () => null);
+            utils.changeValue(state, "stocklist", () => null);
           },
         }}
         render={({ handleSubmit, values }) => (
           <form onSubmit={handleSubmit}>
             <div className="classic-form with-description">
-              {_.map(
-                FIELDS,
-                (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName, {
+              {_.map(FIELDS, (fieldConfig, fieldName) =>
+                renderFormField(fieldConfig, fieldName, {
                   origin: values.origin,
                   destination: values.destination,
                   isSuperuser: this.props.isSuperuser,
-                  debouncedOriginLocationsFetch: this.debouncedOriginLocationsFetch,
-                  debouncedDestinationLocationsFetch: this.debouncedDestinationLocationsFetch,
+                  debouncedOriginLocationsFetch:
+                    this.debouncedOriginLocationsFetch,
+                  debouncedDestinationLocationsFetch:
+                    this.debouncedDestinationLocationsFetch,
                   inboundReturnId: this.props.match.params.inboundReturnId,
                   values,
                 }),
               )}
             </div>
             <div className="submit-buttons">
-              <button type="submit" className="btn btn-outline-primary float-right btn-xs">
-                <Translate id="react.default.button.next.label" defaultMessage="Next" />
+              <button
+                type="submit"
+                className="btn btn-outline-primary float-right btn-xs"
+              >
+                <Translate
+                  id="react.default.button.next.label"
+                  defaultMessage="Next"
+                />
               </button>
             </div>
           </form>
@@ -255,12 +275,16 @@ const mapStateToProps = (state) => ({
   isSuperuser: state.session.isSuperuser,
   debounceTime: state.session.searchConfig.debounceTime,
   minSearchLength: state.session.searchConfig.minSearchLength,
-  inboundReturnsTranslationsFetched: state.session.fetchedTranslations.inboundReturns,
+  inboundReturnsTranslationsFetched:
+    state.session.fetchedTranslations.inboundReturns,
 });
 
-export default withRouter(connect(mapStateToProps, {
-  showSpinner, hideSpinner,
-})(CreateInboundReturn));
+export default withRouter(
+  connect(mapStateToProps, {
+    showSpinner,
+    hideSpinner,
+  })(CreateInboundReturn),
+);
 
 CreateInboundReturn.propTypes = {
   match: PropTypes.shape({

@@ -1,30 +1,29 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiCloseLine, RiSearchLine } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiCloseLine, RiSearchLine } from "react-icons/ri";
 
-import Input from 'utils/Input';
+import Input from "utils/Input";
 
 const SearchInput = (props) => {
   const handleClear = () => {
     if (props.onChange) {
-      props.onChange('');
+      props.onChange("");
     }
   };
 
   return (
-    <div data-testid="search-input-div" className={`d-flex flex-row align-items-center justify-content-center search-input ${props.value ? 'search-input-has-value' : ''}`}>
+    <div
+      data-testid="search-input-div"
+      className={`d-flex flex-row align-items-center justify-content-center search-input ${props.value ? "search-input-has-value" : ""}`}
+    >
       <RiSearchLine />
       <Input {...props} />
-      {props.value
-        && (
-        <button
-          type="button"
-          onClick={handleClear}
-        >
+      {props.value && (
+        <button type="button" onClick={handleClear}>
           <RiCloseLine />
         </button>
-        )}
+      )}
     </div>
   );
 };

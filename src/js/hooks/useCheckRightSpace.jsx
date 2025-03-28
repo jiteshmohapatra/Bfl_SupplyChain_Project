@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 
 const useCheckRightSpace = () => {
   const elementReference = useRef();
@@ -6,8 +6,11 @@ const useCheckRightSpace = () => {
 
   const shouldAlignLeft = () => {
     if (elementReference.current && isVisible) {
-      const elementCoordinates = elementReference.current.getBoundingClientRect();
-      return window.innerWidth > elementCoordinates.right + elementCoordinates.width;
+      const elementCoordinates =
+        elementReference.current.getBoundingClientRect();
+      return (
+        window.innerWidth > elementCoordinates.right + elementCoordinates.width
+      );
     }
     return false;
   };

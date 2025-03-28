@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import { getTranslate } from 'react-localize-redux';
-import { useSelector } from 'react-redux';
+import { getTranslate } from "react-localize-redux";
+import { useSelector } from "react-redux";
 
-import useProductSupplierData from 'hooks/list-pages/productSupplier/useProductSupplierData';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import useProductSupplierData from "hooks/list-pages/productSupplier/useProductSupplierData";
+import { translateWithDefaultMessage } from "utils/Translate";
 
-import '../styles.scss';
+import "../styles.scss";
 
 const ProductSupplierFormTitle = () => {
   const { productSupplier } = useProductSupplierData();
@@ -20,14 +20,14 @@ const ProductSupplierFormTitle = () => {
       <span className="create-page-tile-main-content">
         {productSupplier
           ? productSupplier?.name
-          : translate('react.productSupplier.createProductSource.label', 'Create Product Source')}
-      </span>
-      {' '}
+          : translate(
+              "react.productSupplier.createProductSource.label",
+              "Create Product Source",
+            )}
+      </span>{" "}
       {productSupplier && (
         <span className="create-page-title-source-code">
-          (
-          {productSupplier?.code}
-          )
+          ({productSupplier?.code})
         </span>
       )}
     </div>

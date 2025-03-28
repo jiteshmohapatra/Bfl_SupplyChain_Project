@@ -1,16 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import useTranslate from 'hooks/useTranslate';
+import useTranslate from "hooks/useTranslate";
 
 const InfoBarRedirect = ({ redirect }) => {
   const translate = useTranslate();
-  const {
-    label,
-    defaultLabel,
-    link,
-  } = redirect;
+  const { label, defaultLabel, link } = redirect;
 
   return (
     <div className="info-bar-redirect">

@@ -1,41 +1,49 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import ReactTable from 'react-table';
-import ReactTablePropTypes from 'react-table/lib/propTypes';
-import withFixedColumns from 'react-table-hoc-fixed-columns';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import ReactTable from "react-table";
+import ReactTablePropTypes from "react-table/lib/propTypes";
+import withFixedColumns from "react-table-hoc-fixed-columns";
 
-import TableHeaderCell from 'components/DataTable/TableHeaderCell';
-import TablePagination from 'components/DataTable/TablePagination';
-import TableRow from 'components/DataTable/TableRow';
+import TableHeaderCell from "components/DataTable/TableHeaderCell";
+import TablePagination from "components/DataTable/TablePagination";
+import TableRow from "components/DataTable/TableRow";
 
-import 'react-table/react-table.css';
+import "react-table/react-table.css";
 // important: this line must be placed after react-table css import
-import 'react-table-hoc-fixed-columns/lib/styles.css';
-import 'components/DataTable/DataTable.scss';
+import "react-table-hoc-fixed-columns/lib/styles.css";
+import "components/DataTable/DataTable.scss";
 
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
 
 const DataTable = React.forwardRef((props, ref) => {
   const {
-    data, footerComponent, headerComponent, columns, className, totalData, errors,
+    data,
+    footerComponent,
+    headerComponent,
+    columns,
+    className,
+    totalData,
+    errors,
   } = props;
 
   const PaginationComponent = (paginationProps) => (
     <>
-      { paginationProps.footerComponent && (
-      <div className="app-react-table-footer d-flex p-2">
-        {footerComponent()}
-      </div>
+      {paginationProps.footerComponent && (
+        <div className="app-react-table-footer d-flex p-2">
+          {footerComponent()}
+        </div>
       )}
-      {data.length > 0 && <TablePagination {...paginationProps} totalData={totalData} /> }
+      {data.length > 0 && (
+        <TablePagination {...paginationProps} totalData={totalData} />
+      )}
     </>
   );
 
   return (
     <div className="app-react-table-wrapper" data-testid="data-table">
-      { headerComponent && (
+      {headerComponent && (
         <div className="app-react-table-header d-flex p-2">
           {headerComponent()}
         </div>
@@ -43,7 +51,7 @@ const DataTable = React.forwardRef((props, ref) => {
       <ReactTableFixedColumns
         {...props}
         innerRef={ref}
-        className={`app-react-table ${className} ${data.length === 0 ? 'hide-data' : ''}`}
+        className={`app-react-table ${className} ${data.length === 0 ? "hide-data" : ""}`}
         data={data}
         columns={columns}
         PaginationComponent={PaginationComponent}
@@ -54,12 +62,21 @@ const DataTable = React.forwardRef((props, ref) => {
         })}
         getTrProps={(state, rowInfo) => ({
           row: rowInfo?.row,
-          error: _.get(errors.packingList, `['${rowInfo?.original?.rowId}']`, undefined),
+          error: _.get(
+            errors.packingList,
+            `['${rowInfo?.original?.rowId}']`,
+            undefined,
+          ),
         })}
         getTdProps={(state, rowInfo, columnInfo) => {
-          const columnErrorAccessor = columnInfo?.getProps()?.errorAccessor ?? columnInfo?.id;
+          const columnErrorAccessor =
+            columnInfo?.getProps()?.errorAccessor ?? columnInfo?.id;
           return {
-            error: _.get(errors.packingList, `['${rowInfo?.original?.rowId}']['${columnErrorAccessor}']`, undefined),
+            error: _.get(
+              errors.packingList,
+              `['${rowInfo?.original?.rowId}']['${columnErrorAccessor}']`,
+              undefined,
+            ),
           };
         }}
       />
@@ -72,7 +89,7 @@ DataTable.defaultProps = {
   headerComponent: undefined,
   sortable: false,
   resizable: false,
-  className: '',
+  className: "",
   multiSort: false,
   totalData: undefined,
   errors: {},

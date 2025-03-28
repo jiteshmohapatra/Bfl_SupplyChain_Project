@@ -1,24 +1,30 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 function handleClick(onClick, event, link) {
   event.preventDefault();
-  const newWindow = window.open('', '_blank');
+  const newWindow = window.open("", "_blank");
   if (onClick) {
-    onClick()
-      .then(() => { newWindow.location.href = link; });
+    onClick().then(() => {
+      newWindow.location.href = link;
+    });
   } else {
     newWindow.location.href = link;
   }
 }
 
 const DocumentButton = ({
-  buttonIcon, buttonTitle, link, target, disabled, onClick,
+  buttonIcon,
+  buttonTitle,
+  link,
+  target,
+  disabled,
+  onClick,
 }) => (
   <a
     href={link}
-    className={`py-1 mb-1 btn btn-outline-secondary ${disabled ? 'disabled' : ''}`}
+    className={`py-1 mb-1 btn btn-outline-secondary ${disabled ? "disabled" : ""}`}
     target={target}
     rel="noopener noreferrer"
     onClick={(event) => handleClick(onClick, event, link)}
@@ -46,7 +52,7 @@ DocumentButton.propTypes = {
 };
 
 DocumentButton.defaultProps = {
-  buttonIcon: 'fa-download',
-  buttonTitle: 'Print Document',
-  target: '_blank',
+  buttonIcon: "fa-download",
+  buttonTitle: "Print Document",
+  target: "_blank",
 };

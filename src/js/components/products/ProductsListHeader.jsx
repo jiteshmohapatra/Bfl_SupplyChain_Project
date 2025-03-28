@@ -1,19 +1,21 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import Button from 'components/form-elements/Button';
-import { PRODUCT_URL } from 'consts/applicationUrls';
-import Translate from 'utils/Translate';
+import Button from "components/form-elements/Button";
+import { PRODUCT_URL } from "consts/applicationUrls";
+import Translate from "utils/Translate";
 
 const ProductsListHeader = ({ isUserAdmin }) => (
   <div className="d-flex list-page-header">
     <span className="d-flex align-self-center title">
-      <Translate id="react.productsList.header.label" defaultMessage="Product List" />
+      <Translate
+        id="react.productsList.header.label"
+        defaultMessage="Product List"
+      />
     </span>
-    {isUserAdmin
-      && (
+    {isUserAdmin && (
       <div className="d-flex justify-content-end buttons align-items-center">
         <a href={PRODUCT_URL.importCSV()}>
           <Button
@@ -29,7 +31,7 @@ const ProductsListHeader = ({ isUserAdmin }) => (
           />
         </a>
       </div>
-      )}
+    )}
   </div>
 );
 

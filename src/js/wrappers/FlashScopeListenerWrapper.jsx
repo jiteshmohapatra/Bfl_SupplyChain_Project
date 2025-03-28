@@ -1,4 +1,4 @@
-import useFlashScopeListener from 'hooks/useFlashScopeListener';
+import useFlashScopeListener from "hooks/useFlashScopeListener";
 
 const FlashScopeListenerWrapper = ({ children }) => {
   useFlashScopeListener();

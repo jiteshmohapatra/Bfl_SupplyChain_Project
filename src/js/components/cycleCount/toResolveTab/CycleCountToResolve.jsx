@@ -1,26 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import PropTypes from 'prop-types';
-import { RiCalculatorLine, RiDownload2Line, RiPrinterLine } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import {
+  RiCalculatorLine,
+  RiDownload2Line,
+  RiPrinterLine,
+} from "react-icons/ri";
 
-import DataTable from 'components/DataTable/v2/DataTable';
-import Button from 'components/form-elements/Button';
-import FileFormat from 'consts/fileFormat';
-import useToResolveTab from 'hooks/cycleCount/useToResolveTab';
-import useTranslate from 'hooks/useTranslate';
-import Translate from 'utils/Translate';
+import DataTable from "components/DataTable/v2/DataTable";
+import Button from "components/form-elements/Button";
+import FileFormat from "consts/fileFormat";
+import useToResolveTab from "hooks/cycleCount/useToResolveTab";
+import useTranslate from "hooks/useTranslate";
+import Translate from "utils/Translate";
 
-const CycleCountToResolve = ({
-  filterParams,
-  tablePaginationProps,
-}) => {
+const CycleCountToResolve = ({ filterParams, tablePaginationProps }) => {
   const translate = useTranslate();
-  const {
-    paginationProps,
-    offset,
-    pageSize,
-    setTotalCount,
-  } = tablePaginationProps;
+  const { paginationProps, offset, pageSize, setTotalCount } =
+    tablePaginationProps;
   const {
     columns,
     tableData,
@@ -44,9 +41,8 @@ const CycleCountToResolve = ({
     <div>
       <div className="d-flex justify-content-sm-between align-items-center">
         <span className="selected-rows-indicator pl-4">
-          {selectedCheckboxesAmount}
-          {' '}
-          {translate('react.default.selected.label', 'selected')}
+          {selectedCheckboxesAmount}{" "}
+          {translate("react.default.selected.label", "selected")}
         </span>
         <div className="d-flex m-2 gap-8">
           <Button
@@ -66,14 +62,27 @@ const CycleCountToResolve = ({
               StartIcon={<RiPrinterLine size={18} />}
               disabled={!selectedCheckboxesAmount}
             />
-            <div className="dropdown-menu dropdown-menu-right nav-item padding-8" aria-labelledby="dropdownMenuButton">
-              <a href="#" className="dropdown-item" onClick={() => printResolveForm(FileFormat.PDF)} role="button">
+            <div
+              className="dropdown-menu dropdown-menu-right nav-item padding-8"
+              aria-labelledby="dropdownMenuButton"
+            >
+              <a
+                href="#"
+                className="dropdown-item"
+                onClick={() => printResolveForm(FileFormat.PDF)}
+                role="button"
+              >
                 <Translate
                   id="react.cycleCount.printRecountFormPdf.label"
                   defaultMessage="Print Recount Form PDF"
                 />
               </a>
-              <a href="#" className="dropdown-item" onClick={() => printResolveForm(FileFormat.XLS)} role="button">
+              <a
+                href="#"
+                className="dropdown-item"
+                onClick={() => printResolveForm(FileFormat.XLS)}
+                role="button"
+              >
                 <Translate
                   id="react.cycleCount.exportRecountSheet.label"
                   defaultMessage="Export Recount Sheet"

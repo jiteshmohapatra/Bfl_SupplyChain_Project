@@ -1,23 +1,27 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Controller, useWatch } from 'react-hook-form';
+import PropTypes from "prop-types";
+import { Controller, useWatch } from "react-hook-form";
 
-import SelectField from 'components/form-elements/v2/SelectField';
-import TextInput from 'components/form-elements/v2/TextInput';
-import Subsection from 'components/Layout/v2/Subsection';
-import useQuantityUnitOfMeasureOptions from 'hooks/options-data/useQuantityUnitOfMeasureOptions';
-import { FormErrorPropType } from 'utils/propTypes';
+import SelectField from "components/form-elements/v2/SelectField";
+import TextInput from "components/form-elements/v2/TextInput";
+import Subsection from "components/Layout/v2/Subsection";
+import useQuantityUnitOfMeasureOptions from "hooks/options-data/useQuantityUnitOfMeasureOptions";
+import { FormErrorPropType } from "utils/propTypes";
 
-const PackageSpecification = ({ control, errors, setProductPackageQuantity }) => {
+const PackageSpecification = ({
+  control,
+  errors,
+  setProductPackageQuantity,
+}) => {
   const { quantityUom } = useQuantityUnitOfMeasureOptions();
-  const uom = useWatch({ control, name: 'packageSpecification.uom' });
+  const uom = useWatch({ control, name: "packageSpecification.uom" });
 
   return (
     <Subsection
       title={{
-        label: 'react.productSupplier.form.subsection.packageSpecification',
-        defaultMessage: 'Package Specification',
+        label: "react.productSupplier.form.subsection.packageSpecification",
+        defaultMessage: "Package Specification",
       }}
       collapsable={false}
     >
@@ -36,12 +40,13 @@ const PackageSpecification = ({ control, errors, setProductPackageQuantity }) =>
                 }}
                 required
                 title={{
-                  id: 'react.productSupplier.form.uom.title',
-                  defaultMessage: 'Default Source Package',
+                  id: "react.productSupplier.form.uom.title",
+                  defaultMessage: "Default Source Package",
                 }}
                 tooltip={{
-                  id: 'react.productSupplier.form.uom.tooltip',
-                  defaultMessage: 'The most common package purchased for this product',
+                  id: "react.productSupplier.form.uom.tooltip",
+                  defaultMessage:
+                    "The most common package purchased for this product",
                 }}
                 options={quantityUom}
                 hasErrors={Boolean(errors.uom?.message)}
@@ -57,18 +62,18 @@ const PackageSpecification = ({ control, errors, setProductPackageQuantity }) =>
             render={({ field }) => (
               <TextInput
                 {...field}
-                disabled={uom?.id === 'EA' || field.disabled}
+                disabled={uom?.id === "EA" || field.disabled}
                 required
                 type="number"
                 decimal={0}
                 errorMessage={errors.productPackageQuantity?.message}
                 title={{
-                  id: 'react.productSupplier.form.productPackageQuantity.title',
-                  defaultMessage: 'Package Size',
+                  id: "react.productSupplier.form.productPackageQuantity.title",
+                  defaultMessage: "Package Size",
                 }}
                 tooltip={{
-                  id: 'react.productSupplier.form.productPackageQuantity.tooltip',
-                  defaultMessage: 'The number of units per package',
+                  id: "react.productSupplier.form.productPackageQuantity.tooltip",
+                  defaultMessage: "The number of units per package",
                 }}
               />
             )}
@@ -85,12 +90,13 @@ const PackageSpecification = ({ control, errors, setProductPackageQuantity }) =>
                 type="number"
                 decimal={0}
                 title={{
-                  id: 'react.productSupplier.form.minOrderQuantity.title',
-                  defaultMessage: 'MOQ',
+                  id: "react.productSupplier.form.minOrderQuantity.title",
+                  defaultMessage: "MOQ",
                 }}
                 tooltip={{
-                  id: 'react.productSupplier.form.minOrderQuantity.tooltip',
-                  defaultMessage: 'Minimum Order Quantity - the smallest order the vendor will accept for this product',
+                  id: "react.productSupplier.form.minOrderQuantity.tooltip",
+                  defaultMessage:
+                    "Minimum Order Quantity - the smallest order the vendor will accept for this product",
                 }}
               />
             )}
@@ -107,12 +113,13 @@ const PackageSpecification = ({ control, errors, setProductPackageQuantity }) =>
                 errorMessage={errors.productPackagePrice?.message}
                 type="number"
                 title={{
-                  id: 'react.productSupplier.form.packagePrice.title',
-                  defaultMessage: 'Package Price',
+                  id: "react.productSupplier.form.packagePrice.title",
+                  defaultMessage: "Package Price",
                 }}
                 tooltip={{
-                  id: 'react.productSupplier.form.packagePrice.tooltip',
-                  defaultMessage: 'The most recent price paid per default package',
+                  id: "react.productSupplier.form.packagePrice.tooltip",
+                  defaultMessage:
+                    "The most recent price paid per default package",
                 }}
               />
             )}
@@ -129,12 +136,13 @@ const PackageSpecification = ({ control, errors, setProductPackageQuantity }) =>
                 decimal={4}
                 type="number"
                 title={{
-                  id: 'react.productSupplier.form.eachPrice.title',
-                  defaultMessage: 'Each Price',
+                  id: "react.productSupplier.form.eachPrice.title",
+                  defaultMessage: "Each Price",
                 }}
                 tooltip={{
-                  id: 'react.productSupplier.form.eachPrice.tooltip',
-                  defaultMessage: 'The most recent price paid per smallest individual unit (package price÷package size)',
+                  id: "react.productSupplier.form.eachPrice.tooltip",
+                  defaultMessage:
+                    "The most recent price paid per smallest individual unit (package price÷package size)",
                 }}
               />
             )}

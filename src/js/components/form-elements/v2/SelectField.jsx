@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import ProductSelect from 'components/product-select/ProductSelect';
-import componentType from 'consts/componentType';
-import useFocusOnMatch from 'hooks/useFocusOnMatch';
-import Select from 'utils/Select';
-import InputWrapper from 'wrappers/InputWrapper';
+import ProductSelect from "components/product-select/ProductSelect";
+import componentType from "consts/componentType";
+import useFocusOnMatch from "hooks/useFocusOnMatch";
+import Select from "utils/Select";
+import InputWrapper from "wrappers/InputWrapper";
 
-import './style.scss';
+import "./style.scss";
 
 const SelectField = ({
   title,
@@ -39,12 +39,14 @@ const SelectField = ({
     setValue(defaultValue);
   }, [defaultValue?.id]);
 
-  const asyncProps = async ? {
-    async,
-    loadOptions,
-  } : {
-    options,
-  };
+  const asyncProps = async
+    ? {
+        async,
+        loadOptions,
+      }
+    : {
+        options,
+      };
 
   const onChangeValue = (selectedOption) => {
     onChange?.(selectedOption);
@@ -57,20 +59,27 @@ const SelectField = ({
 
   const refProps = productSelect ? {} : { fieldRef };
 
-  useFocusOnMatch({ ...focusProps, ref: fieldRef, type: componentType.SELECT_FIELD });
+  useFocusOnMatch({
+    ...focusProps,
+    ref: fieldRef,
+    type: componentType.SELECT_FIELD,
+  });
 
   return (
     <InputWrapper
       title={title}
       errorMessage={errorMessage}
-      button={{ ...button, onClick: () => button.onClick(fieldProps?.value?.id ?? value) }}
+      button={{
+        ...button,
+        onClick: () => button.onClick(fieldProps?.value?.id ?? value),
+      }}
       tooltip={tooltip}
       required={required}
       hideErrorMessageWrapper={hideErrorMessageWrapper}
       className="select-wrapper-container"
     >
       <SelectComponent
-        className={`form-element-select ${className} ${errorMessage || hasErrors ? 'has-errors' : ''} ${warning ? 'has-warning' : ''}`}
+        className={`form-element-select ${className} ${errorMessage || hasErrors ? "has-errors" : ""} ${warning ? "has-warning" : ""}`}
         disabled={disabled}
         placeholder={placeholder}
         value={value}
@@ -146,7 +155,7 @@ SelectField.defaultProps = {
   button: null,
   errorMessage: null,
   disabled: false,
-  placeholder: '',
+  placeholder: "",
   async: false,
   options: [],
   loadOptions: () => [],
@@ -155,7 +164,7 @@ SelectField.defaultProps = {
   onChange: () => {},
   productSelect: false,
   hasErrors: false,
-  className: '',
+  className: "",
   hideErrorMessageWrapper: false,
   warning: false,
   onKeyDown: null,

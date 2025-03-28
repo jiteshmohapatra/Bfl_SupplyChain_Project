@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { Translate } from 'react-localize-redux';
+import PropTypes from "prop-types";
+import { Translate } from "react-localize-redux";
 
 /**
  * @callback TranslationCallback
@@ -22,14 +22,12 @@ import { Translate } from 'react-localize-redux';
  * @param {function} translate - The translation function provided by react-localize-redux.
  * @returns {TranslationCallback} - The translated message function.
  */
-export const translateWithDefaultMessage = (translate) => (
-
-  (id, defaultMessage, data, options) =>
+export const translateWithDefaultMessage =
+  (translate) => (id, defaultMessage, data, options) =>
     translate(id, data, {
       ...options,
-      onMissingTranslation: () => (defaultMessage || id),
-    })
-);
+      onMissingTranslation: () => defaultMessage || id,
+    });
 
 /**
  * A wrapper component for the Translate component that provides default message handling.
@@ -39,12 +37,10 @@ export const translateWithDefaultMessage = (translate) => (
  * @param {string} props.data - Optional data for variable replacements in dynamic translations.
  * @returns {JSX.Element} - The Translate component with default message handling.
  */
-const TranslateWrapper = ({
-  id, defaultMessage, options = {}, ...props
-}) => (
+const TranslateWrapper = ({ id, defaultMessage, options = {}, ...props }) => (
   <Translate
     id={id}
-    options={{ ...options, onMissingTranslation: () => (defaultMessage || id) }}
+    options={{ ...options, onMissingTranslation: () => defaultMessage || id }}
     {...props}
   />
 );
@@ -58,6 +54,6 @@ TranslateWrapper.propTypes = {
 };
 
 TranslateWrapper.defaultProps = {
-  defaultMessage: '',
+  defaultMessage: "",
   options: {},
 };

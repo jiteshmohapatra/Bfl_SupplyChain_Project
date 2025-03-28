@@ -1,10 +1,14 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import FilterForm from 'components/Filter/FilterForm';
-import { debounceLocationsFetch, debouncePeopleFetch, debounceUsersFetch } from 'utils/option-utils';
+import FilterForm from "components/Filter/FilterForm";
+import {
+  debounceLocationsFetch,
+  debouncePeopleFetch,
+  debounceUsersFetch,
+} from "utils/option-utils";
 
 const StockMovementInboundFilters = ({
   setFilterParams,
@@ -23,14 +27,17 @@ const StockMovementInboundFilters = ({
     [debounceTime, minSearchLength],
   );
 
-  const fetchLocations = useCallback(debounceLocationsFetch(
-    debounceTime,
-    minSearchLength,
-    [],
-    true,
-    false,
-    false,
-  ), [debounceTime, minSearchLength]);
+  const fetchLocations = useCallback(
+    debounceLocationsFetch(
+      debounceTime,
+      minSearchLength,
+      [],
+      true,
+      false,
+      false,
+    ),
+    [debounceTime, minSearchLength],
+  );
 
   return (
     <div className="d-flex flex-column list-page-filters">
@@ -40,7 +47,7 @@ const StockMovementInboundFilters = ({
         searchFieldDefaultPlaceholder="Search by requisition number, name etc."
         filterFields={filterFields}
         defaultValues={defaultValues}
-        ignoreClearFilters={['destination', 'direction']}
+        ignoreClearFilters={["destination", "direction"]}
         updateFilterParams={(values) => setFilterParams({ ...values })}
         hidden={false}
         formProps={{

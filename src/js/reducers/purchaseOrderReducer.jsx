@@ -1,4 +1,7 @@
-import { FETCH_PAYMENT_TERMS, FETCH_PURCHASE_ORDER_STATUSES } from 'actions/types';
+import {
+  FETCH_PAYMENT_TERMS,
+  FETCH_PURCHASE_ORDER_STATUSES,
+} from "actions/types";
 
 const initialState = {
   statuses: [],

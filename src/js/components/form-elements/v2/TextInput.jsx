@@ -1,14 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import componentType from 'consts/componentType';
-import useFocusOnMatch from 'hooks/useFocusOnMatch';
-import { decimalParser } from 'utils/form-utils';
-import InputWrapper from 'wrappers/InputWrapper';
+import componentType from "consts/componentType";
+import useFocusOnMatch from "hooks/useFocusOnMatch";
+import { decimalParser } from "utils/form-utils";
+import InputWrapper from "wrappers/InputWrapper";
 
-import './style.scss';
+import "./style.scss";
 
 const TextInput = ({
   title,
@@ -32,10 +32,14 @@ const TextInput = ({
 }) => {
   const inputRef = useRef(null);
 
-  useFocusOnMatch({ ...focusProps, ref: inputRef, type: componentType.TEXT_INPUT });
+  useFocusOnMatch({
+    ...focusProps,
+    ref: inputRef,
+    type: componentType.TEXT_INPUT,
+  });
 
   const onBlurHandler = (e) => {
-    if (type === 'number') {
+    if (type === "number") {
       const valueAsNumber = decimalParser(e.target.value, decimal);
       e.target.value = valueAsNumber;
       fieldProps.onChange?.(valueAsNumber);
@@ -45,7 +49,7 @@ const TextInput = ({
 
   const onChangeHandler = (e) => {
     switch (type) {
-      case 'number': {
+      case "number": {
         const valueAsNumber = Number.isNaN(e.target.valueAsNumber)
           ? undefined
           : e.target.valueAsNumber;
@@ -57,9 +61,8 @@ const TextInput = ({
     }
   };
 
-  const numberIncrementValue = type === 'number' && _.isNumber(decimal)
-    ? 0.1 ** decimal
-    : undefined;
+  const numberIncrementValue =
+    type === "number" && _.isNumber(decimal) ? 0.1 ** decimal : undefined;
 
   return (
     <InputWrapper
@@ -76,7 +79,7 @@ const TextInput = ({
         id={id || name}
         name={name}
         disabled={disabled}
-        className={`form-element-input ${className} ${(errorMessage || showErrorBorder) ? 'has-errors' : ''} ${hideErrorMessageWrapper && showErrorBorder && 'pl-4'}`}
+        className={`form-element-input ${className} ${errorMessage || showErrorBorder ? "has-errors" : ""} ${hideErrorMessageWrapper && showErrorBorder && "pl-4"}`}
         placeholder={placeholder}
         type={type}
         step={numberIncrementValue}
@@ -144,12 +147,12 @@ TextInput.defaultProps = {
   button: null,
   errorMessage: null,
   disabled: false,
-  placeholder: '',
+  placeholder: "",
   id: undefined,
   name: undefined,
-  type: 'text',
+  type: "text",
   decimal: undefined,
-  className: '',
+  className: "",
   showErrorBorder: false,
   hideErrorMessageWrapper: false,
   onKeyDown: null,

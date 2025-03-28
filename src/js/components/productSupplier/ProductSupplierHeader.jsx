@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import Button from 'components/form-elements/Button';
-import ListTitle from 'components/listPagesUtils/ListTitle';
-import { PRODUCT_SUPPLIER_URL } from 'consts/applicationUrls';
-import RoleType from 'consts/roleType';
-import useUserHasPermissions from 'hooks/useUserHasPermissions';
-import HeaderButtonsWrapper from 'wrappers/HeaderButtonsWrapper';
-import HeaderWrapper from 'wrappers/HeaderWrapper';
+import Button from "components/form-elements/Button";
+import ListTitle from "components/listPagesUtils/ListTitle";
+import { PRODUCT_SUPPLIER_URL } from "consts/applicationUrls";
+import RoleType from "consts/roleType";
+import useUserHasPermissions from "hooks/useUserHasPermissions";
+import HeaderButtonsWrapper from "wrappers/HeaderButtonsWrapper";
+import HeaderWrapper from "wrappers/HeaderWrapper";
 
 const ProductSupplierHeader = () => {
   const canManageProducts = useUserHasPermissions({
@@ -16,10 +16,11 @@ const ProductSupplierHeader = () => {
 
   return (
     <HeaderWrapper>
-      <ListTitle label={{
-        id: 'react.productSupplier.header.label',
-        defaultMessage: 'Product Sources List',
-      }}
+      <ListTitle
+        label={{
+          id: "react.productSupplier.header.label",
+          defaultMessage: "Product Sources List",
+        }}
       />
       <HeaderButtonsWrapper>
         {canManageProducts && (

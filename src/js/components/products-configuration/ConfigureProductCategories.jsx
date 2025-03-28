@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import ReactHtmlParser from 'react-html-parser';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import ReactHtmlParser from "react-html-parser";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import VerticalTabs from 'components/Layout/VerticalTabs';
-import ImportCategories from 'components/products-configuration/ImportCategories';
-import apiClient from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import VerticalTabs from "components/Layout/VerticalTabs";
+import ImportCategories from "components/products-configuration/ImportCategories";
+import apiClient from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import 'components/products-configuration/ConfigureProductCategories.scss';
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "components/products-configuration/ConfigureProductCategories.scss";
 
 const INITIAL_STATE = {
   categoryOptions: {},
@@ -29,9 +29,10 @@ class ConfigureProductCategories extends Component {
   componentDidMount() {
     this.props.showSpinner();
 
-    const url = '/api/productsConfiguration/categoryOptions';
+    const url = "/api/productsConfiguration/categoryOptions";
 
-    apiClient.get(url)
+    apiClient
+      .get(url)
       .then((response) => {
         const categoryOptions = response.data.data;
 
@@ -53,7 +54,10 @@ class ConfigureProductCategories extends Component {
             className="btn btn-primary"
             onClick={() => this.importCategory(categoryName)}
           >
-            <Translate id="react.productsConfiguration.importCategories.label" defaultMessage="Import Categories" />
+            <Translate
+              id="react.productsConfiguration.importCategories.label"
+              defaultMessage="Import Categories"
+            />
           </button>
         </div>
       </div>
@@ -63,10 +67,15 @@ class ConfigureProductCategories extends Component {
   getTabs() {
     const tabs = {};
     _.forEach(this.state.categoryOptions, (category, categoryName) => {
-      tabs[category.title] = this.getCategoryTreeContent(category, categoryName);
+      tabs[category.title] = this.getCategoryTreeContent(
+        category,
+        categoryName,
+      );
     });
 
-    tabs[`${this.props.translate('react.productsConfiguration.importFromExcel.label', 'Import from Excel')}`] = <ImportCategories nextPage={this.props.nextPage} />;
+    tabs[
+      `${this.props.translate("react.productsConfiguration.importFromExcel.label", "Import from Excel")}`
+    ] = <ImportCategories nextPage={this.props.nextPage} />;
 
     return tabs;
   }
@@ -75,10 +84,16 @@ class ConfigureProductCategories extends Component {
     this.props.showSpinner();
     const url = `/api/productsConfiguration/importCategories?categoryOption=${categoryName}`;
 
-    apiClient.post(url)
+    apiClient
+      .post(url)
       .then(() => {
         this.props.hideSpinner();
-        Alert.success(this.props.translate('react.productsConfiguration.importSuccessful.label', 'Categories imported successfully'));
+        Alert.success(
+          this.props.translate(
+            "react.productsConfiguration.importSuccessful.label",
+            "Categories imported successfully",
+          ),
+        );
         this.props.nextPage({ categoriesImported: true });
       })
       .catch(() => this.props.hideSpinner());
@@ -93,8 +108,15 @@ class ConfigureProductCategories extends Component {
           <VerticalTabs tabs={tabs} />
         </div>
         <div className="submit-buttons">
-          <button type="button" onClick={() => this.props.goToPage(3, this.props.initialValues)} className="btn btn-outline-primary float-right btn-xs">
-            <Translate id="react.default.button.skip.label" defaultMessage="Skip this step" />
+          <button
+            type="button"
+            onClick={() => this.props.goToPage(3, this.props.initialValues)}
+            className="btn btn-outline-primary float-right btn-xs"
+          >
+            <Translate
+              id="react.default.button.skip.label"
+              defaultMessage="Skip this step"
+            />
           </button>
         </div>
       </div>
@@ -106,7 +128,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(ConfigureProductCategories);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  ConfigureProductCategories,
+);
 
 ConfigureProductCategories.propTypes = {
   nextPage: PropTypes.func.isRequired,

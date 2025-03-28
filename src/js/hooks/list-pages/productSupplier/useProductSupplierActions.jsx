@@ -1,15 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import { RiDeleteBinLine, RiPencilLine } from 'react-icons/ri';
+import { RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
 
-import productSupplierApi from 'api/services/ProductSupplierApi';
-import notification from 'components/Layout/notifications/notification';
-import { PRODUCT_SUPPLIER_URL } from 'consts/applicationUrls';
-import NotificationType from 'consts/notificationTypes';
-import RoleType from 'consts/roleType';
-import useUserHasPermissions from 'hooks/useUserHasPermissions';
-import confirmationModal from 'utils/confirmationModalUtils';
-import translate from 'utils/Translate';
+import productSupplierApi from "api/services/ProductSupplierApi";
+import notification from "components/Layout/notifications/notification";
+import { PRODUCT_SUPPLIER_URL } from "consts/applicationUrls";
+import NotificationType from "consts/notificationTypes";
+import RoleType from "consts/roleType";
+import useUserHasPermissions from "hooks/useUserHasPermissions";
+import confirmationModal from "utils/confirmationModalUtils";
+import translate from "utils/Translate";
 
 const useProductSupplierActions = ({ fireFetchData }) => {
   const canManageProducts = useUserHasPermissions({
@@ -22,7 +22,7 @@ const useProductSupplierActions = ({ fireFetchData }) => {
       await productSupplierApi.deleteProductSupplier(productSupplierId);
       notification(NotificationType.SUCCESS)({
         message: translate({
-          id: 'react.productSupplier.deleted.label',
+          id: "react.productSupplier.deleted.label",
           defaultMessage: `Product Source ${productSupplierId} deleted`,
           data: {
             id: productSupplierId,
@@ -41,29 +41,29 @@ const useProductSupplierActions = ({ fireFetchData }) => {
 
   const modalLabels = {
     title: {
-      label: 'react.productSupplier.deleteConfirmation.title.label',
-      default: 'Are you sure?',
+      label: "react.productSupplier.deleteConfirmation.title.label",
+      default: "Are you sure?",
     },
     content: {
-      label: 'react.productSupplier.deleteConfirmation.content.label',
-      default: 'Are you sure you want to delete this Product Source?',
+      label: "react.productSupplier.deleteConfirmation.content.label",
+      default: "Are you sure you want to delete this Product Source?",
     },
   };
 
-  const deleteConfirmationModalButtons = (productSupplierId) => (onClose) => ([
+  const deleteConfirmationModalButtons = (productSupplierId) => (onClose) => [
     {
-      variant: 'transparent',
-      defaultLabel: 'Cancel',
-      label: 'react.productSupplier.deleteConfirmation.cancel.label',
+      variant: "transparent",
+      defaultLabel: "Cancel",
+      label: "react.productSupplier.deleteConfirmation.cancel.label",
       onClick: onClose,
     },
     {
-      variant: 'danger',
-      defaultLabel: 'Delete',
-      label: 'react.productSupplier.deleteConfirmation.delete.label',
+      variant: "danger",
+      defaultLabel: "Delete",
+      label: "react.productSupplier.deleteConfirmation.delete.label",
       onClick: () => deleteProductSupplier(onClose, productSupplierId),
     },
-  ]);
+  ];
 
   const openConfirmationModal = (productSupplierId) => {
     confirmationModal({
@@ -72,24 +72,29 @@ const useProductSupplierActions = ({ fireFetchData }) => {
     });
   };
 
-  const getActions = useCallback((productSupplierId) => (canManageProducts
-    ? [
-      {
-        defaultLabel: 'Edit',
-        label: 'react.productSupplier.edit.label',
-        leftIcon: <RiPencilLine />,
-        onClick: () => {
-          window.location = PRODUCT_SUPPLIER_URL.edit(productSupplierId);
-        },
-      },
-      {
-        defaultLabel: 'Delete Product Source',
-        label: 'react.productSupplier.delete.label',
-        leftIcon: <RiDeleteBinLine />,
-        variant: 'danger',
-        onClick: () => openConfirmationModal(productSupplierId),
-      },
-    ] : []), [canManageProducts]);
+  const getActions = useCallback(
+    (productSupplierId) =>
+      canManageProducts
+        ? [
+            {
+              defaultLabel: "Edit",
+              label: "react.productSupplier.edit.label",
+              leftIcon: <RiPencilLine />,
+              onClick: () => {
+                window.location = PRODUCT_SUPPLIER_URL.edit(productSupplierId);
+              },
+            },
+            {
+              defaultLabel: "Delete Product Source",
+              label: "react.productSupplier.delete.label",
+              leftIcon: <RiDeleteBinLine />,
+              variant: "danger",
+              onClick: () => openConfirmationModal(productSupplierId),
+            },
+          ]
+        : [],
+    [canManageProducts],
+  );
 
   return {
     getActions,

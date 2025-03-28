@@ -1,4 +1,4 @@
-import { SET_OFFLINE, SET_ONLINE } from 'actions/types';
+import { SET_OFFLINE, SET_ONLINE } from "actions/types";
 
 const initialState = {
   online: navigator.onLine,

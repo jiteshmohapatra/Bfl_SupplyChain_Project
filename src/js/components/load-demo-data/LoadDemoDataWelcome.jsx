@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import LOAD_DATA_STEPS from 'consts/loadDataStep';
-import Translate from 'utils/Translate';
+import LOAD_DATA_STEPS from "consts/loadDataStep";
+import Translate from "utils/Translate";
 
 const LoadDemoDataWelcome = ({ skipConfiguration, goToStep }) => {
   const [loadDataOption, setLoadDataOption] = useState(null);
@@ -11,7 +11,10 @@ const LoadDemoDataWelcome = ({ skipConfiguration, goToStep }) => {
   return (
     <>
       <h3 className="font-weight-bold my-3">
-        <Translate id="react.loadData.welcomeHeader.label" defaultMessage="Welcome to OpenBoxes!" />
+        <Translate
+          id="react.loadData.welcomeHeader.label"
+          defaultMessage="Welcome to OpenBoxes!"
+        />
       </h3>
       <p className="my-3">
         <Translate
@@ -28,8 +31,14 @@ const LoadDemoDataWelcome = ({ skipConfiguration, goToStep }) => {
             value={LOAD_DATA_STEPS.loadDemoData}
             checked={loadDataOption === LOAD_DATA_STEPS.loadDemoData}
           />
-          <label htmlFor={LOAD_DATA_STEPS.loadDemoData} className="font-weight-bold ml-1">
-            <Translate id="react.loadData.loadDemoData.label" defaultMessage="Load Demo Data" />
+          <label
+            htmlFor={LOAD_DATA_STEPS.loadDemoData}
+            className="font-weight-bold ml-1"
+          >
+            <Translate
+              id="react.loadData.loadDemoData.label"
+              defaultMessage="Load Demo Data"
+            />
           </label>
           <p className="ml-4">
             <Translate id="react.loadData.loadDemoData.description.label" />
@@ -43,7 +52,10 @@ const LoadDemoDataWelcome = ({ skipConfiguration, goToStep }) => {
             value={LOAD_DATA_STEPS.createFirstLocation}
             checked={loadDataOption === LOAD_DATA_STEPS.createFirstLocation}
           />
-          <label htmlFor={LOAD_DATA_STEPS.createFirstLocation} className="font-weight-bold ml-1">
+          <label
+            htmlFor={LOAD_DATA_STEPS.createFirstLocation}
+            className="font-weight-bold ml-1"
+          >
             <Translate
               id="react.loadData.createFirstLocation.label"
               defaultMessage="Create your First Location"
@@ -56,7 +68,10 @@ const LoadDemoDataWelcome = ({ skipConfiguration, goToStep }) => {
       </div>
       <div className="d-flex justify-content-between align-items-center m-3">
         <a href="#" onClick={skipConfiguration} className="btn btn-link">
-          <Translate id="react.loadData.skipForNow.label" defaultMessage="Skip for now" />
+          <Translate
+            id="react.loadData.skipForNow.label"
+            defaultMessage="Skip for now"
+          />
         </a>
         <button
           disabled={!loadDataOption}

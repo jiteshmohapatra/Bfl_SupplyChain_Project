@@ -14,47 +14,56 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      eslintPath: "eslint/use-at-your-own-risk",
+    }),
+  ],
+};
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const webpack = require('webpack');
 
+
 module.exports = {
-    cache: true,
-    entry: {
-      app: `${SRC}/index.jsx`,
-    },
-    output: {
-      path: WEBPACK_OUTPUT,
-      /*
+  cache: true,
+  entry: {
+    app: `${SRC}/index.jsx`,
+  },
+  output: {
+    path: WEBPACK_OUTPUT,
+    /*
        * Don't set publicPath here, because it's hard to know the
        * application context at bundle time. Instead, we rely on
        * __webpack_public_path__, specified in src/js/index.jsx, q.v.
        */
-      filename: 'bundle.[hash].js',
-      chunkFilename: 'bundle.[hash].[name].js',
-    },
-    stats: {
-      colors: false,
-    },
-    /* We generate source maps so Sentry can map errors to lines of code, even when the code is minified */
-    devtool: 'source-map',
-    plugins: [
-      new ESLintPlugin({
-        extensions: ['js', 'jsx'],
-      }),
-      new FileManagerPlugin({
-        events: {
-          onStart: {
-            delete: [
-              WEBPACK_OUTPUT,
-            ],
-          },
+    filename: 'bundle.[hash].js',
+    chunkFilename: 'bundle.[hash].[name].js',
+  },
+  stats: {
+    colors: false,
+  },
+  /* We generate source maps so Sentry can map errors to lines of code, even when the code is minified */
+  devtool: 'source-map',
+  plugins: [
+    new ESLintPlugin({
+      extensions: ['js', 'jsx'],
+    }),
+    new FileManagerPlugin({
+      events: {
+        onStart: {
+          delete: [
+            WEBPACK_OUTPUT,
+          ],
         },
-      }),
-      new MiniCssExtractPlugin({
-        filename: 'bundle.[hash].css',
-        chunkFilename: 'bundle.[hash].[name].css',
-      }),
-      /*
+      },
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'bundle.[hash].css',
+      chunkFilename: 'bundle.[hash].[name].css',
+    }),
+    /*
        * We use the HtmlWebpackPlugin to render templates to .gsp pages. In
        * the templateParameters field, ${x} is a JavaScript variable expansion,
        * while \${y} is exported literally as ${y} for Grails to later parse
@@ -65,41 +74,41 @@ module.exports = {
        *
        * https://gsp.grails.org/latest/guide/resources.html
        */
-      new HtmlWebpackPlugin({
-        filename: `${COMMON_VIEW}/react.gsp`,
-        template: `${TEMPLATES}/grails-template.html`,
-        inject: false,
-        templateParameters: (compilation) => ({
-          // eslint-disable-next-line no-template-curly-in-string,no-useless-escape
-          contextPath: '\${util.ConfigHelper.contextPath}',
-          jsSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.js')}`,
-          cssSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.css')}`,
-          receivingIfStatement: '',
-        }),
+    new HtmlWebpackPlugin({
+      filename: `${COMMON_VIEW}/react.gsp`,
+      template: `${TEMPLATES}/grails-template.html`,
+      inject: false,
+      templateParameters: (compilation) => ({
+        // eslint-disable-next-line no-template-curly-in-string,no-useless-escape
+        contextPath: '\${util.ConfigHelper.contextPath}',
+        jsSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.js')}`,
+        cssSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.css')}`,
+        receivingIfStatement: '',
       }),
-      // We need to explicitly define our environment variables here so that they can be referenced
-      // in the frontend.
-      new webpack.DefinePlugin({
-        'process.env.REACT_APP_WEB_SENTRY_DSN': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_DSN),
-        'process.env.REACT_APP_SENTRY_ENVIRONMENT': JSON.stringify(process.env.REACT_APP_SENTRY_ENVIRONMENT),
-        'process.env.REACT_APP_WEB_SENTRY_TRACES_SAMPLE_RATE': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_TRACES_SAMPLE_RATE),
-        'process.env.REACT_APP_WEB_SENTRY_REPLAYS_SAMPLE_RATE': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_REPLAYS_SAMPLE_RATE),
-        'process.env.REACT_APP_WEB_SENTRY_REPLAYS_ERROR_SAMPLE_RATE': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_REPLAYS_ERROR_SAMPLE_RATE),
-      }),
-      new HtmlWebpackPlugin({
-        filename: `${RECEIVING_VIEW}/create.gsp`,
-        template: `${TEMPLATES}/grails-template.html`,
-        inject: false,
-        templateParameters: (compilation) => ({
-          // eslint-disable-next-line no-template-curly-in-string,no-useless-escape
-          contextPath: '\${util.ConfigHelper.contextPath}',
-          jsSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.js')}`,
-          cssSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.css')}`,
-          receivingIfStatement:
+    }),
+    // We need to explicitly define our environment variables here so that they can be referenced
+    // in the frontend.
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_WEB_SENTRY_DSN': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_DSN),
+      'process.env.REACT_APP_SENTRY_ENVIRONMENT': JSON.stringify(process.env.REACT_APP_SENTRY_ENVIRONMENT),
+      'process.env.REACT_APP_WEB_SENTRY_TRACES_SAMPLE_RATE': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_TRACES_SAMPLE_RATE),
+      'process.env.REACT_APP_WEB_SENTRY_REPLAYS_SAMPLE_RATE': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_REPLAYS_SAMPLE_RATE),
+      'process.env.REACT_APP_WEB_SENTRY_REPLAYS_ERROR_SAMPLE_RATE': JSON.stringify(process.env.REACT_APP_WEB_SENTRY_REPLAYS_ERROR_SAMPLE_RATE),
+    }),
+    new HtmlWebpackPlugin({
+      filename: `${RECEIVING_VIEW}/create.gsp`,
+      template: `${TEMPLATES}/grails-template.html`,
+      inject: false,
+      templateParameters: (compilation) => ({
+        // eslint-disable-next-line no-template-curly-in-string,no-useless-escape
+        contextPath: '\${util.ConfigHelper.contextPath}',
+        jsSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.js')}`,
+        cssSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.css')}`,
+        receivingIfStatement:
           // eslint-disable-next-line no-template-curly-in-string
-          '<g:if test="${!params.id}">' +
-          'You can access the Partial Receiving feature through the details page for an inbound shipment.' +
-          '</g:if>',
+          '<g:if test="${!params.id}">'
+          + 'You can access the Partial Receiving feature through the details page for an inbound shipment.'
+          + '</g:if>',
       }),
     }),
   ],
@@ -113,7 +122,7 @@ module.exports = {
             presets: [
               '@babel/preset-env',
               '@babel/react',
-            ]
+            ],
           },
         },
         include: SRC,
@@ -138,7 +147,7 @@ module.exports = {
           limit: 5000,
           name: './[hash].[ext]',
           postTransformPublicPath: (p) => `__webpack_public_path__ + ${p}`,
-          prefix: 'font/'
+          prefix: 'font/',
         },
       },
       {
@@ -176,7 +185,7 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      `...`,
+      '...',
       new CssMinimizerPlugin(),
     ],
   },

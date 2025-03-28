@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import queryString from 'query-string';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import queryString from "query-string";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
-import { fetchStockTransferStatuses } from 'actions';
-import filterFields from 'components/stock-transfer/list/FilterFields';
-import useCommonFiltersCleaner from 'hooks/list-pages/useCommonFiltersCleaner';
-import { getParamList, transformFilterParams } from 'utils/list-utils';
-import { fetchUserById } from 'utils/option-utils';
+import { fetchStockTransferStatuses } from "actions";
+import filterFields from "components/stock-transfer/list/FilterFields";
+import useCommonFiltersCleaner from "hooks/list-pages/useCommonFiltersCleaner";
+import { getParamList, transformFilterParams } from "utils/list-utils";
+import { fetchUserById } from "utils/option-utils";
 
 const useStockTransferFilters = () => {
   const [filterParams, setFilterParams] = useState({});
@@ -16,11 +16,7 @@ const useStockTransferFilters = () => {
   const [filtersInitialized, setFiltersInitialized] = useState(false);
 
   const history = useHistory();
-  const {
-    statuses,
-    currentUser,
-    currentLocale,
-  } = useSelector((state) => ({
+  const { statuses, currentUser, currentLocale } = useSelector((state) => ({
     statuses: state.stockTransfer.statuses,
     currentUser: state.session.user,
     currentLocation: state.session.currentLocation,
@@ -36,20 +32,25 @@ const useStockTransferFilters = () => {
 
   const initializeDefaultFilterValues = async () => {
     // INITIALIZE EMPTY FILTER OBJECT
-    const defaultValues = Object.keys(filterFields)
-      .reduce((acc, key) => ({ ...acc, [key]: '' }), {});
+    const defaultValues = Object.keys(filterFields).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      {},
+    );
 
     const queryProps = queryString.parse(history.location.search);
 
     // SET STATIC DEFAULT VALUES
     if (queryProps.status) {
       const statusesFromParams = getParamList(queryProps.status);
-      defaultValues.status = statuses.filter(({ id }) => statusesFromParams.includes(id));
+      defaultValues.status = statuses.filter(({ id }) =>
+        statusesFromParams.includes(id),
+      );
     }
     if (queryProps.createdBy) {
-      defaultValues.createdBy = queryProps.createdBy === currentUser.id
-        ? currentUser
-        : await fetchUserById(queryProps.createdBy);
+      defaultValues.createdBy =
+        queryProps.createdBy === currentUser.id
+          ? currentUser
+          : await fetchUserById(queryProps.createdBy);
     }
     if (queryProps.lastUpdatedStartDate) {
       defaultValues.lastUpdatedStartDate = queryProps.lastUpdatedStartDate;
@@ -68,14 +69,18 @@ const useStockTransferFilters = () => {
   }, [currentLocale]);
 
   // Custom hook for changing location/filters rebuilding logic
-  useCommonFiltersCleaner({ clearFilterValues, initializeDefaultFilterValues, filtersInitialized });
+  useCommonFiltersCleaner({
+    clearFilterValues,
+    initializeDefaultFilterValues,
+    filtersInitialized,
+  });
 
   const setFilterValues = (values) => {
     const filterAccessors = {
-      status: { name: 'status', accessor: 'id' },
-      createdBy: { name: 'createdBy', accessor: 'id' },
-      lastUpdatedStartDate: { name: 'lastUpdatedStartDate' },
-      lastUpdatedEndDate: { name: 'lastUpdatedEndDate' },
+      status: { name: "status", accessor: "id" },
+      createdBy: { name: "createdBy", accessor: "id" },
+      lastUpdatedStartDate: { name: "lastUpdatedStartDate" },
+      lastUpdatedEndDate: { name: "lastUpdatedEndDate" },
     };
 
     const transformedParams = transformFilterParams(values, filterAccessors);

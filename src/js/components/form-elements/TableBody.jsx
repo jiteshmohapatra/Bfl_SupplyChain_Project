@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import TableRow from 'components/form-elements/TableRow';
-import Spinner from 'components/spinner/Spinner';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import TableRow from "components/form-elements/TableRow";
+import Spinner from "components/spinner/Spinner";
+import { translateWithDefaultMessage } from "utils/Translate";
 
 const TableBody = (props) => {
   const {
@@ -15,11 +15,12 @@ const TableBody = (props) => {
     properties,
     fields,
     showRowSaveIndicator,
-    tableRef = () => {
-    },
+    tableRef = () => {},
     addRow = (row = {}) => fields.push(row),
   } = props;
-  const RowComponent = properties.subfield ? TableRow : fieldsConfig.rowComponent || TableRow;
+  const RowComponent = properties.subfield
+    ? TableRow
+    : fieldsConfig.rowComponent || TableRow;
 
   // properties for loading screen in modal
   const {
@@ -31,37 +32,32 @@ const TableBody = (props) => {
 
   // if data is still fetching then spinner will be displayed within the table
   if (isLoading) {
-    return (<Spinner />);
+    return <Spinner />;
   }
 
   // if there is no data to display then message will be displayed
   // fields.length is checked due to possibility of adding custom data
   if (isEmptyData && !fields.length) {
-    return (translate(
-      emptyDataMessageId,
-      defaultEmptyDataMessage,
-    ));
+    return translate(emptyDataMessageId, defaultEmptyDataMessage);
   }
 
-  return (
-    fields.map((field, index) => (
-      <RowComponent
-        key={properties.subfield ? `${properties.parentIndex}-${index}` : index}
-        field={field}
-        index={index}
-        properties={{
-          ...properties,
-          rowCount: fields.length || 0,
-          showRowSaveIndicator,
-        }}
-        addRow={addRow}
-        fieldsConfig={fieldsConfig}
-        removeRow={() => fields.remove(index)}
-        rowValues={fields.value[index]}
-        rowRef={(el, fieldName) => tableRef(el, fieldName, index)}
-      />
-    ))
-  );
+  return fields.map((field, index) => (
+    <RowComponent
+      key={properties.subfield ? `${properties.parentIndex}-${index}` : index}
+      field={field}
+      index={index}
+      properties={{
+        ...properties,
+        rowCount: fields.length || 0,
+        showRowSaveIndicator,
+      }}
+      addRow={addRow}
+      fieldsConfig={fieldsConfig}
+      removeRow={() => fields.remove(index)}
+      rowValues={fields.value[index]}
+      rowRef={(el, fieldName) => tableRef(el, fieldName, index)}
+    />
+  ));
 };
 
 const mapStateToProps = (state) => ({

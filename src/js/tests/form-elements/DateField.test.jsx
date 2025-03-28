@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import renderer from 'react-test-renderer';
+import renderer from "react-test-renderer";
 
-import DateField from 'components/form-elements/DateField';
-import { renderFormField } from 'utils/form-utils';
+import DateField from "components/form-elements/DateField";
+import { renderFormField } from "utils/form-utils";
 
-jest.mock('react-final-form', () => ({
+jest.mock("react-final-form", () => ({
   Field: (props) => {
     const { component: Component, name, ...others } = props;
     const input = { onChange: () => {}, name };
@@ -14,7 +14,7 @@ jest.mock('react-final-form', () => ({
   },
 }));
 
-jest.mock('react-localize-redux', () => ({
+jest.mock("react-localize-redux", () => ({
   Translate: (props) => {
     const { id } = props;
 
@@ -22,18 +22,20 @@ jest.mock('react-localize-redux', () => ({
   },
 }));
 
-xdescribe('DateField component is correctly rendering', () => {
-  it('renders correctly', () => {
+xdescribe("DateField component is correctly rendering", () => {
+  it("renders correctly", () => {
     const fieldConfig = {
       type: DateField,
-      label: 'test label',
+      label: "test label",
       attributes: {
-        dateFormat: 'YYYY-MM-DD',
-        viewDate: '2018-01-01',
+        dateFormat: "YYYY-MM-DD",
+        viewDate: "2018-01-01",
       },
     };
 
-    const rendered = renderer.create(renderFormField(fieldConfig, 'test-field'));
+    const rendered = renderer.create(
+      renderFormField(fieldConfig, "test-field"),
+    );
 
     expect(rendered.toJSON()).toMatchSnapshot();
   });

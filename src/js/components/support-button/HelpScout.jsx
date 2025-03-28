@@ -1,21 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiQuestionLine } from 'react-icons/ri';
-import { LiveChatLoaderProvider } from 'react-live-chat-loader';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { RiQuestionLine } from "react-icons/ri";
+import { LiveChatLoaderProvider } from "react-live-chat-loader";
+import { connect } from "react-redux";
 
-import SupportButton from 'components/support-button/SupportButton';
+import SupportButton from "components/support-button/SupportButton";
 
-const HelpScout = ({ isHelpScoutEnabled, localizedHelpScoutKey, ...props }) => (
-  isHelpScoutEnabled
-    ? (
-      <LiveChatLoaderProvider provider="helpScout" providerKey={localizedHelpScoutKey}>
-        <SupportButton {...props} />
-      </LiveChatLoaderProvider>
-    )
-    : <RiQuestionLine />
-);
+const HelpScout = ({ isHelpScoutEnabled, localizedHelpScoutKey, ...props }) =>
+  isHelpScoutEnabled ? (
+    <LiveChatLoaderProvider
+      provider="helpScout"
+      providerKey={localizedHelpScoutKey}
+    >
+      <SupportButton {...props} />
+    </LiveChatLoaderProvider>
+  ) : (
+    <RiQuestionLine />
+  );
 
 const mapStateToProps = (state) => ({
   localizedHelpScoutKey: state.session.localizedHelpScoutKey,
@@ -32,8 +34,8 @@ HelpScout.propTypes = {
 };
 
 HelpScout.defaultProps = {
-  text: '',
-  className: '',
-  localizedHelpScoutKey: '',
+  text: "",
+  className: "",
+  localizedHelpScoutKey: "",
   isHelpScoutEnabled: false,
 };

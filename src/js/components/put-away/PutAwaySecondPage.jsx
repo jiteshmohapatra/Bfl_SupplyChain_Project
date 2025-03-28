@@ -1,36 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import update from 'immutability-helper';
-import fileDownload from 'js-file-download';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import queryString from 'query-string';
-import { confirmAlert } from 'react-confirm-alert';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import ReactTable from 'react-table';
-import { Tooltip } from 'react-tippy';
+import update from "immutability-helper";
+import fileDownload from "js-file-download";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import queryString from "query-string";
+import { confirmAlert } from "react-confirm-alert";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import ReactTable from "react-table";
+import { Tooltip } from "react-tippy";
 
-import { hideSpinner, showSpinner } from 'actions';
-import { PUTAWAY_GENERATE_PDF } from 'api/urls';
-import { TableCell } from 'components/DataTable';
-import SplitLineModal from 'components/put-away/SplitLineModal';
-import { ORDER_URL } from 'consts/applicationUrls';
-import DateFormat from 'consts/dateFormat';
-import apiClient, { flattenRequest, parseResponse } from 'utils/apiClient';
-import customTreeTableHOC from 'utils/CustomTreeTable';
-import Filter from 'utils/Filter';
-import showLocationChangedAlert from 'utils/location-change-alert';
-import Select from 'utils/Select';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import { PUTAWAY_GENERATE_PDF } from "api/urls";
+import { TableCell } from "components/DataTable";
+import SplitLineModal from "components/put-away/SplitLineModal";
+import { ORDER_URL } from "consts/applicationUrls";
+import DateFormat from "consts/dateFormat";
+import apiClient, { flattenRequest, parseResponse } from "utils/apiClient";
+import customTreeTableHOC from "utils/CustomTreeTable";
+import Filter from "utils/Filter";
+import showLocationChangedAlert from "utils/location-change-alert";
+import Select from "utils/Select";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import 'react-table/react-table.css';
+import "react-table/react-table.css";
 
-const SelectTreeTable = (customTreeTableHOC(ReactTable));
+const SelectTreeTable = customTreeTableHOC(ReactTable);
 
 function hasValidationError(quantity, quantityAvailable) {
-  return (quantity > quantityAvailable) || quantity < 1;
+  return quantity > quantityAvailable || quantity < 1;
 }
 
 /**
@@ -46,16 +46,13 @@ class PutAwaySecondPage extends Component {
     const columns = this.getColumns();
 
     const {
-      initialValues:
-      {
-        putAway, pivotBy, expanded,
-      },
+      initialValues: { putAway, pivotBy, expanded },
     } = this.props;
 
     this.state = {
       putAway: putAway || {},
       columns,
-      pivotBy: pivotBy || ['stockMovement.name'],
+      pivotBy: pivotBy || ["stockMovement.name"],
       expanded,
       bins: [],
       location: this.props.location,
@@ -73,8 +70,12 @@ class PutAwaySecondPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     showLocationChangedAlert(
-      this.props.translate, this.state.location, nextProps.location,
-      () => { window.location = `${ORDER_URL.list()}?orderType=PUTAWAY_ORDER&status=PENDING`; },
+      this.props.translate,
+      this.state.location,
+      nextProps.location,
+      () => {
+        window.location = `${ORDER_URL.list()}?orderType=PUTAWAY_ORDER&status=PENDING`;
+      },
     );
 
     this.setState((prev) => ({
@@ -112,12 +113,13 @@ class PutAwaySecondPage extends Component {
   getColumns = () => [
     {
       Header: <Translate id="react.putAway.code.label" defaultMessage="Code" />,
-      accessor: 'product.productCode',
-      style: { whiteSpace: 'normal' },
+      accessor: "product.productCode",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
+    },
+    {
       Header: <Translate id="react.putAway.name.label" defaultMessage="Name" />,
-      accessor: 'product',
+      accessor: "product",
       Cell: (row) => (
         <TableCell
           {...row}
@@ -126,52 +128,69 @@ class PutAwaySecondPage extends Component {
           tooltipLabel={row.value?.name}
         />
       ),
-      style: { whiteSpace: 'normal' },
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.lotSerialNo.label" defaultMessage="Lot/Serial No." />,
-      accessor: 'inventoryItem.lotNumber',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.putAway.lotSerialNo.label"
+          defaultMessage="Lot/Serial No."
+        />
+      ),
+      accessor: "inventoryItem.lotNumber",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.expiry.label" defaultMessage="Expiry" />,
-      accessor: 'inventoryItem.expirationDate',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate id="react.putAway.expiry.label" defaultMessage="Expiry" />
+      ),
+      accessor: "inventoryItem.expirationDate",
+      style: { whiteSpace: "normal" },
       Cell: (props) => (
         <span>
-          {
-            props?.value
-              ? this.props.formatLocalizedDate(props.value, DateFormat.COMMON)
-              : props.value
-          }
+          {props?.value
+            ? this.props.formatLocalizedDate(props.value, DateFormat.COMMON)
+            : props.value}
         </span>
       ),
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.recipient.label" defaultMessage="Recipient" />,
-      accessor: 'recipient.name',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.putAway.recipient.label"
+          defaultMessage="Recipient"
+        />
+      ),
+      accessor: "recipient.name",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
+    },
+    {
       Header: <Translate id="react.putAway.qty.label" defaultMessage="QTY" />,
-      accessor: 'quantity',
-      style: { whiteSpace: 'normal' },
+      accessor: "quantity",
+      style: { whiteSpace: "normal" },
       Cell: (props) => {
         const itemIndex = props.index;
-        const edit = _.get(this.state.putAway.putawayItems, `[${itemIndex}].edit`);
+        const edit = _.get(
+          this.state.putAway.putawayItems,
+          `[${itemIndex}].edit`,
+        );
         let disabledMessage;
 
         if (props?.value < 1) {
           disabledMessage = this.props.translate(
-            'react.putAway.negativeQuantity.label',
-            'Quantity cannot be less than 1',
+            "react.putAway.negativeQuantity.label",
+            "Quantity cannot be less than 1",
           );
         }
 
         if (props?.value > props.original?.quantityAvailable) {
           disabledMessage = this.props.translate(
-            'react.putAway.higherQuantity.label',
-            'Quantity cannot be greater than original putaway item quantity',
+            "react.putAway.higherQuantity.label",
+            "Quantity cannot be greater than original putaway item quantity",
           );
         }
 
@@ -186,14 +205,25 @@ class PutAwaySecondPage extends Component {
               duration="250"
               hideDelay="50"
             >
-              <div className={hasValidationError(props?.value, props.original?.quantityAvailable) ? 'has-error' : ''}>
+              <div
+                className={
+                  hasValidationError(
+                    props?.value,
+                    props.original?.quantityAvailable,
+                  )
+                    ? "has-error"
+                    : ""
+                }
+              >
                 <input
                   type="number"
                   className="form-control form-control-xs"
                   value={props.value}
                   onChange={(event) => {
                     const putAway = update(this.state.putAway, {
-                      putawayItems: { [itemIndex]: { quantity: { $set: event.target.value } } },
+                      putawayItems: {
+                        [itemIndex]: { quantity: { $set: event.target.value } },
+                      },
                     });
 
                     this.changePutAway(putAway);
@@ -214,17 +244,36 @@ class PutAwaySecondPage extends Component {
             duration="250"
             hideDelay="50"
           >
-            <div className={hasValidationError(props.value, props.original?.quantityAvailable) ? 'has-error' : ''}>
-              <span>{props.value ? props.value.toLocaleString('en-US') : props.value}</span>
+            <div
+              className={
+                hasValidationError(
+                  props.value,
+                  props.original?.quantityAvailable,
+                )
+                  ? "has-error"
+                  : ""
+              }
+            >
+              <span>
+                {props.value
+                  ? props.value.toLocaleString("en-US")
+                  : props.value}
+              </span>
             </div>
           </Tooltip>
         );
       },
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.preferredBin.label" defaultMessage="Preferred bin" />,
-      accessor: 'preferredBin',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.putAway.preferredBin.label"
+          defaultMessage="Preferred bin"
+        />
+      ),
+      accessor: "preferredBin",
+      style: { whiteSpace: "normal" },
       Cell: (props) => (
         <div>
           {props.value && props.value.zoneName ? (
@@ -232,35 +281,63 @@ class PutAwaySecondPage extends Component {
               {props.value.zoneName}
               :&nbsp;
             </div>
-          ) : ''}
-          <div>{props.value ? props.value.name : ''}</div>
+          ) : (
+            ""
+          )}
+          <div>{props.value ? props.value.name : ""}</div>
         </div>
       ),
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.currentBin.label" defaultMessage="Current bin" />,
-      accessor: 'currentBins',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.putAway.currentBin.label"
+          defaultMessage="Current bin"
+        />
+      ),
+      accessor: "currentBins",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.stockMovement.label" defaultMessage="Stock Movement" />,
-      accessor: 'stockMovement.name',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.putAway.stockMovement.label"
+          defaultMessage="Stock Movement"
+        />
+      ),
+      accessor: "stockMovement.name",
+      style: { whiteSpace: "normal" },
       Expander: ({ isExpanded }) => (
         <span className="ml-2">
-          <div className={`rt-expander ${isExpanded && '-open'}`}>&bull;</div>
+          <div className={`rt-expander ${isExpanded && "-open"}`}>&bull;</div>
         </span>
       ),
       filterable: true,
       Filter,
-    }, {
-      Header: <Translate id="react.putAway.putAwayBin.label" defaultMessage="Putaway Bin" />,
-      accessor: 'putawayLocation',
+    },
+    {
+      Header: (
+        <Translate
+          id="react.putAway.putAwayBin.label"
+          defaultMessage="Putaway Bin"
+        />
+      ),
+      accessor: "putawayLocation",
       Cell: (cellInfo) => {
-        const splitItems = _.get(this.state.putAway.putawayItems, `[${cellInfo.index}].splitItems`);
+        const splitItems = _.get(
+          this.state.putAway.putawayItems,
+          `[${cellInfo.index}].splitItems`,
+        );
 
         if (splitItems && splitItems.length > 0) {
-          return <Translate id="react.putAway.splitLine.label" defaultMessage="Split line" />;
+          return (
+            <Translate
+              id="react.putAway.splitLine.label"
+              defaultMessage="Split line"
+            />
+          );
         }
 
         return (
@@ -268,23 +345,38 @@ class PutAwaySecondPage extends Component {
             options={this.state.bins}
             valueKey="id"
             labelKey="name"
-            value={_.get(this.state.putAway.putawayItems, `[${cellInfo.index}].${cellInfo.column.id}`) || null}
-            onChange={(value) => this.changePutAway(update(this.state.putAway, {
-              putawayItems: { [cellInfo.index]: { putawayLocation: { $set: value } } },
-            }))}
+            value={
+              _.get(
+                this.state.putAway.putawayItems,
+                `[${cellInfo.index}].${cellInfo.column.id}`,
+              ) || null
+            }
+            onChange={(value) =>
+              this.changePutAway(
+                update(this.state.putAway, {
+                  putawayItems: {
+                    [cellInfo.index]: { putawayLocation: { $set: value } },
+                  },
+                }),
+              )
+            }
             className="select-xs"
           />
         );
       },
       Filter,
-    }, {
-      Header: '',
-      accessor: 'splitItems',
+    },
+    {
+      Header: "",
+      accessor: "splitItems",
       Cell: (cellInfo) => (
         <div className="d-flex flex-row flex-wrap">
           <SplitLineModal
             putawayItem={this.state.putAway.putawayItems[cellInfo.index]}
-            splitItems={_.get(this.state.putAway.putawayItems, `[${cellInfo.index}].${cellInfo.column.id}`)}
+            splitItems={_.get(
+              this.state.putAway.putawayItems,
+              `[${cellInfo.index}].${cellInfo.column.id}`,
+            )}
             saveSplitItems={(splitItems) => {
               this.saveSplitItems(splitItems, cellInfo.index);
             }}
@@ -295,14 +387,20 @@ class PutAwaySecondPage extends Component {
             className="btn btn-outline-primary btn-xs mr-1 mb-1"
             onClick={() => this.editItem(cellInfo.index)}
           >
-            <Translate id="react.default.button.edit.label" defaultMessage="Edit" />
+            <Translate
+              id="react.default.button.edit.label"
+              defaultMessage="Edit"
+            />
           </button>
           <button
             type="button"
             className="btn btn-outline-danger btn-xs mb-1"
             onClick={() => this.deleteItem(cellInfo.index)}
           >
-            <Translate id="react.default.button.delete.label" defaultMessage="Delete" />
+            <Translate
+              id="react.default.button.delete.label"
+              defaultMessage="Delete"
+            />
           </button>
         </div>
       ),
@@ -321,7 +419,7 @@ class PutAwaySecondPage extends Component {
     if (this.state.pivotBy.length) {
       this.setState({ pivotBy: [], expanded: {} });
     } else {
-      this.setState({ pivotBy: ['stockMovement.name'], expanded: {} });
+      this.setState({ pivotBy: ["stockMovement.name"], expanded: {} });
     }
   };
 
@@ -337,29 +435,38 @@ class PutAwaySecondPage extends Component {
 
       const url = `/api/putaways/${this.props.match.params.putAwayId}`;
 
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const putAway = parseResponse(response.data.data);
 
-          const putawayItems = _.map(
-            putAway.putawayItems,
-            (val) => ({
-              ...val,
-              putawayLocation: (val.putawayLocation.id || val.preferredBin.id) ? {
-                id: val.putawayLocation.id ? val.putawayLocation.id : val.preferredBin.id,
-                name: val.putawayLocation.name ? val.putawayLocation.name : val.preferredBin.name,
-                zoneId: val.putawayLocation.id ? val.putawayLocation.zoneId
-                  : val.preferredBin.zoneId,
-                zoneName: val.putawayLocation.id ? val.putawayLocation.zoneName
-                  : val.preferredBin.zoneName,
-              } : null,
-            }),
-          );
+          const putawayItems = _.map(putAway.putawayItems, (val) => ({
+            ...val,
+            putawayLocation:
+              val.putawayLocation.id || val.preferredBin.id
+                ? {
+                    id: val.putawayLocation.id
+                      ? val.putawayLocation.id
+                      : val.preferredBin.id,
+                    name: val.putawayLocation.name
+                      ? val.putawayLocation.name
+                      : val.preferredBin.name,
+                    zoneId: val.putawayLocation.id
+                      ? val.putawayLocation.zoneId
+                      : val.preferredBin.zoneId,
+                    zoneName: val.putawayLocation.id
+                      ? val.putawayLocation.zoneName
+                      : val.preferredBin.zoneName,
+                  }
+                : null,
+          }));
 
           this.props.hideSpinner();
 
           const expanded = {};
-          _.forEach(putawayItems, (item, index) => { expanded[index] = true; });
+          _.forEach(putawayItems, (item, index) => {
+            expanded[index] = true;
+          });
 
           this.setState({ expanded, putAway: { ...putAway, putawayItems } });
         })
@@ -381,13 +488,13 @@ class PutAwaySecondPage extends Component {
     }
 
     let val = row[filter.id];
-    if (filter.id === 'putawayLocation') {
-      val = _.get(val, 'name');
+    if (filter.id === "putawayLocation") {
+      val = _.get(val, "name");
     }
-    if (filter.id === 'product') {
+    if (filter.id === "product") {
       val = val ? `${val.name} ${val.displayNameOrDefaultName}` : null;
     }
-    if (filter.id === 'inventoryItem.expirationDate') {
+    if (filter.id === "inventoryItem.expirationDate") {
       val = this.props.formatLocalizedDate(val, DateFormat.COMMON);
     }
     return _.toString(val).toLowerCase().includes(filter.value.toLowerCase());
@@ -399,30 +506,32 @@ class PutAwaySecondPage extends Component {
    */
   fetchBins() {
     this.props.showSpinner();
-    const url = '/api/internalLocations';
+    const url = "/api/internalLocations";
 
-    const mapBins = (bins) => (_.chain(bins)
-      .orderBy(['name'], ['asc']).value()
-    );
+    const mapBins = (bins) => _.chain(bins).orderBy(["name"], ["asc"]).value();
 
-    return apiClient.get(url, {
-      paramsSerializer: (parameters) => queryString.stringify(parameters),
-      params: {
-        'location.id': this.props.location.id,
-        locationTypeCode: ['BIN_LOCATION', 'INTERNAL'],
-        ignoreActivityCodes: ['RECEIVE_STOCK'],
-      },
-    })
+    return apiClient
+      .get(url, {
+        paramsSerializer: (parameters) => queryString.stringify(parameters),
+        params: {
+          "location.id": this.props.location.id,
+          locationTypeCode: ["BIN_LOCATION", "INTERNAL"],
+          ignoreActivityCodes: ["RECEIVE_STOCK"],
+        },
+      })
       .then((response) => {
-        const binGroups = _.partition(response.data.data, (bin) => (bin.zoneName));
-        const binsWithZone = _.chain(binGroups[0]).groupBy('zoneName')
+        const binGroups = _.partition(
+          response.data.data,
+          (bin) => bin.zoneName,
+        );
+        const binsWithZone = _.chain(binGroups[0])
+          .groupBy("zoneName")
           .map((value, key) => ({ name: key, options: mapBins(value) }))
-          .orderBy(['label'], ['asc'])
+          .orderBy(["label"], ["asc"])
           .value();
         const binsWithoutZone = mapBins(binGroups[1]);
-        this.setState(
-          { bins: [...binsWithZone, ...binsWithoutZone] },
-          () => this.props.hideSpinner(),
+        this.setState({ bins: [...binsWithZone, ...binsWithoutZone] }, () =>
+          this.props.hideSpinner(),
         );
       })
       .catch(() => this.props.hideSpinner());
@@ -448,7 +557,8 @@ class PutAwaySecondPage extends Component {
     this.props.showSpinner();
     const url = `/api/putaways?location.id=${this.state.location.id}`;
 
-    return apiClient.post(url, flattenRequest(putAwayToSave))
+    return apiClient
+      .post(url, flattenRequest(putAwayToSave))
       .then((response) => {
         const putAway = parseResponse(response.data.data);
 
@@ -473,12 +583,13 @@ class PutAwaySecondPage extends Component {
         [itemIndex]: {
           edit: { $set: true },
           splitItems: {
-            $set: _.map(_.filter(
-              this.state.putAway.putawayItems[itemIndex].splitItems,
-              (item) => item.id,
-            ), (item) => (
-              { ...item, delete: true }
-            )),
+            $set: _.map(
+              _.filter(
+                this.state.putAway.putawayItems[itemIndex].splitItems,
+                (item) => item.id,
+              ),
+              (item) => ({ ...item, delete: true }),
+            ),
           },
         },
       },
@@ -491,13 +602,12 @@ class PutAwaySecondPage extends Component {
     this.props.showSpinner();
     const url = `/api/putawayItems/${_.get(this.state.putAway.putawayItems, `[${itemIndex}].id`)}`;
 
-    apiClient.delete(url)
+    apiClient
+      .delete(url)
       .then(() => {
         const putAway = update(this.state.putAway, {
           putawayItems: {
-            $splice: [
-              [itemIndex, 1],
-            ],
+            $splice: [[itemIndex, 1]],
           },
         });
 
@@ -513,17 +623,24 @@ class PutAwaySecondPage extends Component {
    */
 
   nextPage() {
-    if (_.some(this.state.putAway.putawayItems, (putawayItem) =>
-      putawayItem.quantity > putawayItem.quantityAvailable)) {
+    if (
+      _.some(
+        this.state.putAway.putawayItems,
+        (putawayItem) => putawayItem.quantity > putawayItem.quantityAvailable,
+      )
+    ) {
       confirmAlert({
-        title: this.props.translate('react.putAway.message.putAwayError.label', 'Putaway error'),
+        title: this.props.translate(
+          "react.putAway.message.putAwayError.label",
+          "Putaway error",
+        ),
         message: this.props.translate(
-          'react.putAway.putAwayAlert.message',
-          'Cannot put away more than is available in the receiving bin. Reduce quantity of items in red to match the quantity in the receiving bin.',
+          "react.putAway.putAwayAlert.message",
+          "Cannot put away more than is available in the receiving bin. Reduce quantity of items in red to match the quantity in the receiving bin.",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.ok.label', 'OK'),
+            label: this.props.translate("react.default.ok.label", "OK"),
           },
         ],
       });
@@ -546,12 +663,17 @@ class PutAwaySecondPage extends Component {
     this.props.showSpinner();
     const { putawayNumber } = this.state.putAway;
 
-    return apiClient.get(
-      PUTAWAY_GENERATE_PDF(this.state.putAway.id),
-      { responseType: 'blob', params: { sortBy: this.state.sortBy } },
-    )
+    return apiClient
+      .get(PUTAWAY_GENERATE_PDF(this.state.putAway.id), {
+        responseType: "blob",
+        params: { sortBy: this.state.sortBy },
+      })
       .then((response) => {
-        fileDownload(response.data, `PutawayReport${putawayNumber ? `-${putawayNumber}` : ''}.pdf`, 'application/pdf');
+        fileDownload(
+          response.data,
+          `PutawayReport${putawayNumber ? `-${putawayNumber}` : ""}.pdf`,
+          "application/pdf",
+        );
         this.props.hideSpinner();
       })
       .catch(() => this.props.hideSpinner());
@@ -565,14 +687,14 @@ class PutAwaySecondPage extends Component {
     let { sortBy } = this.state;
 
     switch (sortBy) {
-      case 'currentBins':
-        sortBy = 'preferredBin';
+      case "currentBins":
+        sortBy = "preferredBin";
         break;
-      case 'preferredBin':
-        sortBy = '';
+      case "preferredBin":
+        sortBy = "";
         break;
       default:
-        sortBy = 'currentBins';
+        sortBy = "currentBins";
         break;
     }
 
@@ -582,19 +704,30 @@ class PutAwaySecondPage extends Component {
 
   fetchItems(sortBy) {
     const url = `/api/putaways/${this.state.putAway.id}?sortBy=${sortBy}`;
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
         const putawayItems = _.map(
           parseResponse(response.data.data.putawayItems),
           (val) => ({
             ...val,
-            putawayLocation: (val.putawayLocation.id || val.preferredBin.id) ? {
-              id: val.putawayLocation.id ? val.putawayLocation.id : val.preferredBin.id,
-              name: val.putawayLocation.name ? val.putawayLocation.name : val.preferredBin.name,
-              zoneId: val.putawayLocation.id ? val.putawayLocation.zoneId : val.preferredBin.zoneId,
-              zoneName: val.putawayLocation.id ? val.putawayLocation.zoneName
-                : val.preferredBin.zoneName,
-            } : null,
+            putawayLocation:
+              val.putawayLocation.id || val.preferredBin.id
+                ? {
+                    id: val.putawayLocation.id
+                      ? val.putawayLocation.id
+                      : val.preferredBin.id,
+                    name: val.putawayLocation.name
+                      ? val.putawayLocation.name
+                      : val.preferredBin.name,
+                    zoneId: val.putawayLocation.id
+                      ? val.putawayLocation.zoneId
+                      : val.preferredBin.zoneId,
+                    zoneName: val.putawayLocation.id
+                      ? val.putawayLocation.zoneName
+                      : val.preferredBin.zoneName,
+                  }
+                : null,
           }),
         );
         this.changePutAway({
@@ -607,12 +740,8 @@ class PutAwaySecondPage extends Component {
   }
 
   render() {
-    const {
-      onExpandedChange, toggleTree,
-    } = this;
-    const {
-      columns, pivotBy, expanded, sortBy,
-    } = this.state;
+    const { onExpandedChange, toggleTree } = this;
+    const { columns, pivotBy, expanded, sortBy } = this.state;
     const extraProps = {
       pivotBy,
       expanded,
@@ -623,7 +752,10 @@ class PutAwaySecondPage extends Component {
       <div className="putaway">
         <div className="d-flex justify-content-between mb-2 putaway-buttons">
           <div>
-            <Translate id="react.putAway.showBy.label" defaultMessage="Show by" />
+            <Translate
+              id="react.putAway.showBy.label"
+              defaultMessage="Show by"
+            />
             :
             <button
               type="button"
@@ -632,39 +764,56 @@ class PutAwaySecondPage extends Component {
               aria-pressed="false"
               onClick={toggleTree}
             >
-              {pivotBy && pivotBy.length
-                ? <Translate id="react.putAway.stockMovement.label" defaultMessage="Stock Movement" />
-                : <Translate id="react.putAway.product.label" defaultMessage="Product" /> }
+              {pivotBy && pivotBy.length ? (
+                <Translate
+                  id="react.putAway.stockMovement.label"
+                  defaultMessage="Stock Movement"
+                />
+              ) : (
+                <Translate
+                  id="react.putAway.product.label"
+                  defaultMessage="Product"
+                />
+              )}
             </button>
           </div>
           <span className="buttons-container classic-form-buttons">
             <button
               type="button"
-              onClick={() => this.savePutAways(
-                this.state.putAway,
-                () => this.sortPutawayItems(),
-              )}
+              onClick={() =>
+                this.savePutAways(this.state.putAway, () =>
+                  this.sortPutawayItems(),
+                )
+              }
               className="btn btn-outline-secondary btn-xs mr-3"
             >
               <span>
                 {this.props.translate(
                   /* eslint-disable no-nested-ternary */
-                  `react.putAway.${!sortBy ? 'sortByCurrentBins' : (sortBy === 'currentBins' ? 'sortByPreferredBin' : 'originalOrder')}.label`,
-                  !sortBy ? 'Sort by current bins' : (sortBy === 'currentBins' ? 'Sort by preferred bin' : 'Original order'),
+                  `react.putAway.${!sortBy ? "sortByCurrentBins" : sortBy === "currentBins" ? "sortByPreferredBin" : "originalOrder"}.label`,
+                  !sortBy
+                    ? "Sort by current bins"
+                    : sortBy === "currentBins"
+                      ? "Sort by preferred bin"
+                      : "Original order",
                 )}
               </span>
             </button>
             <button
               type="button"
               className="btn btn-outline-secondary btn-xs mr-3"
-              onClick={() => this.savePutAways(
-                this.state.putAway,
-                () => this.generatePutAwayList(),
-              )}
+              onClick={() =>
+                this.savePutAways(this.state.putAway, () =>
+                  this.generatePutAwayList(),
+                )
+              }
             >
               <span>
                 <i className="fa fa-print pr-2" />
-                <Translate id="react.putAway.generateList.label" defaultMessage="Generate Putaway list" />
+                <Translate
+                  id="react.putAway.generateList.label"
+                  defaultMessage="Generate Putaway list"
+                />
               </span>
             </button>
             <button
@@ -672,39 +821,51 @@ class PutAwaySecondPage extends Component {
               onClick={() => this.savePutAways(this.state.putAway)}
               className="btn btn-outline-secondary btn-xs"
               disabled={_.some(this.state.putAway.putawayItems, (putawayItem) =>
-                hasValidationError(putawayItem.quantity, putawayItem.quantityAvailable))}
+                hasValidationError(
+                  putawayItem.quantity,
+                  putawayItem.quantityAvailable,
+                ),
+              )}
             >
-              <Translate id="react.default.button.save.label" defaultMessage="Save" />
+              <Translate
+                id="react.default.button.save.label"
+                defaultMessage="Save"
+              />
             </button>
           </span>
         </div>
-        {
-          this.state.putAway.putawayItems
-            ? (
-              <SelectTreeTable
-                data={this.state.putAway.putawayItems}
-                columns={columns}
-                ref={(r) => { this.selectTable = r; }}
-                className="-striped -highlight"
-                {...extraProps}
-                defaultPageSize={Number.MAX_SAFE_INTEGER}
-                minRows={0}
-                showPaginationBottom={false}
-                filterable
-                defaultFilterMethod={this.filterMethod}
-              />
-            )
-            : null
-        }
+        {this.state.putAway.putawayItems ? (
+          <SelectTreeTable
+            data={this.state.putAway.putawayItems}
+            columns={columns}
+            ref={(r) => {
+              this.selectTable = r;
+            }}
+            className="-striped -highlight"
+            {...extraProps}
+            defaultPageSize={Number.MAX_SAFE_INTEGER}
+            minRows={0}
+            showPaginationBottom={false}
+            filterable
+            defaultFilterMethod={this.filterMethod}
+          />
+        ) : null}
         <div className="submit-buttons">
           <button
             disabled={_.some(this.state.putAway.putawayItems, (putawayItem) =>
-              hasValidationError(putawayItem.quantity, putawayItem.quantityAvailable))}
+              hasValidationError(
+                putawayItem.quantity,
+                putawayItem.quantityAvailable,
+              ),
+            )}
             type="button"
             onClick={() => this.nextPage()}
             className="btn btn-outline-primary btn-form float-right btn-xs"
           >
-            <Translate id="react.default.button.next.label" defaultMessage="Next" />
+            <Translate
+              id="react.default.button.next.label"
+              defaultMessage="Next"
+            />
           </button>
         </div>
       </div>
@@ -718,12 +879,10 @@ const mapStateToProps = (state) => ({
   putAwayTranslationsFetched: state.session.fetchedTranslations.putAway,
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    showSpinner, hideSpinner,
-  },
-)(PutAwaySecondPage);
+export default connect(mapStateToProps, {
+  showSpinner,
+  hideSpinner,
+})(PutAwaySecondPage);
 
 PutAwaySecondPage.defaultProps = {
   original: {},

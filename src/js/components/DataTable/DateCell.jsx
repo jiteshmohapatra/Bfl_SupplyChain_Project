@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import moment from "moment";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import TableCell from 'components/DataTable/TableCell';
-import DateFormat from 'consts/dateFormat';
-import { formatDate } from 'utils/translation-utils';
+import TableCell from "components/DataTable/TableCell";
+import DateFormat from "consts/dateFormat";
+import { formatDate } from "utils/translation-utils";
 
 const DateCell = ({
   displayDateFormat,

@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { Tooltip } from "react-tippy";
 
-import { renderFormField } from 'utils/form-utils';
-import RowSaveIndicator from 'utils/RowSaveIndicator';
+import { renderFormField } from "utils/form-utils";
+import RowSaveIndicator from "utils/RowSaveIndicator";
 
 class TableRow extends Component {
   shouldComponentUpdate(nextProps) {
     return !_.isEqualWith(this.props, nextProps, (objValue, othValue) => {
-      if (typeof objValue === 'function' || typeof othValue === 'function') {
+      if (typeof objValue === "function" || typeof othValue === "function") {
         return true;
       }
 
@@ -20,11 +20,20 @@ class TableRow extends Component {
 
   // eslint-disable-next-line class-methods-use-this
   rowRender(
-    properties, fieldsConfig, focusFieldMap, field, addRow,
-    removeRow, index, rowValues, rowRef,
+    properties,
+    fieldsConfig,
+    focusFieldMap,
+    field,
+    addRow,
+    removeRow,
+    index,
+    rowValues,
+    rowRef,
   ) {
     return _.map(fieldsConfig.fields, (config, name) => {
-      const dynamicAttr = config.getDynamicAttr ? config.getDynamicAttr(properties) : {};
+      const dynamicAttr = config.getDynamicAttr
+        ? config.getDynamicAttr(properties)
+        : {};
       const { attributes } = config;
       const { hide } = dynamicAttr;
       const flexWidth = dynamicAttr.flexWidth || config.flexWidth;
@@ -33,9 +42,11 @@ class TableRow extends Component {
         return (
           <div
             key={`${field}.${name}`}
-            className={`align-self-center ${attributes && attributes.cellClassName ? attributes.cellClassName : ''}`}
+            className={`align-self-center ${attributes && attributes.cellClassName ? attributes.cellClassName : ""}`}
             style={{
-              flex: fixedWidth ? `0 1 ${fixedWidth}` : `${flexWidth || '12'} 1 0`,
+              flex: fixedWidth
+                ? `0 1 ${fixedWidth}`
+                : `${flexWidth || "12"} 1 0`,
               minWidth: 0,
             }}
             role="cell"
@@ -51,7 +62,10 @@ class TableRow extends Component {
               addRow,
               removeRow,
               rowIndex: index,
-              fieldValue: config.fieldKey === '' ? rowValues : _.get(rowValues, config.fieldKey || name),
+              fieldValue:
+                config.fieldKey === ""
+                  ? rowValues
+                  : _.get(rowValues, config.fieldKey || name),
               fieldRef: (el) => rowRef(el, name),
             })}
           </div>
@@ -63,7 +77,14 @@ class TableRow extends Component {
 
   render() {
     const {
-      fieldsConfig, index, field, addRow, properties, removeRow, rowValues = {}, rowRef = () => {},
+      fieldsConfig,
+      index,
+      field,
+      addRow,
+      properties,
+      removeRow,
+      rowValues = {},
+      rowRef = () => {},
     } = this.props;
     const fieldNames = _.keys(fieldsConfig.fields);
     const focusFieldMap = {};
@@ -75,9 +96,12 @@ class TableRow extends Component {
     });
 
     const dynamicRowAttr = fieldsConfig.getDynamicRowAttr
-      ? fieldsConfig.getDynamicRowAttr({ ...properties, index, rowValues }) : {};
-    const rowIndex = !_.isNil(properties.parentIndex) ? properties.parentIndex : index;
-    const className = `table-row ${rowIndex % 2 === 0 ? 'even-row' : ''} ${dynamicRowAttr.className ? dynamicRowAttr.className : ''}`;
+      ? fieldsConfig.getDynamicRowAttr({ ...properties, index, rowValues })
+      : {};
+    const rowIndex = !_.isNil(properties.parentIndex)
+      ? properties.parentIndex
+      : index;
+    const className = `table-row ${rowIndex % 2 === 0 ? "even-row" : ""} ${dynamicRowAttr.className ? dynamicRowAttr.className : ""}`;
     const tooltip = dynamicRowAttr.tooltip ? dynamicRowAttr.tooltip : null;
 
     if (dynamicRowAttr.hideRow) {
@@ -95,22 +119,40 @@ class TableRow extends Component {
             hideDelay="50"
           >
             <div className="d-flex flex-row border-bottom table-inner-row">
-              {properties.isAutosaveEnabled
-                && <RowSaveIndicator lineItemSaveStatus={rowValues.rowSaveStatus} />}
+              {properties.isAutosaveEnabled && (
+                <RowSaveIndicator
+                  lineItemSaveStatus={rowValues.rowSaveStatus}
+                />
+              )}
               {this.rowRender(
-                properties, fieldsConfig, focusFieldMap, field, addRow,
-                removeRow, index, rowValues, rowRef,
+                properties,
+                fieldsConfig,
+                focusFieldMap,
+                field,
+                addRow,
+                removeRow,
+                index,
+                rowValues,
+                rowRef,
               )}
             </div>
           </Tooltip>
         )}
         {!tooltip && (
           <div className="d-flex flex-row border-bottom table-inner-row">
-            {properties.isAutosaveEnabled
-              && <RowSaveIndicator lineItemSaveStatus={rowValues.rowSaveStatus} />}
+            {properties.isAutosaveEnabled && (
+              <RowSaveIndicator lineItemSaveStatus={rowValues.rowSaveStatus} />
+            )}
             {this.rowRender(
-              properties, fieldsConfig, focusFieldMap, field, addRow,
-              removeRow, index, rowValues, rowRef,
+              properties,
+              fieldsConfig,
+              focusFieldMap,
+              field,
+              addRow,
+              removeRow,
+              index,
+              rowValues,
+              rowRef,
             )}
           </div>
         )}

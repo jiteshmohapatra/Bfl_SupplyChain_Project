@@ -1,30 +1,25 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import ReactTable from 'react-table';
-import selectTableHOC from 'react-table/lib/hoc/selectTable';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import ReactTable from "react-table";
+import selectTableHOC from "react-table/lib/hoc/selectTable";
 
-import {
-  createInfoBar,
-  hideInfoBar,
-  hideSpinner,
-  showSpinner,
-} from 'actions';
-import { STOCK_TRANSFER_CANDIDATES } from 'api/urls';
-import { TableCell } from 'components/DataTable';
-import { STOCK_TRANSFER_URL } from 'consts/applicationUrls';
-import DateFormat from 'consts/dateFormat';
-import { InfoBar, InfoBarConfigs } from 'consts/infoBar';
-import apiClient, { flattenRequest, parseResponse } from 'utils/apiClient';
-import customTreeTableHOC from 'utils/CustomTreeTable';
-import Filter from 'utils/Filter';
-import Translate from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { createInfoBar, hideInfoBar, hideSpinner, showSpinner } from "actions";
+import { STOCK_TRANSFER_CANDIDATES } from "api/urls";
+import { TableCell } from "components/DataTable";
+import { STOCK_TRANSFER_URL } from "consts/applicationUrls";
+import DateFormat from "consts/dateFormat";
+import { InfoBar, InfoBarConfigs } from "consts/infoBar";
+import apiClient, { flattenRequest, parseResponse } from "utils/apiClient";
+import customTreeTableHOC from "utils/CustomTreeTable";
+import Filter from "utils/Filter";
+import Translate from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import 'react-table/react-table.css';
+import "react-table/react-table.css";
 
 const SelectTreeTable = selectTableHOC(customTreeTableHOC(ReactTable));
 
@@ -32,7 +27,10 @@ const SelectTreeTable = selectTableHOC(customTreeTableHOC(ReactTable));
 
 function getNodes(data, node = []) {
   data.forEach((item) => {
-    if (Object.prototype.hasOwnProperty.call(item, '_subRows') && item._subRows) {
+    if (
+      Object.prototype.hasOwnProperty.call(item, "_subRows") &&
+      item._subRows
+    ) {
       // eslint-disable-next-line no-param-reassign
       node = getNodes(item._subRows, node);
     } else {
@@ -54,7 +52,7 @@ class CreateStockTransfer extends Component {
       columns,
       selection: new Set(),
       selectAll: false,
-      selectType: 'checkbox',
+      selectType: "checkbox",
     };
   }
 
@@ -67,7 +65,9 @@ class CreateStockTransfer extends Component {
       this.fetchStockTransferCandidates();
     }
 
-    this.props.createInfoBar(InfoBarConfigs[InfoBar.STOCK_TRANSFER_DESCRIPTION]);
+    this.props.createInfoBar(
+      InfoBarConfigs[InfoBar.STOCK_TRANSFER_DESCRIPTION],
+    );
   }
 
   componentWillUnmount() {
@@ -92,63 +92,109 @@ class CreateStockTransfer extends Component {
    */
   getColumns = () => [
     {
-      Header: <Translate id="react.stockTransfer.code.label" defaultMessage="Code" />,
-      accessor: 'product.productCode',
-      style: { whiteSpace: 'normal' },
+      Header: (
+        <Translate id="react.stockTransfer.code.label" defaultMessage="Code" />
+      ),
+      accessor: "product.productCode",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.product.label" defaultMessage="Product" />,
-      accessor: 'product',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.stockTransfer.product.label"
+          defaultMessage="Product"
+        />
+      ),
+      accessor: "product",
+      style: { whiteSpace: "normal" },
       Cell: (row) => (
         <TableCell
           {...row}
           value={row.value?.displayName ?? row.value?.name}
-          tooltip={row.value?.displayName && row.value?.name !== row.value?.displayName}
+          tooltip={
+            row.value?.displayName && row.value?.name !== row.value?.displayName
+          }
           tooltipLabel={row.value?.name}
         />
       ),
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.lot.label" defaultMessage="Lot" />,
-      accessor: 'lotNumber',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate id="react.stockTransfer.lot.label" defaultMessage="Lot" />
+      ),
+      accessor: "lotNumber",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.expiry.label" defaultMessage="Expiry" />,
-      accessor: 'expirationDate',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.stockTransfer.expiry.label"
+          defaultMessage="Expiry"
+        />
+      ),
+      accessor: "expirationDate",
+      style: { whiteSpace: "normal" },
       Cell: (props) => (
         <span>
-          {
-            props?.value
-              ? this.props.formatLocalizedDate(props.value, DateFormat.COMMON)
-              : props.value
-          }
+          {props?.value
+            ? this.props.formatLocalizedDate(props.value, DateFormat.COMMON)
+            : props.value}
         </span>
       ),
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.zone.label" defaultMessage="Zone" />,
-      accessor: 'originZone',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate id="react.stockTransfer.zone.label" defaultMessage="Zone" />
+      ),
+      accessor: "originZone",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.binLocation.label" defaultMessage="Bin Location" />,
-      accessor: 'originBinLocation.name',
-      style: { whiteSpace: 'normal' },
+    },
+    {
+      Header: (
+        <Translate
+          id="react.stockTransfer.binLocation.label"
+          defaultMessage="Bin Location"
+        />
+      ),
+      accessor: "originBinLocation.name",
+      style: { whiteSpace: "normal" },
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.quantityOnHand.label" defaultMessage="QOH" />,
-      accessor: 'quantityOnHand',
-      style: { whiteSpace: 'normal' },
-      Cell: (props) => <span>{props.value ? props.value.toLocaleString('en-US') : props.value}</span>,
+    },
+    {
+      Header: (
+        <Translate
+          id="react.stockTransfer.quantityOnHand.label"
+          defaultMessage="QOH"
+        />
+      ),
+      accessor: "quantityOnHand",
+      style: { whiteSpace: "normal" },
+      Cell: (props) => (
+        <span>
+          {props.value ? props.value.toLocaleString("en-US") : props.value}
+        </span>
+      ),
       Filter,
-    }, {
-      Header: <Translate id="react.stockTransfer.quantityAvailableToTransfer.label" defaultMessage="Quantity Available to Transfer" />,
-      accessor: 'quantityNotPicked',
-      style: { whiteSpace: 'normal' },
-      Cell: (props) => <span>{props.value ? props.value.toLocaleString('en-US') : props.value}</span>,
+    },
+    {
+      Header: (
+        <Translate
+          id="react.stockTransfer.quantityAvailableToTransfer.label"
+          defaultMessage="Quantity Available to Transfer"
+        />
+      ),
+      accessor: "quantityNotPicked",
+      style: { whiteSpace: "normal" },
+      Cell: (props) => (
+        <span>
+          {props.value ? props.value.toLocaleString("en-US") : props.value}
+        </span>
+      ),
       Filter,
     },
   ];
@@ -161,13 +207,14 @@ class CreateStockTransfer extends Component {
    */
   fetchStockTransferCandidates(locationId) {
     this.props.showSpinner();
-    return apiClient.get(STOCK_TRANSFER_CANDIDATES(locationId))
+    return apiClient
+      .get(STOCK_TRANSFER_CANDIDATES(locationId))
       .then((resp) => {
         const stockTransferCandidates = parseResponse(resp.data.data);
         const stockTransferItems = [];
         stockTransferCandidates.forEach((item) => {
           // this _id is used internally in TreeTable
-          const _id = _.uniqueId('item_');
+          const _id = _.uniqueId("item_");
           stockTransferItems.push({ _id, ...item });
         });
         this.setState({ stockTransferItems }, () => this.props.hideSpinner());
@@ -177,10 +224,10 @@ class CreateStockTransfer extends Component {
 
   filterMethod = (filter, row) => {
     let val = row[filter.id];
-    if (filter.id === 'expirationDate') {
+    if (filter.id === "expirationDate") {
       val = this.props.formatLocalizedDate(val, DateFormat.COMMON);
     }
-    if (filter.id === 'product') {
+    if (filter.id === "product") {
       val = val ? `${val.name} ${val.displayName}` : null;
     }
     return _.toString(val).toLowerCase().includes(filter.value.toLowerCase());
@@ -192,20 +239,22 @@ class CreateStockTransfer extends Component {
    */
   createStockTransfer() {
     this.props.showSpinner();
-    const url = '/api/stockTransfers/';
+    const url = "/api/stockTransfers/";
     const payload = {
-      stockTransferItems: _.filter(
-        this.state.stockTransferItems,
-        (item) => _.includes([...this.state.selection], item._id),
+      stockTransferItems: _.filter(this.state.stockTransferItems, (item) =>
+        _.includes([...this.state.selection], item._id),
       ),
     };
 
-    apiClient.post(url, flattenRequest(payload))
+    apiClient
+      .post(url, flattenRequest(payload))
       .then((response) => {
         const stockTransfer = parseResponse(response.data.data);
         this.props.hideSpinner();
 
-        this.props.history.push(STOCK_TRANSFER_URL.createById(stockTransfer.id));
+        this.props.history.push(
+          STOCK_TRANSFER_URL.createById(stockTransfer.id),
+        );
         this.props.nextPage({ stockTransfer });
       })
       .catch(() => this.props.hideSpinner());
@@ -243,8 +292,7 @@ class CreateStockTransfer extends Component {
    * @param {string} key
    * @public
    */
-  isSelected = (key) =>
-    _.includes([...this.state.selection], key);
+  isSelected = (key) => _.includes([...this.state.selection], key);
 
   /**
    * Adds or deletes item from selection array depending on what user did.
@@ -274,12 +322,8 @@ class CreateStockTransfer extends Component {
   };
 
   render() {
-    const {
-      toggleSelection, toggleAll, isSelected,
-    } = this;
-    const {
-      stockTransferItems, columns, selectAll, selectType,
-    } = this.state;
+    const { toggleSelection, toggleAll, isSelected } = this;
+    const { stockTransferItems, columns, selectAll, selectType } = this.state;
     const extraProps = {
       selectAll,
       isSelected,
@@ -292,9 +336,11 @@ class CreateStockTransfer extends Component {
       <div className="stock-transfer">
         <div className="d-flex justify-content-between stock-transfer-buttons">
           <div className="count-selected ">
-            {this.state.selection.size}
-            {' '}
-            <Translate id="react.stockTransfer.selected.label" defaultMessage="Selected" />
+            {this.state.selection.size}{" "}
+            <Translate
+              id="react.stockTransfer.selected.label"
+              defaultMessage="Selected"
+            />
           </div>
           <button
             type="button"
@@ -302,43 +348,42 @@ class CreateStockTransfer extends Component {
             onClick={() => this.createStockTransfer()}
             className="btn btn-outline-primary btn-form float-right btn-xs"
           >
-            <Translate id="react.stockTransfer.startStockTransfer.label" defaultMessage="Start Stock Transfer" />
+            <Translate
+              id="react.stockTransfer.startStockTransfer.label"
+              defaultMessage="Start Stock Transfer"
+            />
           </button>
         </div>
-        {
-          stockTransferItems
-            ? (
-              <SelectTreeTable
-                data={stockTransferItems}
-                columns={columns}
-                ref={(r) => { this.selectTable = r; }}
-                className="-striped -highlight"
-                {...extraProps}
-                defaultPageSize={Number.MAX_SAFE_INTEGER}
-                minRows={0}
-                showPaginationBottom={false}
-                filterable
-                defaultFilterMethod={this.filterMethod}
-                SelectInputComponent={({
-                  id, checked, onClick, row,
-                }) => (
-                  <input
-                    type={selectType}
-                    checked={checked}
-                    disabled={row && row.quantityNotPicked === 0}
-                    onChange={() => {}}
-                    onClick={(e) => {
-                      const { shiftKey } = e;
+        {stockTransferItems ? (
+          <SelectTreeTable
+            data={stockTransferItems}
+            columns={columns}
+            ref={(r) => {
+              this.selectTable = r;
+            }}
+            className="-striped -highlight"
+            {...extraProps}
+            defaultPageSize={Number.MAX_SAFE_INTEGER}
+            minRows={0}
+            showPaginationBottom={false}
+            filterable
+            defaultFilterMethod={this.filterMethod}
+            SelectInputComponent={({ id, checked, onClick, row }) => (
+              <input
+                type={selectType}
+                checked={checked}
+                disabled={row && row.quantityNotPicked === 0}
+                onChange={() => {}}
+                onClick={(e) => {
+                  const { shiftKey } = e;
 
-                      e.stopPropagation();
-                      onClick(id, shiftKey, row);
-                    }}
-                  />
-                )}
+                  e.stopPropagation();
+                  onClick(id, shiftKey, row);
+                }}
               />
-            )
-            : null
-        }
+            )}
+          />
+        ) : null}
         <div className="submit-buttons">
           <button
             type="button"
@@ -346,7 +391,10 @@ class CreateStockTransfer extends Component {
             onClick={() => this.createStockTransfer()}
             className="btn btn-outline-primary btn-form float-right btn-xs"
           >
-            <Translate id="react.stockTransfer.startStockTransfer.label" defaultMessage="Start Stock Transfer" />
+            <Translate
+              id="react.stockTransfer.startStockTransfer.label"
+              defaultMessage="Start Stock Transfer"
+            />
           </button>
         </div>
       </div>
@@ -355,7 +403,8 @@ class CreateStockTransfer extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  stockTransferTranslationsFetched: state.session.fetchedTranslations.stockTransfer,
+  stockTransferTranslationsFetched:
+    state.session.fetchedTranslations.stockTransfer,
   formatLocalizedDate: formatDate(state.localize),
 });
 
@@ -366,10 +415,9 @@ const mapDispatchToProps = {
   hideInfoBar,
 };
 
-export default withRouter(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(CreateStockTransfer));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(CreateStockTransfer),
+);
 
 CreateStockTransfer.propTypes = {
   /** Function called when data is loading */

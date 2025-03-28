@@ -1,4 +1,4 @@
-import { FETCH_REQUISITION_STATUS_CODES } from 'actions/types';
+import { FETCH_REQUISITION_STATUS_CODES } from "actions/types";
 
 const initialState = {
   data: [],

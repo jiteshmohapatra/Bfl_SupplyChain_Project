@@ -1,21 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 
-import DateFormat from 'consts/dateFormat';
-import { formatDate } from 'utils/translation-utils';
+import DateFormat from "consts/dateFormat";
+import { formatDate } from "utils/translation-utils";
 
 const FormatDate = ({ date, formatName }) => {
   const { translateDate } = useSelector((state) => ({
     translateDate: formatDate(state.localize),
   }));
 
-  return (
-    <>
-      {translateDate(date, formatName)}
-    </>
-  );
+  return <>{translateDate(date, formatName)}</>;
 };
 
 export default FormatDate;

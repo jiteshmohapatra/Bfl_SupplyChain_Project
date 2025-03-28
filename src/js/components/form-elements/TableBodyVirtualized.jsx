@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { AutoSizer, InfiniteLoader, List } from 'react-virtualized';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { AutoSizer, InfiniteLoader, List } from "react-virtualized";
 
-import TableRow from 'components/form-elements/TableRow';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import TableRow from "components/form-elements/TableRow";
+import { translateWithDefaultMessage } from "utils/Translate";
 
 const ROW_HEIGHT = 28;
 
@@ -28,16 +28,23 @@ class TableBodyVirtualized extends Component {
   }
 
   getHeight() {
-    const { fieldsConfig: { subfieldKey, getDynamicRowAttr }, fields, properties } = this.props;
+    const {
+      fieldsConfig: { subfieldKey, getDynamicRowAttr },
+      fields,
+      properties,
+    } = this.props;
     let height = 0;
-    const maxTableHeight = window.innerHeight < 900
-      // 0.35 * window.innerHeight = 35vh from table-content class in StockMovement.scss
-      ? 0.35 * window.innerHeight : 0.40 * window.innerHeight;
+    const maxTableHeight =
+      window.innerHeight < 900
+        ? // 0.35 * window.innerHeight = 35vh from table-content class in StockMovement.scss
+          0.35 * window.innerHeight
+        : 0.4 * window.innerHeight;
 
     if (!subfieldKey) {
       height = fields.value.reduce((acc, field) => {
         const dynamicAttr = getDynamicRowAttr
-          ? getDynamicRowAttr({ ...properties, rowValues: field }) : {};
+          ? getDynamicRowAttr({ ...properties, rowValues: field })
+          : {};
         // If a row is supposed to be hidden or the height is already higher than max height,
         // return this height without increasing it
         if (dynamicAttr.hideRow || acc > maxTableHeight) {
@@ -50,7 +57,8 @@ class TableBodyVirtualized extends Component {
     } else {
       _.forEach(fields.value, (field) => {
         const dynamicAttr = getDynamicRowAttr
-          ? getDynamicRowAttr({ ...properties, rowValues: field }) : {};
+          ? getDynamicRowAttr({ ...properties, rowValues: field })
+          : {};
         const subfields = field[subfieldKey];
 
         if (dynamicAttr.hideRow) {
@@ -59,10 +67,13 @@ class TableBodyVirtualized extends Component {
 
         if (!height) {
           height = ROW_HEIGHT * (subfields.length + 1);
-        } else if (height + (ROW_HEIGHT * (subfields.length + 1)) > maxTableHeight) {
+        } else if (
+          height + ROW_HEIGHT * (subfields.length + 1) >
+          maxTableHeight
+        ) {
           height = maxTableHeight;
         } else {
-          height += (ROW_HEIGHT * (subfields.length + 1));
+          height += ROW_HEIGHT * (subfields.length + 1);
         }
       });
     }
@@ -70,11 +81,17 @@ class TableBodyVirtualized extends Component {
   }
 
   getRowHeight({ index }) {
-    const { fieldsConfig: { subfieldKey, getDynamicRowAttr }, fields, properties } = this.props;
+    const {
+      fieldsConfig: { subfieldKey, getDynamicRowAttr },
+      fields,
+      properties,
+    } = this.props;
     const rowValues = fields?.value?.[index];
 
-    const dynamicAttr = getDynamicRowAttr && rowValues
-      ? getDynamicRowAttr({ ...properties, index, rowValues }) : {};
+    const dynamicAttr =
+      getDynamicRowAttr && rowValues
+        ? getDynamicRowAttr({ ...properties, index, rowValues })
+        : {};
 
     if (dynamicAttr.hideRow) {
       return 0;
@@ -97,11 +114,12 @@ class TableBodyVirtualized extends Component {
     return ROW_HEIGHT * (subfields.length + 1);
   }
 
-  rowRenderer({
-    key, index, style,
-  }) {
+  rowRenderer({ key, index, style }) {
     const {
-      fieldsConfig, properties, fields, tableRef = () => {},
+      fieldsConfig,
+      properties,
+      fields,
+      tableRef = () => {},
       addRow = (row = {}) => fields.push(row),
     } = this.props;
     const field = `${fields.name}[${index}]`;
@@ -111,9 +129,10 @@ class TableBodyVirtualized extends Component {
     if (fields?.value?.[index]) {
       const dynamicRowAttr = fieldsConfig.getDynamicRowAttr
         ? fieldsConfig.getDynamicRowAttr({
-          ...properties,
-          rowValues: fields.value[index],
-        }) : {};
+            ...properties,
+            rowValues: fields.value[index],
+          })
+        : {};
 
       if (dynamicRowAttr.hideRow) {
         return null;
@@ -139,7 +158,7 @@ class TableBodyVirtualized extends Component {
     }
     return (
       <div key={key} style={style}>
-        {this.props.translate('react.default.loading.label', 'Loading...')}
+        {this.props.translate("react.default.loading.label", "Loading...")}
       </div>
     );
   }
@@ -151,9 +170,8 @@ class TableBodyVirtualized extends Component {
   render() {
     // eslint-disable-next-line max-len
     const { properties, pageSize } = this.props;
-    const {
-      totalCount, loadMoreRows, isRowLoaded, isFirstPageLoaded,
-    } = properties;
+    const { totalCount, loadMoreRows, isRowLoaded, isFirstPageLoaded } =
+      properties;
 
     const loadPage = isFirstPageLoaded ? () => {} : loadMoreRows;
 

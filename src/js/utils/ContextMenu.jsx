@@ -1,18 +1,22 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiMoreLine } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
-import { Popover } from 'react-tiny-popover';
+import PropTypes from "prop-types";
+import { RiMoreLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
+import { Popover } from "react-tiny-popover";
 
-import actionItemType from 'consts/actionItemType';
-import useContextMenu from 'hooks/useContextMenu';
-import Translate from 'utils/Translate';
+import actionItemType from "consts/actionItemType";
+import useContextMenu from "hooks/useContextMenu";
+import Translate from "utils/Translate";
 
-import './utils.scss';
+import "./utils.scss";
 
 const ContextMenu = ({
-  positions, actions, dropdownClasses, popoverClasses, id,
+  positions,
+  actions,
+  dropdownClasses,
+  popoverClasses,
+  id,
 }) => {
   const {
     getActionItemType,
@@ -30,56 +34,61 @@ const ContextMenu = ({
       padding={10}
       onClickOutside={() => setIsPopoverOpen(false)}
       ref={popoverRef}
-      content={() => (
+      content={() =>
         actions && (
-        <div
-          className={`${popoverClasses} context-menu padding-8`}
-          data-testid="dropdown-menu"
-        >
-          {actions.map((action) => {
-            const itemClasses = `${dropdownClasses} d-flex align-items-center gap-8 dropdown-item ${action.variant === 'danger' ? 'font-red-ob' : ''}`;
-            const itemValue = (
-              <>
-                {action.leftIcon && action.leftIcon}
-                {action.label
-                  && <Translate id={action.label} defaultMessage={action.defaultLabel} />}
-              </>
-            );
-            const elementType = getActionItemType(action);
-            const link = elementType === actionItemType.LINK || actionItemType.REACT_LINK
-              ? buildLink(action, id)
-              : '';
+          <div
+            className={`${popoverClasses} context-menu padding-8`}
+            data-testid="dropdown-menu"
+          >
+            {actions.map((action) => {
+              const itemClasses = `${dropdownClasses} d-flex align-items-center gap-8 dropdown-item ${action.variant === "danger" ? "font-red-ob" : ""}`;
+              const itemValue = (
+                <>
+                  {action.leftIcon && action.leftIcon}
+                  {action.label && (
+                    <Translate
+                      id={action.label}
+                      defaultMessage={action.defaultLabel}
+                    />
+                  )}
+                </>
+              );
+              const elementType = getActionItemType(action);
+              const link =
+                elementType === actionItemType.LINK || actionItemType.REACT_LINK
+                  ? buildLink(action, id)
+                  : "";
 
-            return (
-              <React.Fragment key={action.label}>
-                {elementType === actionItemType.BUTTON && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    action.onClick(id);
-                    setIsPopoverOpen(false);
-                  }}
-                  className={itemClasses}
-                >
-                  {itemValue}
-                </button>
-                )}
-                {elementType === actionItemType.LINK && (
-                <a href={link} className={itemClasses}>
-                  {itemValue}
-                </a>
-                )}
-                {elementType === actionItemType.REACT_LINK && (
-                <Link to={link} className={itemClasses}>
-                  {itemValue}
-                </Link>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
+              return (
+                <React.Fragment key={action.label}>
+                  {elementType === actionItemType.BUTTON && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        action.onClick(id);
+                        setIsPopoverOpen(false);
+                      }}
+                      className={itemClasses}
+                    >
+                      {itemValue}
+                    </button>
+                  )}
+                  {elementType === actionItemType.LINK && (
+                    <a href={link} className={itemClasses}>
+                      {itemValue}
+                    </a>
+                  )}
+                  {elementType === actionItemType.REACT_LINK && (
+                    <Link to={link} className={itemClasses}>
+                      {itemValue}
+                    </Link>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
         )
-      )}
+      }
     >
       <button
         data-testid="dropdown-toggle"
@@ -96,15 +105,17 @@ const ContextMenu = ({
 export default ContextMenu;
 
 ContextMenu.propTypes = {
-  actions: PropTypes.arrayOf(PropTypes.shape({
-    leftIcon: PropTypes.element.isRequired,
-    label: PropTypes.string.isRequired,
-    defaultLabel: PropTypes.string.isRequired,
-    href: PropTypes.string,
-    reactLink: PropTypes.bool,
-    variant: PropTypes.string,
-    onClick: PropTypes.func,
-  })).isRequired,
+  actions: PropTypes.arrayOf(
+    PropTypes.shape({
+      leftIcon: PropTypes.element.isRequired,
+      label: PropTypes.string.isRequired,
+      defaultLabel: PropTypes.string.isRequired,
+      href: PropTypes.string,
+      reactLink: PropTypes.bool,
+      variant: PropTypes.string,
+      onClick: PropTypes.func,
+    }),
+  ).isRequired,
   positions: PropTypes.arrayOf(PropTypes.string),
   id: PropTypes.string.isRequired,
   dropdownClasses: PropTypes.string,
@@ -112,7 +123,7 @@ ContextMenu.propTypes = {
 };
 
 ContextMenu.defaultProps = {
-  positions: ['top', 'right', 'left', 'bottom'],
-  dropdownClasses: '',
-  popoverClasses: '',
+  positions: ["top", "right", "left", "bottom"],
+  dropdownClasses: "",
+  popoverClasses: "",
 };

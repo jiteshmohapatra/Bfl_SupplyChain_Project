@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const HeaderButtonsWrapper = ({ children, className }) => (
-  <div className={`d-flex justify-content-end buttons align-items-center ${className}`}>
+  <div
+    className={`d-flex justify-content-end buttons align-items-center ${className}`}
+  >
     {children}
   </div>
 );
@@ -16,5 +18,5 @@ HeaderButtonsWrapper.propTypes = {
 };
 
 HeaderButtonsWrapper.defaultProps = {
-  className: '',
+  className: "",
 };

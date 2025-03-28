@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import WizardPage from 'components/wizard/WizardPage';
-import WizardSteps from 'components/wizard/WizardSteps';
-import WizardTitle from 'components/wizard/WizardTitle';
+import WizardPage from "components/wizard/WizardPage";
+import WizardSteps from "components/wizard/WizardSteps";
+import WizardTitle from "components/wizard/WizardTitle";
 
 /** Wizard component. */
 class Wizard extends Component {
@@ -38,7 +38,9 @@ class Wizard extends Component {
     const { currentPage } = this.state;
     if (this.props.pageList.length > currentPage) {
       this.setState({
-        prevPage: currentPage, currentPage: currentPage + 1, values,
+        prevPage: currentPage,
+        currentPage: currentPage + 1,
+        values,
       });
       this.props.updateWizardValues(currentPage + 1, values);
     } else {
@@ -56,7 +58,9 @@ class Wizard extends Component {
     const { prevPage } = this.state;
     if (prevPage > 0) {
       this.setState({
-        prevPage: prevPage - 1, currentPage: prevPage, values,
+        prevPage: prevPage - 1,
+        currentPage: prevPage,
+        values,
       });
       this.props.updateWizardValues(prevPage, values);
     } else {
@@ -79,13 +83,26 @@ class Wizard extends Component {
   render() {
     const { currentPage, values } = this.state;
     const {
-      title, pageList, stepList, additionalTitle, additionalProps, showStepNumber,
+      title,
+      pageList,
+      stepList,
+      additionalTitle,
+      additionalProps,
+      showStepNumber,
     } = this.props;
 
     return (
       <div className="content-wrap" data-testid="content-wrap">
-        <WizardTitle title={title} additionalTitle={additionalTitle} values={values} />
-        <WizardSteps steps={stepList} currentStep={currentPage} showStepNumber={showStepNumber} />
+        <WizardTitle
+          title={title}
+          additionalTitle={additionalTitle}
+          values={values}
+        />
+        <WizardSteps
+          steps={stepList}
+          currentStep={currentPage}
+          showStepNumber={showStepNumber}
+        />
         <div className="panel panel-primary">
           <WizardPage
             pageList={pageList}
@@ -104,7 +121,8 @@ class Wizard extends Component {
 
 const mapStateToProps = (state) => ({
   locale: state.session.activeLanguage,
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   hasPackingSupport: state.session.currentLocation.hasPackingSupport,
 });
 

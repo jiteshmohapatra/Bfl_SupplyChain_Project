@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
-import './style.scss';
+import "./style.scss";
 
 const Switch = ({
   defaultValue,
@@ -44,18 +44,17 @@ const Switch = ({
         <div className="slider" />
       </label>
       <div className="switch-title">
-        {value
-          ? (
-            <Translate
-              id={titles?.checked?.id}
-              defaultMessage={titles?.checked?.defaultMessage}
-            />
-          ) : (
-            <Translate
-              id={titles?.unchecked?.id}
-              defaultMessage={titles?.unchecked?.defaultMessage}
-            />
-          )}
+        {value ? (
+          <Translate
+            id={titles?.checked?.id}
+            defaultMessage={titles?.checked?.defaultMessage}
+          />
+        ) : (
+          <Translate
+            id={titles?.unchecked?.id}
+            defaultMessage={titles?.unchecked?.defaultMessage}
+          />
+        )}
       </div>
     </div>
   );
@@ -85,14 +84,14 @@ Switch.defaultProps = {
   defaultValue: false,
   titles: {
     checked: {
-      id: '',
-      defaultMessage: '',
+      id: "",
+      defaultMessage: "",
     },
     unchecked: {
-      id: '',
-      defaultMessage: '',
+      id: "",
+      defaultMessage: "",
     },
   },
   onChange: () => {},
-  className: '',
+  className: "",
 };

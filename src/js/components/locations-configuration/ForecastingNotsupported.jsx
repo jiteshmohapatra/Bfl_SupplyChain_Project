@@ -1,14 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 const ForecastingNotsupported = ({ previousPage }) => (
   <>
     <div className="classic-form with-description forecasting">
       <div className="form-title">
-        <Translate id="react.locationsConfiguration.forecasting.label" defaultMessage="Forecasting" />
+        <Translate
+          id="react.locationsConfiguration.forecasting.label"
+          defaultMessage="Forecasting"
+        />
       </div>
       <div className="form-subtitle">
         <Translate
@@ -18,11 +21,24 @@ const ForecastingNotsupported = ({ previousPage }) => (
       </div>
     </div>
     <div className="submit-buttons">
-      <button type="button" onClick={previousPage} className="btn btn-outline-primary float-left btn-xs">
-        <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+      <button
+        type="button"
+        onClick={previousPage}
+        className="btn btn-outline-primary float-left btn-xs"
+      >
+        <Translate
+          id="react.default.button.previous.label"
+          defaultMessage="Previous"
+        />
       </button>
-      <button type="submit" className="btn btn-outline-primary float-right btn-xs">
-        <Translate id="react.default.button.finish.label" defaultMessage="Finish" />
+      <button
+        type="submit"
+        className="btn btn-outline-primary float-right btn-xs"
+      >
+        <Translate
+          id="react.default.button.finish.label"
+          defaultMessage="Finish"
+        />
       </button>
     </div>
   </>

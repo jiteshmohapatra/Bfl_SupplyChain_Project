@@ -1,63 +1,69 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import queryString from 'query-string';
-import DatePicker from 'react-datepicker';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import queryString from "query-string";
+import DatePicker from "react-datepicker";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import TextField from 'components/form-elements/TextField';
-import ProductSelect from 'components/product-select/ProductSelect';
-import DateFormat from 'consts/dateFormat';
-import StockMovementStatus from 'consts/stockMovementStatus';
-import apiClient, { flattenRequest, parseResponse } from 'utils/apiClient';
-import Checkbox from 'utils/Checkbox';
-import { renderFormField } from 'utils/form-utils';
-import { formatProductDisplayName } from 'utils/form-values-utils';
-import { debounceAvailableItemsFetch } from 'utils/option-utils';
-import Select from 'utils/Select';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate, getDateFormat, getLocaleCode } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import TextField from "components/form-elements/TextField";
+import ProductSelect from "components/product-select/ProductSelect";
+import DateFormat from "consts/dateFormat";
+import StockMovementStatus from "consts/stockMovementStatus";
+import apiClient, { flattenRequest, parseResponse } from "utils/apiClient";
+import Checkbox from "utils/Checkbox";
+import { renderFormField } from "utils/form-utils";
+import { formatProductDisplayName } from "utils/form-values-utils";
+import { debounceAvailableItemsFetch } from "utils/option-utils";
+import Select from "utils/Select";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
+import {
+  formatDate,
+  getDateFormat,
+  getLocaleCode,
+} from "utils/translation-utils";
 
-import 'react-table/react-table.css';
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-table/react-table.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 const FIELDS = {
   returnItems: {
     type: ArrayField,
-    maxTableHeight: 'calc(100vh - 500px)',
+    maxTableHeight: "calc(100vh - 500px)",
     getDynamicRowAttr: ({ rowValues, translate }) => {
-      let className = '';
-      let tooltip = '';
+      let className = "";
+      let tooltip = "";
       if (rowValues.recalled && rowValues.onHold) {
-        className = 'recalled-and-on-hold';
-        tooltip = translate('react.outboundReturns.recalledAndOnHold.label');
+        className = "recalled-and-on-hold";
+        tooltip = translate("react.outboundReturns.recalledAndOnHold.label");
       } else if (rowValues.recalled) {
-        className = 'recalled';
-        tooltip = translate('react.outboundReturns.recalled.label');
+        className = "recalled";
+        tooltip = translate("react.outboundReturns.recalled.label");
       } else if (rowValues.onHold) {
-        className = 'on-hold';
-        tooltip = translate('react.outboundReturns.onHold.label');
+        className = "on-hold";
+        tooltip = translate("react.outboundReturns.onHold.label");
       }
       return { className, tooltip };
     },
     fields: {
       checked: {
-        fieldKey: '',
-        label: '',
-        flexWidth: '0.5',
+        fieldKey: "",
+        label: "",
+        flexWidth: "0.5",
         type: ({
           // eslint-disable-next-line react/prop-types
-          rowIndex, fieldValue, selectRow,
+          rowIndex,
+          fieldValue,
+          selectRow,
         }) => (
           <Checkbox
             id={rowIndex.toString()}
@@ -68,84 +74,83 @@ const FIELDS = {
           />
         ),
       },
-      'product.productCode': {
+      "product.productCode": {
         type: LabelField,
-        label: 'react.outboundReturns.productCode.label',
-        defaultMessage: 'Code',
-        flexWidth: '1',
+        label: "react.outboundReturns.productCode.label",
+        defaultMessage: "Code",
+        flexWidth: "1",
       },
       product: {
         type: LabelField,
-        label: 'react.outboundReturns.productName.label',
-        defaultMessage: 'Product',
-        flexWidth: '4.5',
+        label: "react.outboundReturns.productName.label",
+        defaultMessage: "Product",
+        flexWidth: "4.5",
         getDynamicAttr: ({ fieldValue }) => ({
           tooltipValue: fieldValue?.name,
         }),
         attributes: {
           formatValue: formatProductDisplayName,
           showValueTooltip: true,
-          className: 'text-left ml-1',
+          className: "text-left ml-1",
         },
       },
       lotNumber: {
         type: LabelField,
-        label: 'react.outboundReturns.lot.label',
-        defaultMessage: 'Lot',
-        flexWidth: '1',
+        label: "react.outboundReturns.lot.label",
+        defaultMessage: "Lot",
+        flexWidth: "1",
       },
       expirationDate: {
         type: LabelField,
-        label: 'react.outboundReturns.expiry.label',
-        defaultMessage: 'Expiry',
-        flexWidth: '1',
+        label: "react.outboundReturns.expiry.label",
+        defaultMessage: "Expiry",
+        flexWidth: "1",
         getDynamicAttr: ({ formatLocalizedDate }) => ({
           formatValue: (value) => formatLocalizedDate(value, DateFormat.COMMON),
         }),
       },
       quantityOnHand: {
         type: LabelField,
-        label: 'react.outboundReturns.qoh.label',
-        defaultMessage: 'QOH',
-        flexWidth: '1',
+        label: "react.outboundReturns.qoh.label",
+        defaultMessage: "QOH",
+        flexWidth: "1",
       },
       quantityNotPicked: {
         type: LabelField,
-        label: 'react.outboundReturns.qtyNotPicked.label',
-        defaultMessage: 'Quantity Available to Return',
-        headerTooltip: 'react.outboundReturns.qtyNotPickedTooltip.label',
-        headerDefaultTooltip: 'This is the quantity on hand that is not currently picked in a shipment',
-        flexWidth: '1',
+        label: "react.outboundReturns.qtyNotPicked.label",
+        defaultMessage: "Quantity Available to Return",
+        headerTooltip: "react.outboundReturns.qtyNotPickedTooltip.label",
+        headerDefaultTooltip:
+          "This is the quantity on hand that is not currently picked in a shipment",
+        flexWidth: "1",
       },
       originZone: {
         type: LabelField,
-        label: 'react.outboundReturns.zone.label',
-        defaultMessage: 'Zone',
-        flexWidth: '1',
+        label: "react.outboundReturns.zone.label",
+        defaultMessage: "Zone",
+        flexWidth: "1",
         attributes: {
           showValueTooltip: true,
         },
       },
-      'originBinLocation.name': {
+      "originBinLocation.name": {
         type: LabelField,
-        label: 'react.outboundReturns.bin.label',
-        defaultMessage: 'Bin Location',
-        flexWidth: '1',
+        label: "react.outboundReturns.bin.label",
+        defaultMessage: "Bin Location",
+        flexWidth: "1",
         attributes: {
           showValueTooltip: true,
         },
       },
       quantity: {
         type: TextField,
-        label: 'react.outboundReturns.quantity.label',
-        defaultMessage: 'Qty to Return',
-        flexWidth: '1',
+        label: "react.outboundReturns.quantity.label",
+        defaultMessage: "Qty to Return",
+        flexWidth: "1",
         attributes: {
-          type: 'number',
+          type: "number",
         },
-        getDynamicAttr: ({
-          updateRow, values, rowIndex,
-        }) => ({
+        getDynamicAttr: ({ updateRow, values, rowIndex }) => ({
           onChange: () => updateRow(values, rowIndex),
         }),
       },
@@ -159,13 +164,13 @@ function validate(values) {
 
   _.forEach(values.returnItems, (item, key) => {
     if (
-      item.checked
-      && (
-        (_.toInteger(item.quantity) > item.quantityNotPicked)
-        || _.toInteger(item.quantity) < 0
-      )
+      item.checked &&
+      (_.toInteger(item.quantity) > item.quantityNotPicked ||
+        _.toInteger(item.quantity) < 0)
     ) {
-      errors.returnItems[key] = { quantity: 'react.outboundReturns.errors.quantityToReturn.label' };
+      errors.returnItems[key] = {
+        quantity: "react.outboundReturns.errors.quantityToReturn.label",
+      };
     }
   });
 
@@ -174,10 +179,10 @@ function validate(values) {
 
 const INITIAL_STATE = {
   // Filters
-  selectedProductId: '',
-  selectedLotNumber: '',
-  selectedExpirationDate: '',
-  selectedBinLocation: '',
+  selectedProductId: "",
+  selectedLotNumber: "",
+  selectedExpirationDate: "",
+  selectedBinLocation: "",
   // Selected items for return
   selectedItems: [],
   formValues: { returnItems: [] },
@@ -223,51 +228,80 @@ class AddItemsPage extends Component {
   }
 
   setSelectedProduct(selectedProduct) {
-    this.setState({
-      selectedProductId: selectedProduct ? selectedProduct.id : '',
-    }, () => this.fetchReturnCandidates());
+    this.setState(
+      {
+        selectedProductId: selectedProduct ? selectedProduct.id : "",
+      },
+      () => this.fetchReturnCandidates(),
+    );
   }
 
   setSelectedLotNumber(selectedLotNumber) {
-    this.setState({
-      selectedLotNumber: selectedLotNumber || '',
-    }, () => {
-      if (selectedLotNumber.length >= this.props.minSearchLength || !selectedLotNumber) {
-        return this.fetchReturnCandidates();
-      }
-      return null;
-    });
+    this.setState(
+      {
+        selectedLotNumber: selectedLotNumber || "",
+      },
+      () => {
+        if (
+          selectedLotNumber.length >= this.props.minSearchLength ||
+          !selectedLotNumber
+        ) {
+          return this.fetchReturnCandidates();
+        }
+        return null;
+      },
+    );
   }
 
   setSelectedExpirationDate(selectedExpirationDate) {
-    this.setState({
-      selectedExpirationDate: selectedExpirationDate ? moment(selectedExpirationDate).format('MM/DD/YYYY') : '',
-    }, () => this.fetchReturnCandidates());
+    this.setState(
+      {
+        selectedExpirationDate: selectedExpirationDate
+          ? moment(selectedExpirationDate).format("MM/DD/YYYY")
+          : "",
+      },
+      () => this.fetchReturnCandidates(),
+    );
   }
 
   setSelectedBinLocation(selectedBinLocation) {
-    this.setState({
-      selectedBinLocation: selectedBinLocation || '',
-    }, () => this.fetchReturnCandidates());
+    this.setState(
+      {
+        selectedBinLocation: selectedBinLocation || "",
+      },
+      () => this.fetchReturnCandidates(),
+    );
   }
 
   fetchOutboundReturn() {
     if (this.props.match.params.outboundReturnId) {
       this.props.showSpinner();
       const url = `/api/stockTransfers/${this.props.match.params.outboundReturnId}`;
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((resp) => {
           const outboundReturn = parseResponse(resp.data.data);
           const returnItems = _.map(
             outboundReturn.stockTransferItems,
             // Picked value added to compensate value already subtracted
-            (item) => ({ ...item, quantityNotPicked: item.quantityNotPicked + _.sumBy(item.picklistItems, 'quantity'), checked: true }),
+            (item) => ({
+              ...item,
+              quantityNotPicked:
+                item.quantityNotPicked +
+                _.sumBy(item.picklistItems, "quantity"),
+              checked: true,
+            }),
           );
-          this.setState({
-            outboundReturn,
-            selectedItems: _.chain(returnItems).keyBy('productAvailabilityId').value(),
-            formValues: { returnItems },
-          }, () => this.props.hideSpinner());
+          this.setState(
+            {
+              outboundReturn,
+              selectedItems: _.chain(returnItems)
+                .keyBy("productAvailabilityId")
+                .value(),
+              formValues: { returnItems },
+            },
+            () => this.props.hideSpinner(),
+          );
         })
         .catch(() => this.props.hideSpinner());
     }
@@ -283,13 +317,13 @@ class AddItemsPage extends Component {
     } = this.state;
 
     if (
-      selectedProductId
-      || selectedLotNumber
-      || selectedExpirationDate
-      || selectedBinLocation
+      selectedProductId ||
+      selectedLotNumber ||
+      selectedExpirationDate ||
+      selectedBinLocation
     ) {
       this.props.showSpinner();
-      const url = '/api/stockTransfers/candidates';
+      const url = "/api/stockTransfers/candidates";
       const payload = {
         productId: selectedProductId,
         lotNumber: selectedLotNumber,
@@ -298,51 +332,71 @@ class AddItemsPage extends Component {
         locationId,
       };
 
-      apiClient.post(url, payload)
+      apiClient
+        .post(url, payload)
         .then((resp) => {
           const returnItems = _.map(parseResponse(resp.data.data), (item) => ({
             ...item,
-            quantity: this.state.selectedItems[item.productAvailabilityId] ? this.state.selectedItems[item.productAvailabilityId].quantity : '',
+            quantity: this.state.selectedItems[item.productAvailabilityId]
+              ? this.state.selectedItems[item.productAvailabilityId].quantity
+              : "",
             // Picked value added to compensate value already subtracted
-            quantityNotPicked: this.state.selectedItems[item.productAvailabilityId]
-              ? (item.quantityNotPicked
-                  + this.state.selectedItems[item.productAvailabilityId].quantity)
+            quantityNotPicked: this.state.selectedItems[
+              item.productAvailabilityId
+            ]
+              ? item.quantityNotPicked +
+                this.state.selectedItems[item.productAvailabilityId].quantity
               : item.quantityNotPicked,
             checked: !!this.state.selectedItems[item.productAvailabilityId],
           }));
-          this.setState({ formValues: { returnItems } }, () => this.props.hideSpinner());
+          this.setState({ formValues: { returnItems } }, () =>
+            this.props.hideSpinner(),
+          );
         })
         .catch(() => this.props.hideSpinner());
     } else if (
-      !selectedProductId
-      && !selectedLotNumber
-      && !selectedExpirationDate
-      && !selectedBinLocation
+      !selectedProductId &&
+      !selectedLotNumber &&
+      !selectedExpirationDate &&
+      !selectedBinLocation
     ) {
-      this.setState((prev) => ({ formValues: { returnItems: _.values(prev.selectedItems) } }));
+      this.setState((prev) => ({
+        formValues: { returnItems: _.values(prev.selectedItems) },
+      }));
     }
   }
 
   dataFetched = false;
 
   saveAndTransition(callback, status) {
-    const errors = validate({ returnItems: _.values(this.state.selectedItems) });
+    const errors = validate({
+      returnItems: _.values(this.state.selectedItems),
+    });
     if (errors && errors.returnItems.length) {
-      Alert.error(this.props.translate('react.outboundReturns.errors.quantityToReturn.label'));
-      this.setState({
-        selectedProductId: '',
-        selectedLotNumber: '',
-        selectedExpirationDate: '',
-        selectedBinLocation: '',
-      }, () => this.fetchReturnCandidates());
+      Alert.error(
+        this.props.translate(
+          "react.outboundReturns.errors.quantityToReturn.label",
+        ),
+      );
+      this.setState(
+        {
+          selectedProductId: "",
+          selectedLotNumber: "",
+          selectedExpirationDate: "",
+          selectedBinLocation: "",
+        },
+        () => this.fetchReturnCandidates(),
+      );
       return;
     }
 
     this.props.showSpinner();
 
-    const statusPayload = status ? {
-      status,
-    } : {};
+    const statusPayload = status
+      ? {
+          status,
+        }
+      : {};
 
     const payload = {
       ...this.state.outboundReturn,
@@ -351,7 +405,8 @@ class AddItemsPage extends Component {
     };
     const url = `/api/stockTransfers/${this.props.match.params.outboundReturnId}`;
 
-    apiClient.put(url, flattenRequest(payload))
+    apiClient
+      .put(url, flattenRequest(payload))
       .then((resp) => {
         const outboundReturns = resp.data.data;
         this.props.hideSpinner();
@@ -362,30 +417,32 @@ class AddItemsPage extends Component {
 
   fetchBins() {
     this.props.showSpinner();
-    const url = '/api/internalLocations';
+    const url = "/api/internalLocations";
 
-    const mapBins = (bins) => (_.chain(bins)
-      .orderBy(['name'], ['asc']).value()
-    );
+    const mapBins = (bins) => _.chain(bins).orderBy(["name"], ["asc"]).value();
 
-    return apiClient.get(url, {
-      paramsSerializer: (parameters) => queryString.stringify(parameters),
-      params: {
-        locationTypeCode: ['BIN_LOCATION', 'INTERNAL'],
-        ignoreActivityCodes: ['RECEIVE_STOCK'],
-        'location.id': this.props.locationId,
-      },
-    })
+    return apiClient
+      .get(url, {
+        paramsSerializer: (parameters) => queryString.stringify(parameters),
+        params: {
+          locationTypeCode: ["BIN_LOCATION", "INTERNAL"],
+          ignoreActivityCodes: ["RECEIVE_STOCK"],
+          "location.id": this.props.locationId,
+        },
+      })
       .then((response) => {
-        const binGroups = _.partition(response.data.data, (bin) => (bin.zoneName));
-        const binsWithZone = _.chain(binGroups[0]).groupBy('zoneName')
+        const binGroups = _.partition(
+          response.data.data,
+          (bin) => bin.zoneName,
+        );
+        const binsWithZone = _.chain(binGroups[0])
+          .groupBy("zoneName")
           .map((value, key) => ({ name: key, options: mapBins(value) }))
-          .orderBy(['name'], ['asc'])
+          .orderBy(["name"], ["asc"])
           .value();
         const binsWithoutZone = mapBins(binGroups[1]);
-        this.setState(
-          { bins: [...binsWithZone, ...binsWithoutZone] },
-          () => this.props.hideSpinner(),
+        this.setState({ bins: [...binsWithZone, ...binsWithoutZone] }, () =>
+          this.props.hideSpinner(),
         );
       })
       .catch(() => this.props.hideSpinner());
@@ -400,7 +457,7 @@ class AddItemsPage extends Component {
             return {
               ...item,
               checked: value,
-              quantity: value ? item.quantityNotPicked : '',
+              quantity: value ? item.quantityNotPicked : "",
             };
           }
           return { ...item };
@@ -408,7 +465,9 @@ class AddItemsPage extends Component {
       },
     };
     if (!value) {
-      delete selectedItems[formValues.returnItems[rowIndex].productAvailabilityId];
+      delete selectedItems[
+        formValues.returnItems[rowIndex].productAvailabilityId
+      ];
       newState = {
         ...newState,
         selectedItems,
@@ -421,7 +480,9 @@ class AddItemsPage extends Component {
           [formValues.returnItems[rowIndex].productAvailabilityId]: {
             ...formValues.returnItems[rowIndex],
             checked: true,
-            quantity: value ? formValues.returnItems[rowIndex].quantityOnHand : '',
+            quantity: value
+              ? formValues.returnItems[rowIndex].quantityOnHand
+              : "",
           },
         },
       };
@@ -429,7 +490,9 @@ class AddItemsPage extends Component {
 
     newState = {
       formValues: update(formValues, {
-        returnItems: { [rowIndex]: { $set: newState.formValues.returnItems[rowIndex] } },
+        returnItems: {
+          [rowIndex]: { $set: newState.formValues.returnItems[rowIndex] },
+        },
       }),
       selectedItems: newState.selectedItems,
     };
@@ -471,7 +534,12 @@ class AddItemsPage extends Component {
 
     return (
       <Form
-        onSubmit={() => this.saveAndTransition(this.props.nextPage, StockMovementStatus.APPROVED)}
+        onSubmit={() =>
+          this.saveAndTransition(
+            this.props.nextPage,
+            StockMovementStatus.APPROVED,
+          )
+        }
         mutators={{ ...arrayMutators }}
         initialValues={formValues}
         validate={validate}
@@ -479,7 +547,10 @@ class AddItemsPage extends Component {
           <div className="d-flex flex-column">
             <div className="d-flex mb-3 justify-content-start align-items-center w-100 combined-shipment-filter">
               <ProductSelect
-                placeholder={this.props.translate('react.outboundReturns.selectProduct.label', 'Select product...')}
+                placeholder={this.props.translate(
+                  "react.outboundReturns.selectProduct.label",
+                  "Select product...",
+                )}
                 loadOptions={this.debounceAvailableItemsFetch}
                 onChange={(value) => this.setSelectedProduct(value)}
               />
@@ -489,17 +560,29 @@ class AddItemsPage extends Component {
                 name="selectedLotNumber"
                 type="text"
                 className="form-control my-2"
-                placeholder={this.props.translate('react.outboundReturns.enterLotNumber.label', 'Enter lot number...')}
+                placeholder={this.props.translate(
+                  "react.outboundReturns.enterLotNumber.label",
+                  "Enter lot number...",
+                )}
                 value={selectedLotNumber}
-                onChange={(event) => this.setSelectedLotNumber(event.target.value)}
+                onChange={(event) =>
+                  this.setSelectedLotNumber(event.target.value)
+                }
               />
               &nbsp;
               <div className="form-element-container returns-date-picker">
                 <DatePicker
                   className="form-control"
-                  selected={moment(selectedExpirationDate, 'MM/DD/YYYY').isValid() ? moment(selectedExpirationDate, 'MM/DD/YYYY') : null}
-                  highlightDates={[!moment(selectedExpirationDate, 'MM/DD/YYYY').isValid()
-                    ? moment(new Date(), 'MM/DD/YYYY') : {}]}
+                  selected={
+                    moment(selectedExpirationDate, "MM/DD/YYYY").isValid()
+                      ? moment(selectedExpirationDate, "MM/DD/YYYY")
+                      : null
+                  }
+                  highlightDates={[
+                    !moment(selectedExpirationDate, "MM/DD/YYYY").isValid()
+                      ? moment(new Date(), "MM/DD/YYYY")
+                      : {},
+                  ]}
                   onChange={(date) => this.setSelectedExpirationDate(date)}
                   popperClassName="force-on-top"
                   showYearDropdown
@@ -507,7 +590,10 @@ class AddItemsPage extends Component {
                   dateFormat={this.props.dateFormat(DateFormat.COMMON)}
                   yearDropdownItemNumber={3}
                   utcOffset={0}
-                  placeholderText={this.props.translate('react.outboundReturns.selectExpirationDate.label', 'Select expiration date...')}
+                  placeholderText={this.props.translate(
+                    "react.outboundReturns.selectExpirationDate.label",
+                    "Select expiration date...",
+                  )}
                   locale={this.props.localeCode}
                 />
               </div>
@@ -518,37 +604,53 @@ class AddItemsPage extends Component {
                 labelKey="name"
                 value={selectedBinLocation || null}
                 onChange={(value) => this.setSelectedBinLocation(value)}
-                placeholder={this.props.translate('react.outboundReturns.selectBinLocation.label', 'Select bin location...')}
+                placeholder={this.props.translate(
+                  "react.outboundReturns.selectBinLocation.label",
+                  "Select bin location...",
+                )}
               />
             </div>
             <form onSubmit={handleSubmit} className="print-mt">
               <div className="table-form">
-                {_.map(FIELDS, (fieldConfig, fieldName) => renderFormField(fieldConfig, fieldName, {
-                  outboundReturnId: this.props.match.params.outboundReturnId,
-                  locationId: this.props.locationId,
-                  translate: this.props.translate,
-                  selectRow: this.selectRow,
-                  updateRow: this.updateRow,
-                  formatLocalizedDate: this.props.formatLocalizedDate,
-                  values,
-                }))}
+                {_.map(FIELDS, (fieldConfig, fieldName) =>
+                  renderFormField(fieldConfig, fieldName, {
+                    outboundReturnId: this.props.match.params.outboundReturnId,
+                    locationId: this.props.locationId,
+                    translate: this.props.translate,
+                    selectRow: this.selectRow,
+                    updateRow: this.updateRow,
+                    formatLocalizedDate: this.props.formatLocalizedDate,
+                    values,
+                  }),
+                )}
               </div>
               <div className="submit-buttons d-flex justify-content-between">
                 <button
                   type="button"
-                  onClick={() => this.saveAndTransition(this.props.previousPage)}
+                  onClick={() =>
+                    this.saveAndTransition(this.props.previousPage)
+                  }
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                 >
-                  <Translate id="react.outboundReturns.previous.label" defaultMessage="Previous" />
+                  <Translate
+                    id="react.outboundReturns.previous.label"
+                    defaultMessage="Previous"
+                  />
                 </button>
                 <button
                   type="submit"
                   disabled={
-                    !_.some(values.returnItems, (item) => _.parseInt(item.quantity) && item.checked)
+                    !_.some(
+                      values.returnItems,
+                      (item) => _.parseInt(item.quantity) && item.checked,
+                    )
                   }
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                 >
-                  <Translate id="react.outboundReturns.next.label" defaultMessage="Next" />
+                  <Translate
+                    id="react.outboundReturns.next.label"
+                    defaultMessage="Next"
+                  />
                 </button>
               </div>
             </form>
@@ -563,15 +665,17 @@ const mapStateToProps = (state) => ({
   debounceTime: state.session.searchConfig.debounceTime,
   minSearchLength: state.session.searchConfig.minSearchLength,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
-  outboundReturnsTranslationsFetched: state.session.fetchedTranslations.outboundReturns,
+  outboundReturnsTranslationsFetched:
+    state.session.fetchedTranslations.outboundReturns,
   formatLocalizedDate: formatDate(state.localize),
   localeCode: getLocaleCode(state.localize),
   dateFormat: getDateFormat(state.localize),
 });
 
-export default (connect(mapStateToProps, {
-  showSpinner, hideSpinner,
-})(AddItemsPage));
+export default connect(mapStateToProps, {
+  showSpinner,
+  hideSpinner,
+})(AddItemsPage);
 
 AddItemsPage.propTypes = {
   previousPage: PropTypes.func.isRequired,

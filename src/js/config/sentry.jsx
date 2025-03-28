@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react';
+import * as Sentry from "@sentry/react";
 
 /**
  * Initialize Sentry for performance and error monitoring.
@@ -37,7 +37,7 @@ const initializeSentry = () => {
     ],
 
     // For Distributed Tracing. Only enable traces to continue through openboxes app requests.
-    tracePropagationTargets: ['localhost', /^\/openboxes\//],
+    tracePropagationTargets: ["localhost", /^\/openboxes\//],
 
     // Enables capturing headers and cookies in error traces.
     sendDefaultPii: true,
@@ -45,12 +45,15 @@ const initializeSentry = () => {
     // The ratio of all requests to capture for performance tracing. 1.0 is 100% of requests.
     // Disable tracing by setting a value of 0. We keep this number low (as recommended by Sentry)
     // for performance reasons, but it can be increased if we decide we need more data.
-    tracesSampleRate: process.env.REACT_APP_WEB_SENTRY_TRACES_SAMPLE_RATE || 0.1,
+    tracesSampleRate:
+      process.env.REACT_APP_WEB_SENTRY_TRACES_SAMPLE_RATE || 0.1,
 
     // For Session Replay. By default, we only capture session recordings if there is an error,
     // which we record 100% of.
-    replaysSessionSampleRate: process.env.REACT_APP_WEB_SENTRY_REPLAYS_SAMPLE_RATE || 0,
-    replaysOnErrorSampleRate: process.env.REACT_APP_WEB_SENTRY_REPLAYS_ERROR_SAMPLE_RATE || 1.0,
+    replaysSessionSampleRate:
+      process.env.REACT_APP_WEB_SENTRY_REPLAYS_SAMPLE_RATE || 0,
+    replaysOnErrorSampleRate:
+      process.env.REACT_APP_WEB_SENTRY_REPLAYS_ERROR_SAMPLE_RATE || 1.0,
   });
 };
 

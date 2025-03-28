@@ -1,33 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import CheckboxField from 'components/form-elements/CheckboxField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import SelectField from 'components/form-elements/SelectField';
-import TextareaField from 'components/form-elements/TextareaField';
-import TextField from 'components/form-elements/TextField';
-import apiClient from 'utils/apiClient';
-import { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import CheckboxField from "components/form-elements/CheckboxField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import SelectField from "components/form-elements/SelectField";
+import TextareaField from "components/form-elements/TextareaField";
+import TextField from "components/form-elements/TextField";
+import apiClient from "utils/apiClient";
+import { translateWithDefaultMessage } from "utils/Translate";
 
 const FIELDS = {
   recipients: {
     type: SelectField,
-    label: 'react.stockListManagement.recipients.label',
-    defaultMessage: 'Recipients',
+    label: "react.stockListManagement.recipients.label",
+    defaultMessage: "Recipients",
     attributes: {
       required: true,
       showValueTooltip: true,
       multi: true,
-      className: 'multi-select',
+      className: "multi-select",
       style: { paddingBottom: 5 },
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
     },
     getDynamicAttr: ({ users }) => ({
       options: users,
@@ -35,16 +35,16 @@ const FIELDS = {
   },
   subject: {
     type: TextField,
-    label: 'react.stockListManagement.subject.label',
-    defaultMessage: 'Subject',
+    label: "react.stockListManagement.subject.label",
+    defaultMessage: "Subject",
     attributes: {
       required: true,
     },
   },
   text: {
     type: TextareaField,
-    label: 'react.stockListManagement.message.label',
-    defaultMessage: 'Message',
+    label: "react.stockListManagement.message.label",
+    defaultMessage: "Message",
     attributes: {
       rows: 8,
       required: true,
@@ -52,26 +52,26 @@ const FIELDS = {
   },
   includePdf: {
     type: CheckboxField,
-    label: 'react.stockListManagement.includePdf.label',
-    defaultMessage: 'Include PDF document',
+    label: "react.stockListManagement.includePdf.label",
+    defaultMessage: "Include PDF document",
   },
   includeXls: {
     type: CheckboxField,
-    label: 'react.stockListManagement.includeXls.label',
-    defaultMessage: 'Include XLS document',
+    label: "react.stockListManagement.includeXls.label",
+    defaultMessage: "Include XLS document",
   },
 };
 
 function validate(values) {
   const errors = {};
   if (_.isEmpty(values.recipients)) {
-    errors.recipients = 'react.default.error.requiredField.label';
+    errors.recipients = "react.default.error.requiredField.label";
   }
   if (!values.subject) {
-    errors.subject = 'react.default.error.requiredField.label';
+    errors.subject = "react.default.error.requiredField.label";
   }
   if (!values.text) {
-    errors.text = 'react.default.error.requiredField.label';
+    errors.text = "react.default.error.requiredField.label";
   }
   return errors;
 }
@@ -100,10 +100,18 @@ class EmailModal extends Component {
     const { manager } = this.props;
     this.setState({
       formValues: {
-        subject: this.props.translate('react.stockListManagement.emailSubject.label', 'STOCK LIST UPDATE'),
-        text: this.props.translate('react.stockListManagement.emailMessage.label', 'Please find attached a new'
-          + ' version of your stock list reflecting recent updates. Please use this version for your next replenishment request.'),
-        recipients: manager ? [{ id: manager.id, email: manager.email, label: manager.name }] : [],
+        subject: this.props.translate(
+          "react.stockListManagement.emailSubject.label",
+          "STOCK LIST UPDATE",
+        ),
+        text: this.props.translate(
+          "react.stockListManagement.emailMessage.label",
+          "Please find attached a new" +
+            " version of your stock list reflecting recent updates. Please use this version for your next replenishment request.",
+        ),
+        recipients: manager
+          ? [{ id: manager.id, email: manager.email, label: manager.name }]
+          : [],
         includePdf: true,
         includeXls: true,
         showModal: true,
@@ -122,20 +130,41 @@ class EmailModal extends Component {
     const url = `/api/stocklists/sendMail/${this.props.stocklistId}?includePdf=${this.state.formValues.includePdf}?includeXls=${this.state.formValues.includeXls}`;
     const payload = {
       ...values,
-      recipients: _.map(_.filter(values.recipients, (val) => val.email), (val) => val.email),
+      recipients: _.map(
+        _.filter(values.recipients, (val) => val.email),
+        (val) => val.email,
+      ),
     };
     const { manager } = this.props;
 
-    if (!_.some(values.recipients, (recipient) => recipient.email === manager.email)) {
+    if (
+      !_.some(
+        values.recipients,
+        (recipient) => recipient.email === manager.email,
+      )
+    ) {
       this.props.hideSpinner();
-      Alert.error(this.props.translate('react.stockListManagement.alert.noManagerSelected.label', 'Please add a manager as a recipient and resend.'), { timeout: 1000 });
+      Alert.error(
+        this.props.translate(
+          "react.stockListManagement.alert.noManagerSelected.label",
+          "Please add a manager as a recipient and resend.",
+        ),
+        { timeout: 1000 },
+      );
       this.setState({ showModal: true });
     } else {
-      apiClient.post(url, payload)
+      apiClient
+        .post(url, payload)
         .then(() => {
           this.props.hideSpinner();
           this.setState({ showModal: false });
-          Alert.success(this.props.translate('react.stockListManagement.alert.emailSend.label', 'Email sent successfully'), { timeout: 1000 });
+          Alert.success(
+            this.props.translate(
+              "react.stockListManagement.alert.emailSend.label",
+              "Email sent successfully",
+            ),
+            { timeout: 1000 },
+          );
         })
         .catch(() => this.props.hideSpinner());
     }
@@ -175,7 +204,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(EmailModal);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  EmailModal,
+);
 
 EmailModal.propTypes = {
   /** Function called when data is loading */

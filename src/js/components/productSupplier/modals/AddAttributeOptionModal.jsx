@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import PropTypes from 'prop-types';
-import { RiCloseFill } from 'react-icons/all';
-import Modal from 'react-modal';
+import PropTypes from "prop-types";
+import { RiCloseFill } from "react-icons/all";
+import Modal from "react-modal";
 
-import Button from 'components/form-elements/Button';
-import TextInput from 'components/form-elements/v2/TextInput';
-import useTranslate from 'hooks/useTranslate';
+import Button from "components/form-elements/Button";
+import TextInput from "components/form-elements/v2/TextInput";
+import useTranslate from "hooks/useTranslate";
 
-import '../styles.scss';
+import "../styles.scss";
 
 const AddAttributeOptionModal = ({
   isOpen,
@@ -27,7 +27,11 @@ const AddAttributeOptionModal = ({
   };
 
   const setAttributeValue = () => {
-    setValue(`attributes.${selectedAttribute?.id}`, { id: selectedAttribute?.id, value: inputValue, label: inputValue });
+    setValue(`attributes.${selectedAttribute?.id}`, {
+      id: selectedAttribute?.id,
+      value: inputValue,
+      label: inputValue,
+    });
     setInputValue(null);
     close();
   };
@@ -52,13 +56,16 @@ const AddAttributeOptionModal = ({
           <TextInput
             required
             title={{
-              id: 'react.productSupplier.form.selectOtherValue.label',
-              defaultMessage: 'Other',
+              id: "react.productSupplier.form.selectOtherValue.label",
+              defaultMessage: "Other",
             }}
-            errorMessage={inputValue === '' && translate(
-              'react.productSupplier.validation.otherIsRequired',
-              'Other is required',
-            )}
+            errorMessage={
+              inputValue === "" &&
+              translate(
+                "react.productSupplier.validation.otherIsRequired",
+                "Other is required",
+              )
+            }
             value={inputValue}
             onChange={onChange}
           />

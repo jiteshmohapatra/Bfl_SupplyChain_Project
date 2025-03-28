@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import Translate from 'utils/Translate';
+import Translate from "utils/Translate";
 
 const RejectRequestModalHeader = ({ identifier }) => (
   <div className="header">
@@ -11,8 +11,7 @@ const RejectRequestModalHeader = ({ identifier }) => (
         id="react.rejectRequestModal.provideReason.label"
         defaultMessage="Please provide a reason for rejecting request"
       />
-      :
-      {identifier}
+      :{identifier}
     </h4>
   </div>
 );

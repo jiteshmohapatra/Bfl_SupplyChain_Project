@@ -1,4 +1,7 @@
-import { FETCH_INVOICE_STATUSES, FETCH_INVOICE_TYPE_CODES } from 'actions/types';
+import {
+  FETCH_INVOICE_STATUSES,
+  FETCH_INVOICE_TYPE_CODES,
+} from "actions/types";
 
 const initialState = {
   statuses: [],

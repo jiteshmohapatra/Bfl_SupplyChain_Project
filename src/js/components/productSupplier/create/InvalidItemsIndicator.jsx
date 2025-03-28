@@ -1,31 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import PropTypes from 'prop-types';
-import { RiCheckboxCircleLine } from 'react-icons/all';
-import { RiErrorWarningLine } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiCheckboxCircleLine } from "react-icons/all";
+import { RiErrorWarningLine } from "react-icons/ri";
 
-import Button from 'components/form-elements/Button';
-import useResetScrollbar from 'hooks/useResetScrollbar';
+import Button from "components/form-elements/Button";
+import useResetScrollbar from "hooks/useResetScrollbar";
 
 const invalidLinesButton = {
   Icon: RiErrorWarningLine,
-  variant: 'danger',
-  wrapperClassName: 'is-invalid',
+  variant: "danger",
+  wrapperClassName: "is-invalid",
 };
 
 const validLinesButton = {
   Icon: RiCheckboxCircleLine,
-  variant: 'transparent',
-  wrapperClassName: 'is-valid',
+  variant: "transparent",
+  wrapperClassName: "is-valid",
 };
 
-const getButtonVariant = ({
-  buttonVariant,
-  isFiltered,
-}) => ({
+const getButtonVariant = ({ buttonVariant, isFiltered }) => ({
   ...buttonVariant,
-  variant: isFiltered ? 'active' : buttonVariant.variant,
-  wrapperClassName: isFiltered ? '' : buttonVariant.wrapperClassName,
+  variant: isFiltered ? "active" : buttonVariant.variant,
+  wrapperClassName: isFiltered ? "" : buttonVariant.wrapperClassName,
 });
 
 const InvalidItemsIndicator = ({
@@ -41,7 +38,7 @@ const InvalidItemsIndicator = ({
   });
 
   const { resetScrollbar } = useResetScrollbar({
-    selector: '.rt-table',
+    selector: ".rt-table",
   });
 
   useEffect(() => {
@@ -58,13 +55,12 @@ const InvalidItemsIndicator = ({
       label="react.productSupplier.form.invalidItemsIndicator.title"
       defaultLabel="Item(s) require attention"
       onClick={handleOnFilterButtonClick}
-      StartIcon={(
+      StartIcon={
         <>
           <Icon />
-          {errorsCounter}
-          {' '}
+          {errorsCounter}{" "}
         </>
-      )}
+      }
     />
   );
 };
@@ -80,7 +76,7 @@ InvalidItemsIndicator.propTypes = {
 };
 
 InvalidItemsIndicator.defaultProps = {
-  className: '',
+  className: "",
   errorsCounter: 0,
   setIsFiltered: () => {},
   isFiltered: false,

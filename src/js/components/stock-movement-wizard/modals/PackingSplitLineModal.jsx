@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import DateFormat from 'consts/dateFormat';
-import { formatProductDisplayName } from 'utils/form-values-utils';
-import { debouncePeopleFetch } from 'utils/option-utils';
-import Translate from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import DateFormat from "consts/dateFormat";
+import { formatProductDisplayName } from "utils/form-values-utils";
+import { debouncePeopleFetch } from "utils/option-utils";
+import Translate from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
 const FIELDS = {
   splitLineItems: {
@@ -23,24 +23,33 @@ const FIELDS = {
       <button
         type="button"
         className="btn btn-outline-success btn-xs"
-        onClick={() => addRow({
-          product: lineItem.product,
-          lotNumber: lineItem.lotNumber,
-          expirationDate: lineItem.expirationDate,
-          binLocation: lineItem.binLocation,
-          recipient: lineItem.recipient,
-        }, null, false)}
+        onClick={() =>
+          addRow(
+            {
+              product: lineItem.product,
+              lotNumber: lineItem.lotNumber,
+              expirationDate: lineItem.expirationDate,
+              binLocation: lineItem.binLocation,
+              recipient: lineItem.recipient,
+            },
+            null,
+            false,
+          )
+        }
       >
-        {' '}
-        <Translate id="react.default.button.addLine.label" defaultMessage="Add line" />
+        {" "}
+        <Translate
+          id="react.default.button.addLine.label"
+          defaultMessage="Add line"
+        />
       </button>
     ),
     type: ArrayField,
     fields: {
       product: {
         type: LabelField,
-        label: 'react.stockMovement.productName.label',
-        defaultMessage: 'Product name',
+        label: "react.stockMovement.productName.label",
+        defaultMessage: "Product name",
         getDynamicAttr: ({ fieldValue }) => ({
           showValueTooltip: !!fieldValue?.displayNames?.default,
           tooltipValue: fieldValue?.name,
@@ -51,48 +60,62 @@ const FIELDS = {
       },
       lotNumber: {
         type: LabelField,
-        label: 'react.stockMovement.lot.label',
-        defaultMessage: 'Lot',
+        label: "react.stockMovement.lot.label",
+        defaultMessage: "Lot",
       },
       expirationDate: {
         type: LabelField,
-        label: 'react.stockMovement.expiry.label',
-        defaultMessage: 'Expiry',
+        label: "react.stockMovement.expiry.label",
+        defaultMessage: "Expiry",
         getDynamicAttr: ({ formatLocalizedDate }) => ({
           formatValue: (value) => formatLocalizedDate(value, DateFormat.COMMON),
         }),
       },
       binLocation: {
         type: LabelField,
-        label: 'react.stockMovement.binLocation.label',
-        defaultMessage: 'Bin Location',
+        label: "react.stockMovement.binLocation.label",
+        defaultMessage: "Bin Location",
         getDynamicAttr: ({ hasBinLocationSupport }) => ({
           hide: !hasBinLocationSupport,
         }),
         attributes: {
           showValueTooltip: true,
-          formatValue: (fieldValue) => fieldValue && (
-            <div className="d-flex">
-              {fieldValue.zoneName ? <div className="text-truncate" style={{ minWidth: 30, flexShrink: 20 }}>{fieldValue.zoneName}</div> : ''}
-              <div className="text-truncate">{fieldValue.zoneName ? `: ${fieldValue.name}` : fieldValue.name}</div>
-            </div>
-          ),
+          formatValue: (fieldValue) =>
+            fieldValue && (
+              <div className="d-flex">
+                {fieldValue.zoneName ? (
+                  <div
+                    className="text-truncate"
+                    style={{ minWidth: 30, flexShrink: 20 }}
+                  >
+                    {fieldValue.zoneName}
+                  </div>
+                ) : (
+                  ""
+                )}
+                <div className="text-truncate">
+                  {fieldValue.zoneName
+                    ? `: ${fieldValue.name}`
+                    : fieldValue.name}
+                </div>
+              </div>
+            ),
         },
       },
       quantityShipped: {
         type: TextField,
-        label: 'react.stockMovement.quantityShipped.label',
-        defaultMessage: 'Quantity shipped',
-        fixedWidth: '150px',
+        label: "react.stockMovement.quantityShipped.label",
+        defaultMessage: "Quantity shipped",
+        fixedWidth: "150px",
         attributes: {
-          type: 'number',
+          type: "number",
         },
       },
       recipient: {
         type: SelectField,
-        label: 'react.stockMovement.recipient.label',
-        defaultMessage: 'Recipient',
-        fieldKey: '',
+        label: "react.stockMovement.recipient.label",
+        defaultMessage: "Recipient",
+        fieldKey: "",
         attributes: {
           async: true,
           required: true,
@@ -101,7 +124,7 @@ const FIELDS = {
           autoload: false,
           cache: false,
           options: [],
-          labelKey: 'name',
+          labelKey: "name",
           filterOptions: (options) => options,
         },
         getDynamicAttr: (props) => ({
@@ -110,15 +133,15 @@ const FIELDS = {
       },
       palletName: {
         type: TextField,
-        label: 'react.stockMovement.packLevel1.label',
-        defaultMessage: 'Pack level 1',
-        fixedWidth: '150px',
+        label: "react.stockMovement.packLevel1.label",
+        defaultMessage: "Pack level 1",
+        fixedWidth: "150px",
       },
       boxName: {
         type: TextField,
-        label: 'react.stockMovement.packLevel2.label',
-        defaultMessage: 'Pack level 2',
-        fixedWidth: '150px',
+        label: "react.stockMovement.packLevel2.label",
+        defaultMessage: "Pack level 2",
+        fixedWidth: "150px",
       },
     },
   },
@@ -132,8 +155,12 @@ class PackingSplitLineModal extends Component {
    * @public
    */
   static calculatePacked(values) {
-    return (_.reduce(values, (sum, val) =>
-      (sum + (val.quantityShipped ? _.toInteger(val.quantityShipped) : 0)), 0));
+    return _.reduce(
+      values,
+      (sum, val) =>
+        sum + (val.quantityShipped ? _.toInteger(val.quantityShipped) : 0),
+      0,
+    );
   }
 
   /**
@@ -145,9 +172,11 @@ class PackingSplitLineModal extends Component {
     return (
       <div>
         <div className="font-weight-bold pb-2">
-          <Translate id="react.stockMovement.quantityPacked.label" defaultMessage="Qty Packed" />
-          :
-          {PackingSplitLineModal.calculatePacked(values.splitLineItems)}
+          <Translate
+            id="react.stockMovement.quantityPacked.label"
+            defaultMessage="Qty Packed"
+          />
+          :{PackingSplitLineModal.calculatePacked(values.splitLineItems)}
         </div>
         <hr />
       </div>
@@ -222,15 +251,22 @@ class PackingSplitLineModal extends Component {
 
   validate(values) {
     const shippedQty = _.toInteger(this.state.attr.lineItem.quantityShipped);
-    const splitItemsQty = PackingSplitLineModal.calculatePacked(values.splitLineItems);
+    const splitItemsQty = PackingSplitLineModal.calculatePacked(
+      values.splitLineItems,
+    );
     const errors = { splitLineItems: [] };
 
     _.forEach(values.splitLineItems, (item, key) => {
       if (shippedQty !== splitItemsQty) {
-        errors.splitLineItems[key] = { quantityShipped: 'react.stockMovement.errors.packingQty.label' };
+        errors.splitLineItems[key] = {
+          quantityShipped: "react.stockMovement.errors.packingQty.label",
+        };
       }
       if (item.quantityShipped < 0) {
-        errors.splitLineItems[key] = { quantityShipped: 'react.stockMovement.errors.negativeQtyShipped.label' };
+        errors.splitLineItems[key] = {
+          quantityShipped:
+            "react.stockMovement.errors.negativeQtyShipped.label",
+        };
       }
     });
 
@@ -243,7 +279,10 @@ class PackingSplitLineModal extends Component {
         {...this.state.attr}
         onOpen={this.onOpen}
         onSave={(values) =>
-          this.state.attr.onSave(_.filter(values.splitLineItems, (item) => item.quantityShipped))}
+          this.state.attr.onSave(
+            _.filter(values.splitLineItems, (item) => item.quantityShipped),
+          )
+        }
         fields={FIELDS}
         initialValues={this.state.formValues}
         formProps={{
@@ -257,9 +296,11 @@ class PackingSplitLineModal extends Component {
       >
         <div>
           <div className="font-weight-bold">
-            <Translate id="react.stockMovement.totalQuantity.label" defaultMessage="Total quantity" />
-            :
-            {this.state.attr.lineItem.quantityShipped}
+            <Translate
+              id="react.stockMovement.totalQuantity.label"
+              defaultMessage="Total quantity"
+            />
+            :{this.state.attr.lineItem.quantityShipped}
           </div>
         </div>
       </ModalWrapper>
@@ -274,7 +315,9 @@ const mapStateToProps = (state) => ({
   formatLocalizedDate: formatDate(state.localize),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(PackingSplitLineModal);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  PackingSplitLineModal,
+);
 
 PackingSplitLineModal.propTypes = {
   /** Name of the field */

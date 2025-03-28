@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiCloseFill } from 'react-icons/all';
-import { useDispatch } from 'react-redux';
+import PropTypes from "prop-types";
+import { RiCloseFill } from "react-icons/all";
+import { useDispatch } from "react-redux";
 
-import { closeInfoBar } from 'actions';
-import InfoBarRedirect from 'components/infoBar/InfoBarRedirect';
-import InfoBarTitle from 'components/infoBar/InfoBarTitle';
-import InfoBarVersionBox from 'components/infoBar/InfoBarVersionBox';
-import useTranslation from 'hooks/useTranslation';
+import { closeInfoBar } from "actions";
+import InfoBarRedirect from "components/infoBar/InfoBarRedirect";
+import InfoBarTitle from "components/infoBar/InfoBarTitle";
+import InfoBarVersionBox from "components/infoBar/InfoBarVersionBox";
+import useTranslation from "hooks/useTranslation";
 
 const InfoBar = ({
   name,
@@ -18,17 +18,26 @@ const InfoBar = ({
   hasModalToDisplay,
   redirect,
 }) => {
-  useTranslation('infoBar');
+  useTranslation("infoBar");
   const dispatch = useDispatch();
 
   return (
     <div className="info-bar">
       <div className="d-flex justify-content-center gap-8 align-items-center">
         <InfoBarVersionBox versionLabel={versionLabel} name={name} />
-        <InfoBarTitle title={title} name={name} hasModalToDisplay={hasModalToDisplay} />
+        <InfoBarTitle
+          title={title}
+          name={name}
+          hasModalToDisplay={hasModalToDisplay}
+        />
         {redirect && <InfoBarRedirect redirect={redirect} />}
       </div>
-      {isCloseable && <RiCloseFill onClick={() => dispatch(closeInfoBar(name))} cursor="pointer" />}
+      {isCloseable && (
+        <RiCloseFill
+          onClick={() => dispatch(closeInfoBar(name))}
+          cursor="pointer"
+        />
+      )}
     </div>
   );
 };

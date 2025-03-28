@@ -1,21 +1,16 @@
-import {
-  useCallback, useEffect, useMemo, useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-import invoiceApi from 'api/services/InvoiceApi';
-import { INVOICE_URL } from 'consts/applicationUrls';
-import useSpinner from 'hooks/useSpinner';
-import accountingFormat from 'utils/number-utils';
+import invoiceApi from "api/services/InvoiceApi";
+import { INVOICE_URL } from "consts/applicationUrls";
+import useSpinner from "hooks/useSpinner";
+import accountingFormat from "utils/number-utils";
 
 const useConfirmInvoicePage = ({ initialValues }) => {
   const spinner = useSpinner();
 
-  const {
-    pageSize,
-    isSuperuser,
-  } = useSelector((state) => ({
+  const { pageSize, isSuperuser } = useSelector((state) => ({
     pageSize: state.session.pageSize,
     isSuperuser: state.session.isSuperuser,
   }));
@@ -33,7 +28,8 @@ const useConfirmInvoicePage = ({ initialValues }) => {
    */
   const fetchInvoiceData = useCallback(() => {
     spinner.show();
-    invoiceApi.getInvoice(stateValues.id)
+    invoiceApi
+      .getInvoice(stateValues.id)
       .then((response) => {
         setStateValues((state) => ({
           ...state,
@@ -50,21 +46,21 @@ const useConfirmInvoicePage = ({ initialValues }) => {
     }
   }, [stateValues.id]);
 
-  const totalValue = useMemo(() =>
-    accountingFormat(stateValues.totalValue.toFixed(2)), [stateValues.totalValue]);
+  const totalValue = useMemo(
+    () => accountingFormat(stateValues.totalValue.toFixed(2)),
+    [stateValues.totalValue],
+  );
 
   const submitInvoice = () => {
-    invoiceApi.submitInvoice(stateValues.id)
-      .then(() => {
-        window.location = INVOICE_URL.show(stateValues.id);
-      });
+    invoiceApi.submitInvoice(stateValues.id).then(() => {
+      window.location = INVOICE_URL.show(stateValues.id);
+    });
   };
 
   const postInvoice = () => {
-    invoiceApi.postInvoice(stateValues.id)
-      .then(() => {
-        window.location = INVOICE_URL.show(stateValues.id);
-      });
+    invoiceApi.postInvoice(stateValues.id).then(() => {
+      window.location = INVOICE_URL.show(stateValues.id);
+    });
   };
 
   const parseItemsToMap = (items, indexOffset = 0) =>
@@ -82,7 +78,11 @@ const useConfirmInvoicePage = ({ initialValues }) => {
    * @param startIndex
    * @public
    */
-  const setInvoiceItems = (response, overrideInvoiceItems = true, startIndex = 0) => {
+  const setInvoiceItems = (
+    response,
+    overrideInvoiceItems = true,
+    startIndex = 0,
+  ) => {
     spinner.show();
     const { data, totalCount } = response.data;
     setStateValues((state) => ({
@@ -102,38 +102,39 @@ const useConfirmInvoicePage = ({ initialValues }) => {
    */
   const loadMoreRows = useCallback(
     ({ startIndex, stopIndex, overrideInvoiceItems = false }) =>
-      invoiceApi.getInvoiceItems(stateValues.id, {
-        params: { offset: startIndex, max: stopIndex ? (stopIndex - startIndex + 1) : pageSize },
-      })
+      invoiceApi
+        .getInvoiceItems(stateValues.id, {
+          params: {
+            offset: startIndex,
+            max: stopIndex ? stopIndex - startIndex + 1 : pageSize,
+          },
+        })
         .then((response) => {
           setInvoiceItems(response, overrideInvoiceItems, startIndex);
         }),
     [stateValues.id, pageSize],
   );
 
-  const updateInvoiceItemData = (updateRow) => (invoiceItemId, fieldName) => (value) => {
-    updateRow?.(
-      invoiceItemId,
-      {
+  const updateInvoiceItemData =
+    (updateRow) => (invoiceItemId, fieldName) => (value) => {
+      updateRow?.(invoiceItemId, {
         [fieldName]: value,
-      },
-    );
-    setStateValues((state) => ({
-      ...state,
-      invoiceItems: new Map(Array.from(state.invoiceItems).map(([idx, item]) => {
-        if (item.id === invoiceItemId) {
-          return [idx, { ...item, [fieldName]: value }];
-        }
+      });
+      setStateValues((state) => ({
+        ...state,
+        invoiceItems: new Map(
+          Array.from(state.invoiceItems).map(([idx, item]) => {
+            if (item.id === invoiceItemId) {
+              return [idx, { ...item, [fieldName]: value }];
+            }
 
-        return [idx, item];
-      })),
-    }));
-  };
+            return [idx, item];
+          }),
+        ),
+      }));
+    };
 
-  const refetchData = async ({
-    callback,
-    overrideInvoiceItems = false,
-  }) => {
+  const refetchData = async ({ callback, overrideInvoiceItems = false }) => {
     try {
       spinner.show();
       await fetchInvoiceData();

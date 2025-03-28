@@ -1,12 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 
-import FilterForm from 'components/Filter/FilterForm';
-import RoleType from 'consts/roleType';
-import { debounceOrganizationsFetch, debounceProductsFetch } from 'utils/option-utils';
-import ListFilterFormWrapper from 'wrappers/ListFilterFormWrapper';
+import FilterForm from "components/Filter/FilterForm";
+import RoleType from "consts/roleType";
+import {
+  debounceOrganizationsFetch,
+  debounceProductsFetch,
+} from "utils/option-utils";
+import ListFilterFormWrapper from "wrappers/ListFilterFormWrapper";
 
 const ProductSupplierListFilters = ({
   filterFields,
@@ -14,21 +17,17 @@ const ProductSupplierListFilters = ({
   defaultValues,
   ignoreClearFilters,
 }) => {
-  const {
-    debounceTime,
-    minSearchLength,
-    preferenceTypes,
-  } = useSelector((state) => ({
-    debounceTime: state.session.searchConfig.debounceTime,
-    minSearchLength: state.session.searchConfig.minSearchLength,
-    preferenceTypes: state.productSupplier.preferenceTypes,
-  }));
+  const { debounceTime, minSearchLength, preferenceTypes } = useSelector(
+    (state) => ({
+      debounceTime: state.session.searchConfig.debounceTime,
+      minSearchLength: state.session.searchConfig.minSearchLength,
+      preferenceTypes: state.productSupplier.preferenceTypes,
+    }),
+  );
 
   const debouncedProductsFetch = useCallback(
-    debounceProductsFetch(
-      debounceTime,
-      minSearchLength,
-    ), [debounceTime, minSearchLength],
+    debounceProductsFetch(debounceTime, minSearchLength),
+    [debounceTime, minSearchLength],
   );
 
   const debouncedOrganizationsFetch = useCallback(
@@ -37,7 +36,8 @@ const ProductSupplierListFilters = ({
       minSearchLength,
       [RoleType.ROLE_SUPPLIER],
       true,
-    ), [debounceTime, minSearchLength],
+    ),
+    [debounceTime, minSearchLength],
   );
 
   return (

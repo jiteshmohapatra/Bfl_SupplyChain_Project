@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import { RiGlobalLine, RiLogoutBoxRLine } from 'react-icons/ri';
+import { RiGlobalLine, RiLogoutBoxRLine } from "react-icons/ri";
 
-import { DISABLE_LOCALIZATION } from 'api/urls';
-import Button from 'components/form-elements/Button';
-import Translate from 'utils/Translate';
+import { DISABLE_LOCALIZATION } from "api/urls";
+import Button from "components/form-elements/Button";
+import Translate from "utils/Translate";
 
 const LocalizationModeInfo = () => (
   <div
@@ -15,7 +15,10 @@ const LocalizationModeInfo = () => (
     <div className="info d-flex align-items-center">
       <RiGlobalLine />
       <span>
-        <Translate id="react.default.localizationModeActive.label" defaultMessage="The localization mode is active" />
+        <Translate
+          id="react.default.localizationModeActive.label"
+          defaultMessage="The localization mode is active"
+        />
       </span>
     </div>
     <a href={DISABLE_LOCALIZATION()}>

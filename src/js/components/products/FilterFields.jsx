@@ -1,15 +1,15 @@
-import CheckboxField from 'components/form-elements/CheckboxField';
-import DateFilter from 'components/form-elements/DateFilter/DateFilter';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
+import CheckboxField from "components/form-elements/CheckboxField";
+import DateFilter from "components/form-elements/DateFilter/DateFilter";
+import FilterSelectField from "components/form-elements/FilterSelectField";
 
 export default {
   categoryId: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.productsList.filters.category.label',
-      defaultPlaceholder: 'Category',
+      placeholder: "react.productsList.filters.category.label",
+      defaultPlaceholder: "Category",
       showLabelTooltip: true,
       multi: true,
       closeMenuOnSelect: false,
@@ -22,9 +22,9 @@ export default {
   glAccountsId: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
-      placeholder: 'react.productsList.filters.glAccount.label',
-      defaultPlaceholder: 'GL Account',
+      valueKey: "id",
+      placeholder: "react.productsList.filters.glAccount.label",
+      defaultPlaceholder: "GL Account",
       multi: true,
       closeMenuOnSelect: false,
       blurInputOnSelect: false,
@@ -37,10 +37,10 @@ export default {
   catalogId: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.productsList.filters.catalog.label',
-      defaultPlaceholder: 'Formulary',
+      placeholder: "react.productsList.filters.catalog.label",
+      defaultPlaceholder: "Formulary",
       showLabelTooltip: true,
       multi: true,
       closeMenuOnSelect: false,
@@ -53,10 +53,10 @@ export default {
   tagId: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.productsList.filters.tags.label',
-      defaultPlaceholder: 'Tags',
+      placeholder: "react.productsList.filters.tags.label",
+      defaultPlaceholder: "Tags",
       showLabelTooltip: true,
       multi: true,
       closeMenuOnSelect: false,
@@ -69,10 +69,10 @@ export default {
   productFamilyId: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.productsList.column.productFamily.label',
-      defaultPlaceholder: 'Product Family',
+      placeholder: "react.productsList.column.productFamily.label",
+      defaultPlaceholder: "Product Family",
       showLabelTooltip: true,
       multi: true,
       closeMenuOnSelect: false,
@@ -85,18 +85,18 @@ export default {
   createdAfter: {
     type: DateFilter,
     attributes: {
-      label: 'react.productsList.filters.createdAfter.label',
-      defaultMessage: 'Created after',
-      dateFormat: 'MM/DD/YYYY',
+      label: "react.productsList.filters.createdAfter.label",
+      defaultMessage: "Created after",
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
     },
   },
   createdBefore: {
     type: DateFilter,
     attributes: {
-      label: 'react.productsList.filters.createdBefore.label',
-      defaultMessage: 'Created before',
-      dateFormat: 'MM/DD/YYYY',
+      label: "react.productsList.filters.createdBefore.label",
+      defaultMessage: "Created before",
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
     },
   },
@@ -104,8 +104,8 @@ export default {
     type: CheckboxField,
     attributes: {
       withLabel: true,
-      label: 'react.productsList.includeInactive.label',
-      defaultMessage: 'Include inactive',
+      label: "react.productsList.includeInactive.label",
+      defaultMessage: "Include inactive",
       filterElement: true,
     },
   },
@@ -113,18 +113,18 @@ export default {
     type: CheckboxField,
     attributes: {
       withLabel: true,
-      label: 'react.productsList.includeSubcategories.label',
-      defaultMessage: 'Include subcategories',
+      label: "react.productsList.includeSubcategories.label",
+      defaultMessage: "Include subcategories",
       filterElement: true,
     },
   },
   handlingRequirementId: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.productsList.filters.handlingRequirements.label',
-      defaultPlaceholder: 'Handling Requirements',
+      placeholder: "react.productsList.filters.handlingRequirements.label",
+      defaultPlaceholder: "Handling Requirements",
       showLabelTooltip: true,
       multi: true,
       closeMenuOnSelect: false,

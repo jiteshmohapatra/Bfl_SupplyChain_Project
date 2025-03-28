@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import fileDownload from 'js-file-download';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import fileDownload from "js-file-download";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import FileSelect from 'components/form-elements/v2/FileSelect';
-import apiClient from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import FileSelect from "components/form-elements/v2/FileSelect";
+import apiClient from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
 class ImportBinModal extends Component {
   constructor(props) {
@@ -22,7 +22,8 @@ class ImportBinModal extends Component {
     this.onDrop = this.onDrop.bind(this);
     this.importBinLocation = this.importBinLocation.bind(this);
     this.getSupportLinks = this.getSupportLinks.bind(this);
-    this.downloadBinLocationsTemplate = this.downloadBinLocationsTemplate.bind(this);
+    this.downloadBinLocationsTemplate =
+      this.downloadBinLocationsTemplate.bind(this);
   }
 
   componentDidMount() {
@@ -34,7 +35,7 @@ class ImportBinModal extends Component {
   }
 
   getSupportLinks() {
-    const url = '/api/supportLinks';
+    const url = "/api/supportLinks";
 
     apiClient.get(url).then((response) => {
       const supportLinks = response.data.data;
@@ -44,9 +45,14 @@ class ImportBinModal extends Component {
 
   downloadBinLocationsTemplate() {
     this.props.showSpinner();
-    apiClient.get('/api/locations/binLocations/template', { responseType: 'blob' })
+    apiClient
+      .get("/api/locations/binLocations/template", { responseType: "blob" })
       .then((response) => {
-        fileDownload(response.data, 'BinLocations_template.xls', 'application/vnd.ms-excel');
+        fileDownload(
+          response.data,
+          "BinLocations_template.xls",
+          "application/vnd.ms-excel",
+        );
         this.props.hideSpinner();
       })
       .catch(() => this.props.hideSpinner());
@@ -55,23 +61,26 @@ class ImportBinModal extends Component {
   importBinLocation() {
     this.props.showSpinner();
     const formData = new FormData();
-    formData.append('fileContents', this.state.file);
+    formData.append("fileContents", this.state.file);
 
     const config = {
       headers: {
-        'content-type': 'multipart/form-data',
+        "content-type": "multipart/form-data",
       },
     };
 
     const url = `/api/locations/${this.props.locationId}/binLocations/import`;
 
-    return apiClient.post(url, formData, config)
+    return apiClient
+      .post(url, formData, config)
       .then(() => {
         this.props.hideSpinner();
-        Alert.success(this.props.translate(
-          'react.locationsConfiguration.importBinLocations.successMessage.label',
-          'Bin Location imported successfully',
-        ));
+        Alert.success(
+          this.props.translate(
+            "react.locationsConfiguration.importBinLocations.successMessage.label",
+            "Bin Location imported successfully",
+          ),
+        );
         this.setState({ file: undefined });
         this.props.onResponse();
       })
@@ -98,9 +107,7 @@ class ImportBinModal extends Component {
         btnSaveDisabled={!this.state.file}
       >
         <div className="form-subtitle mb-lg-4">
-          <Translate
-            id="react.locationsConfiguration.importBinLocations.importInstruction1.label"
-          />
+          <Translate id="react.locationsConfiguration.importBinLocations.importInstruction1.label" />
           &nbsp;
           <a href="#" onClick={this.downloadBinLocationsTemplate}>
             <Translate
@@ -108,7 +115,7 @@ class ImportBinModal extends Component {
               defaultMessage="here"
             />
           </a>
-          {'. '}
+          {". "}
           <Translate
             id="react.locationsConfiguration.importBinLocations.importInstruction2.label"
             data={this.state.supportLinks}

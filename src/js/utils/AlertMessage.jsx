@@ -1,19 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-const AlertMessage = ({
-  show,
-  message,
-  danger,
-  close,
-  className,
-}) => {
+const AlertMessage = ({ show, message, danger, close, className }) => {
   const getMessageElement = useMemo(() => {
-    const alertMessages = typeof message !== 'string' && Array.isArray(message) ? message : [message];
+    const alertMessages =
+      typeof message !== "string" && Array.isArray(message)
+        ? message
+        : [message];
     return alertMessages.map((msg) => (
       <div>
-        <i className={`fa ${danger ? 'fa-times-circle' : 'fa-exclamation-circle'} pr-2`} />
+        <i
+          className={`fa ${danger ? "fa-times-circle" : "fa-exclamation-circle"} pr-2`}
+        />
         {msg}
       </div>
     ));
@@ -23,15 +22,14 @@ const AlertMessage = ({
     return (
       <div
         data-testid="alert-message"
-        className={`${className} alert ${danger ? 'alert-danger' : 'alert-warning'}`}
+        className={`${className} alert ${danger ? "alert-danger" : "alert-warning"}`}
         style={{
-          cursor: close ? 'pointer' : 'default',
-          whiteSpace: 'pre-line',
+          cursor: close ? "pointer" : "default",
+          whiteSpace: "pre-line",
         }}
         role="presentation"
         onClick={() => close()}
       >
-
         {getMessageElement}
       </div>
     );
@@ -51,9 +49,9 @@ AlertMessage.propTypes = {
 };
 
 AlertMessage.defaultProps = {
-  className: '',
+  className: "",
   close: () => null,
   danger: false,
-  message: '',
+  message: "",
   show: false,
 };

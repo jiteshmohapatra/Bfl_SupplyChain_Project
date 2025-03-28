@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiCloseFill } from 'react-icons/all';
+import PropTypes from "prop-types";
+import { RiCloseFill } from "react-icons/all";
 
-import Button from 'components/form-elements/Button';
-import Translate from 'utils/Translate';
+import Button from "components/form-elements/Button";
+import Translate from "utils/Translate";
 
-import 'utils/utils.scss';
+import "utils/utils.scss";
 
 const ConfirmModal = ({
   labels: { title, content },
@@ -15,14 +15,15 @@ const ConfirmModal = ({
   className,
   hideCloseButton,
 }) => (
-  <div className={`d-flex flex-column custom-modal-content justify-content-between bg-white ${className}`}>
+  <div
+    className={`d-flex flex-column custom-modal-content justify-content-between bg-white ${className}`}
+  >
     <div className="d-flex justify-content-between">
-      {(title?.label && title?.default)
-        && (
+      {title?.label && title?.default && (
         <p className="custom-modal-title">
           <Translate id={title?.label} defaultMessage={title?.default} />
         </p>
-        )}
+      )}
       {!hideCloseButton && (
         <RiCloseFill
           size="32px"
@@ -33,7 +34,7 @@ const ConfirmModal = ({
       )}
     </div>
     <div>
-      {(content?.label && content?.default) && (
+      {content?.label && content?.default && (
         <p className="custom-modal-text">
           <Translate id={content?.label} defaultMessage={content?.default} />
         </p>
@@ -68,27 +69,29 @@ ConfirmModal.propTypes = {
   }),
   onClose: PropTypes.func.isRequired,
   className: PropTypes.string,
-  buttons: PropTypes.arrayOf(PropTypes.shape({
-    variant: PropTypes.string,
-    defaultLabel: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
-  })),
+  buttons: PropTypes.arrayOf(
+    PropTypes.shape({
+      variant: PropTypes.string,
+      defaultLabel: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      onClick: PropTypes.func.isRequired,
+    }),
+  ),
   hideCloseButton: PropTypes.bool,
 };
 
 ConfirmModal.defaultProps = {
   labels: {
     title: {
-      label: '',
-      content: '',
+      label: "",
+      content: "",
     },
     content: {
-      label: '',
-      content: '',
+      label: "",
+      content: "",
     },
   },
   buttons: [],
-  className: '',
+  className: "",
   hideCloseButton: false,
 };

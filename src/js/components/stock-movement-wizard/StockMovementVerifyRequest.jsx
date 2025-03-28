@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { fetchTranslations, hideSpinner, showSpinner } from 'actions';
-import PackingPage from 'components/stock-movement-wizard/outbound/PackingPage';
-import PickPage from 'components/stock-movement-wizard/outbound/PickPage';
-import SendMovementPage from 'components/stock-movement-wizard/outbound/SendMovementPage';
-import EditPage from 'components/stock-movement-wizard/request/EditPage';
-import Wizard from 'components/wizard/Wizard';
-import DateFormat from 'consts/dateFormat';
-import RequisitionStatus from 'consts/requisitionStatus';
-import apiClient from 'utils/apiClient';
-import canEditRequest from 'utils/permissionUtils';
-import { translateWithDefaultMessage } from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
+import PackingPage from "components/stock-movement-wizard/outbound/PackingPage";
+import PickPage from "components/stock-movement-wizard/outbound/PickPage";
+import SendMovementPage from "components/stock-movement-wizard/outbound/SendMovementPage";
+import EditPage from "components/stock-movement-wizard/request/EditPage";
+import Wizard from "components/wizard/Wizard";
+import DateFormat from "consts/dateFormat";
+import RequisitionStatus from "consts/requisitionStatus";
+import apiClient from "utils/apiClient";
+import canEditRequest from "utils/permissionUtils";
+import { translateWithDefaultMessage } from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
-import 'components/stock-movement-wizard/StockMovement.scss';
+import "components/stock-movement-wizard/StockMovement.scss";
 
 /** Main Verify Request Stock movement form's wizard component. */
 class StockMovementVerifyRequest extends Component {
@@ -33,7 +33,7 @@ class StockMovementVerifyRequest extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchTranslations('', 'stockMovement');
+    this.props.fetchTranslations("", "stockMovement");
 
     if (this.props.stockMovementTranslationsFetched) {
       this.dataFetched = true;
@@ -44,7 +44,7 @@ class StockMovementVerifyRequest extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.locale && this.props.locale !== nextProps.locale) {
-      this.props.fetchTranslations(nextProps.locale, 'stockMovement');
+      this.props.fetchTranslations(nextProps.locale, "stockMovement");
     }
 
     if (nextProps.stockMovementTranslationsFetched && !this.dataFetched) {
@@ -61,14 +61,18 @@ class StockMovementVerifyRequest extends Component {
   get stepList() {
     let stepList = [];
     if (this.props.hasPackingSupport) {
-      stepList = [this.props.translate('react.stockMovement.edit.label', 'Edit'),
-        this.props.translate('react.stockMovement.pick.label', 'Pick'),
-        this.props.translate('react.stockMovement.pack.label', 'Pack'),
-        this.props.translate('react.stockMovement.send.label', 'Send')];
+      stepList = [
+        this.props.translate("react.stockMovement.edit.label", "Edit"),
+        this.props.translate("react.stockMovement.pick.label", "Pick"),
+        this.props.translate("react.stockMovement.pack.label", "Pack"),
+        this.props.translate("react.stockMovement.send.label", "Send"),
+      ];
     } else {
-      stepList = [this.props.translate('react.stockMovement.edit.label', 'Edit'),
-        this.props.translate('react.stockMovement.pick.label', 'Pick'),
-        this.props.translate('react.stockMovement.send.label', 'Send')];
+      stepList = [
+        this.props.translate("react.stockMovement.edit.label", "Edit"),
+        this.props.translate("react.stockMovement.pick.label", "Pick"),
+        this.props.translate("react.stockMovement.send.label", "Send"),
+      ];
     }
     return stepList;
   }
@@ -80,18 +84,9 @@ class StockMovementVerifyRequest extends Component {
   get pageList() {
     let formList = [];
     if (this.props.hasPackingSupport) {
-      formList = [
-        EditPage,
-        PickPage,
-        PackingPage,
-        SendMovementPage,
-      ];
+      formList = [EditPage, PickPage, PackingPage, SendMovementPage];
     } else {
-      formList = [
-        EditPage,
-        PickPage,
-        SendMovementPage,
-      ];
+      formList = [EditPage, PickPage, SendMovementPage];
     }
     return formList;
   }
@@ -108,47 +103,55 @@ class StockMovementVerifyRequest extends Component {
     }
     return [
       {
-        text: this.props.translate('react.stockMovement.label', 'Stock Movement'),
-        color: '#000000',
-        delimeter: ' | ',
+        text: this.props.translate(
+          "react.stockMovement.label",
+          "Stock Movement",
+        ),
+        color: "#000000",
+        delimeter: " | ",
       },
       {
         text: values.movementNumber,
-        color: '#000000',
-        delimeter: ' - ',
+        color: "#000000",
+        delimeter: " - ",
       },
       {
         text: values.origin.name,
-        color: '#004d40',
-        delimeter: ` ${this.props.translate('react.default.to.label', 'to')} `,
+        color: "#004d40",
+        delimeter: ` ${this.props.translate("react.default.to.label", "to")} `,
       },
       {
         text: values.destination.name,
-        color: '#01579b',
-        delimeter: ', ',
+        color: "#01579b",
+        delimeter: ", ",
       },
       {
-        text: this.props.formatLocalizedDate(values.dateRequested, DateFormat.COMMON),
-        color: '#4a148c',
-        delimeter: ', ',
+        text: this.props.formatLocalizedDate(
+          values.dateRequested,
+          DateFormat.COMMON,
+        ),
+        color: "#4a148c",
+        delimeter: ", ",
       },
       {
         text: values.description,
-        color: '#770838',
-        delimeter: '',
+        color: "#770838",
+        delimeter: "",
       },
     ];
   }
 
   get additionalWizardTitle() {
     const { currentPage, values } = this.state;
-    const shipped = values.shipped ? 'SHIPPED' : '';
-    const received = values.received ? 'RECEIVED' : '';
-    if ((this.props.hasPackingSupport && currentPage === 4)
-      || (!this.props.hasPackingSupport && currentPage === 3)) {
+    const shipped = values.shipped ? "SHIPPED" : "";
+    const received = values.received ? "RECEIVED" : "";
+    if (
+      (this.props.hasPackingSupport && currentPage === 4) ||
+      (!this.props.hasPackingSupport && currentPage === 3)
+    ) {
       return (
         <span className="shipment-status float-right">
-          {`${shipped || received || 'PENDING'}`}
+          {`${shipped || received || "PENDING"}`}
         </span>
       );
     }
@@ -169,7 +172,8 @@ class StockMovementVerifyRequest extends Component {
     if (this.props.match.params.stockMovementId) {
       this.props.showSpinner();
       const url = `/api/stockMovements/${this.props.match.params.stockMovementId}`;
-      apiClient.get(url)
+      apiClient
+        .get(url)
         .then((response) => {
           const resp = response.data.data;
           const originType = resp.origin.locationType;
@@ -203,18 +207,18 @@ class StockMovementVerifyRequest extends Component {
 
           let currentPage = 1;
           switch (values.statusCode) {
-            case 'REQUESTED':
-            case 'VALIDATING':
-            case 'PENDING_APPROVAL':
-            case 'APPROVED':
-            case 'REJECTED':
+            case "REQUESTED":
+            case "VALIDATING":
+            case "PENDING_APPROVAL":
+            case "APPROVED":
+            case "REJECTED":
               break;
-            case 'VALIDATED':
-            case 'PICKING':
+            case "VALIDATED":
+            case "PICKING":
               currentPage = 2;
               break;
-            case 'PICKED':
-            case 'PACKING':
+            case "PICKED":
+            case "PACKING":
               currentPage = 3;
               break;
             default:
@@ -231,9 +235,11 @@ class StockMovementVerifyRequest extends Component {
   render() {
     const { values, currentPage } = this.state;
     const { currentLocation, currentUser } = this.props;
-    const showOnly = (values.origin && values.origin.id !== currentLocation.id)
-      || ((values?.isElectronicType && !canEditRequest(currentUser, values, currentLocation))
-        || values.statusCode === RequisitionStatus.PENDING_APPROVAL);
+    const showOnly =
+      (values.origin && values.origin.id !== currentLocation.id) ||
+      (values?.isElectronicType &&
+        !canEditRequest(currentUser, values, currentLocation)) ||
+      values.statusCode === RequisitionStatus.PENDING_APPROVAL;
 
     if (values.stockMovementId) {
       return (
@@ -256,7 +262,8 @@ class StockMovementVerifyRequest extends Component {
 
 const mapStateToProps = (state) => ({
   locale: state.session.activeLanguage,
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
   hasPackingSupport: state.session.currentLocation.hasPackingSupport,
   currentLocation: state.session.currentLocation,
@@ -265,7 +272,9 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  showSpinner, hideSpinner, fetchTranslations,
+  showSpinner,
+  hideSpinner,
+  fetchTranslations,
 })(StockMovementVerifyRequest);
 
 StockMovementVerifyRequest.propTypes = {

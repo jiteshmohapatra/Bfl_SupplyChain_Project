@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const useElementSize = (element) => {
   const [size, setSize] = useState({
@@ -14,11 +14,11 @@ const useElementSize = (element) => {
   };
 
   useEffect(() => {
-    element.addEventListener('resize', handleResize);
+    element.addEventListener("resize", handleResize);
     // Call handler right away so state gets updated with initial window size
     handleResize();
     return () => {
-      element.removeEventListener('resize', handleResize);
+      element.removeEventListener("resize", handleResize);
     };
   }, []);
   return size;

@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import queryString from 'query-string';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import queryString from "query-string";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
-import { fetchShipmentStatusCodes, fetchShipmentTypes } from 'actions';
-import filterFields from 'components/stock-movement/inbound/FilterFields';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import useCommonFiltersCleaner from 'hooks/list-pages/useCommonFiltersCleaner';
-import { getParamList, transformFilterParams } from 'utils/list-utils';
-import { fetchLocationById, fetchUserById } from 'utils/option-utils';
+import { fetchShipmentStatusCodes, fetchShipmentTypes } from "actions";
+import filterFields from "components/stock-movement/inbound/FilterFields";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import useCommonFiltersCleaner from "hooks/list-pages/useCommonFiltersCleaner";
+import { getParamList, transformFilterParams } from "utils/list-utils";
+import { fetchLocationById, fetchUserById } from "utils/option-utils";
 
 const useInboundFilters = () => {
   const [filterParams, setFilterParams] = useState({});
@@ -40,9 +40,13 @@ const useInboundFilters = () => {
   }, [currentLocale]);
 
   const clearFilterValues = () => {
-    const defaultValues = Object.keys(filterFields)
-      .reduce((acc, key) => ({ ...acc, [key]: '' }), { direction: 'INBOUND' });
-    const transformedParams = transformFilterParams(defaultValues, { direction: { name: 'direction' } });
+    const defaultValues = Object.keys(filterFields).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      { direction: "INBOUND" },
+    );
+    const transformedParams = transformFilterParams(defaultValues, {
+      direction: { name: "direction" },
+    });
     const queryFilterParams = queryString.stringify(transformedParams);
     const { pathname } = history.location;
     if (queryFilterParams) {
@@ -52,11 +56,13 @@ const useInboundFilters = () => {
 
   const initializeDefaultFilterValues = async () => {
     // INITIALIZE EMPTY FILTER OBJECT
-    const defaultValues = Object.keys(filterFields)
-      .reduce((acc, key) => ({ ...acc, [key]: '' }), {});
+    const defaultValues = Object.keys(filterFields).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      {},
+    );
 
     // SET STATIC DEFAULT VALUES
-    defaultValues.direction = 'INBOUND';
+    defaultValues.direction = "INBOUND";
 
     const queryProps = queryString.parse(history.location.search);
     // IF VALUE IS IN A SEARCH QUERY SET DEFAULT VALUES
@@ -71,26 +77,30 @@ const useInboundFilters = () => {
 
     if (queryProps.receiptStatusCode) {
       const statuses = getParamList(queryProps.receiptStatusCode);
-      defaultValues.receiptStatusCode = shipmentStatuses
-        .filter(({ value }) => statuses.includes(value));
+      defaultValues.receiptStatusCode = shipmentStatuses.filter(({ value }) =>
+        statuses.includes(value),
+      );
     }
     if (queryProps.origin) {
       defaultValues.origin = await fetchLocationById(queryProps.origin);
     }
     if (queryProps.requestedBy) {
-      defaultValues.requestedBy = queryProps.requestedBy === currentUser.id
-        ? currentUser
-        : await fetchUserById(queryProps.requestedBy);
+      defaultValues.requestedBy =
+        queryProps.requestedBy === currentUser.id
+          ? currentUser
+          : await fetchUserById(queryProps.requestedBy);
     }
     if (queryProps.createdBy) {
-      defaultValues.createdBy = queryProps.createdBy === currentUser.id
-        ? currentUser
-        : await fetchUserById(queryProps.createdBy);
+      defaultValues.createdBy =
+        queryProps.createdBy === currentUser.id
+          ? currentUser
+          : await fetchUserById(queryProps.createdBy);
     }
     if (queryProps.updatedBy) {
-      defaultValues.updatedBy = queryProps.updatedBy === currentUser.id
-        ? currentUser
-        : await fetchUserById(queryProps.updatedBy);
+      defaultValues.updatedBy =
+        queryProps.updatedBy === currentUser.id
+          ? currentUser
+          : await fetchUserById(queryProps.updatedBy);
     }
     if (queryProps.createdAfter) {
       defaultValues.createdAfter = queryProps.createdAfter;
@@ -100,7 +110,9 @@ const useInboundFilters = () => {
     }
     if (queryProps.shipmentType) {
       const shipTypes = getParamList(queryProps.shipmentType);
-      defaultValues.shipmentType = shipmentTypes.filter(({ id }) => shipTypes.includes(id));
+      defaultValues.shipmentType = shipmentTypes.filter(({ id }) =>
+        shipTypes.includes(id),
+      );
     }
 
     setDefaultFilterValues(defaultValues);
@@ -108,7 +120,11 @@ const useInboundFilters = () => {
   };
 
   // Custom hook for changing location/filters rebuilding logic
-  useCommonFiltersCleaner({ clearFilterValues, filtersInitialized, initializeDefaultFilterValues });
+  useCommonFiltersCleaner({
+    clearFilterValues,
+    filtersInitialized,
+    initializeDefaultFilterValues,
+  });
 
   const selectFiltersForMyStockMovements = () => {
     const currentUserValue = {
@@ -119,7 +135,7 @@ const useInboundFilters = () => {
     };
 
     const searchQuery = {
-      direction: 'INBOUND',
+      direction: "INBOUND",
       requestedBy: currentUserValue.id,
       createdBy: currentUserValue.id,
     };
@@ -137,15 +153,15 @@ const useInboundFilters = () => {
 
   const setFilterValues = (values) => {
     const filterAccessors = {
-      direction: { name: 'direction' },
-      origin: { name: 'origin', accessor: 'id' },
-      requestedBy: { name: 'requestedBy', accessor: 'id' },
-      createdBy: { name: 'createdBy', accessor: 'id' },
-      updatedBy: { name: 'updatedBy', accessor: 'id' },
-      createdAfter: { name: 'createdAfter' },
-      createdBefore: { name: 'createdBefore' },
-      receiptStatusCode: { name: 'receiptStatusCode', accessor: 'id' },
-      shipmentType: { name: 'shipmentType', accessor: 'id' },
+      direction: { name: "direction" },
+      origin: { name: "origin", accessor: "id" },
+      requestedBy: { name: "requestedBy", accessor: "id" },
+      createdBy: { name: "createdBy", accessor: "id" },
+      updatedBy: { name: "updatedBy", accessor: "id" },
+      createdAfter: { name: "createdAfter" },
+      createdBefore: { name: "createdBefore" },
+      receiptStatusCode: { name: "receiptStatusCode", accessor: "id" },
+      shipmentType: { name: "shipmentType", accessor: "id" },
     };
 
     const transformedParams = transformFilterParams(values, filterAccessors);

@@ -1,5 +1,5 @@
-import DateFilter from 'components/form-elements/DateFilter/DateFilter';
-import FilterSelectField from 'components/form-elements/FilterSelectField';
+import DateFilter from "components/form-elements/DateFilter/DateFilter";
+import FilterSelectField from "components/form-elements/FilterSelectField";
 
 export default {
   status: {
@@ -7,8 +7,8 @@ export default {
     attributes: {
       multi: true,
       filterElement: true,
-      placeholder: 'react.purchaseOrder.filters.status.placeholder.label',
-      defaultPlaceholder: 'Status',
+      placeholder: "react.purchaseOrder.filters.status.placeholder.label",
+      defaultPlaceholder: "Status",
       showLabelTooltip: true,
       closeMenuOnSelect: false,
       blurInputOnSelect: false,
@@ -20,18 +20,18 @@ export default {
   statusStartDate: {
     type: DateFilter,
     attributes: {
-      label: 'react.purchaseOrder.lastUpdateAfter.label',
-      defaultMessage: 'Last update after',
-      dateFormat: 'MM/DD/YYYY',
+      label: "react.purchaseOrder.lastUpdateAfter.label",
+      defaultMessage: "Last update after",
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
     },
   },
   statusEndDate: {
     type: DateFilter,
     attributes: {
-      label: 'react.purchaseOrder.lastUpdateBefore.label',
-      defaultMessage: 'Last update before',
-      dateFormat: 'MM/DD/YYYY',
+      label: "react.purchaseOrder.lastUpdateBefore.label",
+      defaultMessage: "Last update before",
+      dateFormat: "MM/DD/YYYY",
       filterElement: true,
     },
   },
@@ -42,18 +42,16 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.purchaseOrder.filters.origin.placeholder.label',
-      defaultPlaceholder: 'Supplier',
+      placeholder: "react.purchaseOrder.filters.origin.placeholder.label",
+      defaultPlaceholder: "Supplier",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedOriginLocationsFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedOriginLocationsFetch }) => ({
       loadOptions: debouncedOriginLocationsFetch,
     }),
   },
@@ -64,28 +62,27 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.purchaseOrder.filters.destination.placeholder.label',
-      defaultPlaceholder: 'Destination',
+      placeholder: "react.purchaseOrder.filters.destination.placeholder.label",
+      defaultPlaceholder: "Destination",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedDestinationLocationsFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedDestinationLocationsFetch }) => ({
       loadOptions: debouncedDestinationLocationsFetch,
     }),
   },
   destinationParty: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.purchaseOrder.filters.destinationParty.placeholder.label',
-      defaultPlaceholder: 'Purchasing organization',
+      placeholder:
+        "react.purchaseOrder.filters.destinationParty.placeholder.label",
+      defaultPlaceholder: "Purchasing organization",
       showLabelTooltip: true,
     },
     getDynamicAttr: ({ buyers, isCentralPurchasingEnabled }) => ({
@@ -96,17 +93,18 @@ export default {
   paymentTerm: {
     type: FilterSelectField,
     attributes: {
-      valueKey: 'id',
+      valueKey: "id",
       filterElement: true,
-      placeholder: 'react.purchaseOrder.column.paymentTerms.label',
-      defaultPlaceholder: 'Payment Terms',
+      placeholder: "react.purchaseOrder.column.paymentTerms.label",
+      defaultPlaceholder: "Payment Terms",
       showLabelTooltip: true,
       multi: true,
       closeMenuOnSelect: false,
       blurInputOnSelect: false,
       nullOption: true,
-      nullOptionLabel: 'react.purchaseOrder.filters.option.blankPaymentTerm.label',
-      nullOptionDefaultLabel: 'Blank Payment Term',
+      nullOptionLabel:
+        "react.purchaseOrder.filters.option.blankPaymentTerm.label",
+      nullOptionDefaultLabel: "Blank Payment Term",
     },
     getDynamicAttr: ({ paymentTerms }) => ({
       options: paymentTerms,
@@ -119,18 +117,16 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.purchaseOrder.filters.orderedBy.placeholder.label',
-      defaultPlaceholder: 'Ordered by',
+      placeholder: "react.purchaseOrder.filters.orderedBy.placeholder.label",
+      defaultPlaceholder: "Ordered by",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedPeopleFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedPeopleFetch }) => ({
       loadOptions: debouncedPeopleFetch,
     }),
   },
@@ -141,18 +137,16 @@ export default {
       openOnClick: false,
       autoload: false,
       cache: false,
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       options: [],
       filterOptions: (options) => options,
       filterElement: true,
-      placeholder: 'react.purchaseOrder.filters.createdBy.placeholder.label',
-      defaultPlaceholder: 'Created by',
+      placeholder: "react.purchaseOrder.filters.createdBy.placeholder.label",
+      defaultPlaceholder: "Created by",
       showLabelTooltip: true,
     },
-    getDynamicAttr: ({
-      debouncedPeopleFetch,
-    }) => ({
+    getDynamicAttr: ({ debouncedPeopleFetch }) => ({
       loadOptions: debouncedPeopleFetch,
     }),
   },

@@ -1,56 +1,54 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from "react";
 
-import { HttpStatusCode } from 'axios';
-import _ from 'lodash';
+import { HttpStatusCode } from "axios";
+import _ from "lodash";
 
-import OutboundImportHeader from 'components/stock-movement-wizard/outboundImport/OutboundImportHeader';
-import OutboundImportConfirm from 'components/stock-movement-wizard/outboundImport/sections/OutboundImportConfirm';
-import OutboundImportDetails from 'components/stock-movement-wizard/outboundImport/sections/OutboundImportDetails';
-import WizardStepsV2 from 'components/wizard/v2/WizardStepsV2';
-import OutboundImportStep from 'consts/OutboundImportStep';
-import useOutboundImportForm from 'hooks/outboundImport/useOutboundImportForm';
-import useOutboundImportValidation from 'hooks/outboundImport/useOutboundImportValidation';
-import useSessionStorage from 'hooks/useSessionStorage';
-import useTranslate from 'hooks/useTranslate';
-import useTranslation from 'hooks/useTranslation';
-import useWizard from 'hooks/useWizard';
-import PageWrapper from 'wrappers/PageWrapper';
+import OutboundImportHeader from "components/stock-movement-wizard/outboundImport/OutboundImportHeader";
+import OutboundImportConfirm from "components/stock-movement-wizard/outboundImport/sections/OutboundImportConfirm";
+import OutboundImportDetails from "components/stock-movement-wizard/outboundImport/sections/OutboundImportDetails";
+import WizardStepsV2 from "components/wizard/v2/WizardStepsV2";
+import OutboundImportStep from "consts/OutboundImportStep";
+import useOutboundImportForm from "hooks/outboundImport/useOutboundImportForm";
+import useOutboundImportValidation from "hooks/outboundImport/useOutboundImportValidation";
+import useSessionStorage from "hooks/useSessionStorage";
+import useTranslate from "hooks/useTranslate";
+import useTranslation from "hooks/useTranslation";
+import useWizard from "hooks/useWizard";
+import PageWrapper from "wrappers/PageWrapper";
 
-import 'utils/utils.scss';
+import "utils/utils.scss";
 
 const OutboundImport = () => {
-  useTranslation('outboundImport', 'stockMovement');
-  const [cachedData] = useSessionStorage('outbound-import', {});
+  useTranslation("outboundImport", "stockMovement");
+  const [cachedData] = useSessionStorage("outbound-import", {});
 
   const translate = useTranslate();
 
-  const steps = useMemo(() => [
-    {
-      key: OutboundImportStep.DETAILS,
-      title: translate('react.outboundImport.steps.details.label', 'Create'),
-      Component: (props) => (<OutboundImportDetails {...props} />),
-    },
-    {
-      key: OutboundImportStep.CONFIRM,
-      title: translate('react.outboundImport.steps.confirm.label', 'Confirm'),
-      Component: (props) => (<OutboundImportConfirm {...props} />),
-    },
-  ], [translate]);
+  const steps = useMemo(
+    () => [
+      {
+        key: OutboundImportStep.DETAILS,
+        title: translate("react.outboundImport.steps.details.label", "Create"),
+        Component: (props) => <OutboundImportDetails {...props} />,
+      },
+      {
+        key: OutboundImportStep.CONFIRM,
+        title: translate("react.outboundImport.steps.confirm.label", "Confirm"),
+        Component: (props) => <OutboundImportConfirm {...props} />,
+      },
+    ],
+    [translate],
+  );
 
   const stepsTitles = steps.map((step) => ({
     title: step.title,
     key: step.key,
   }));
 
-  const [
-    Step,
-    {
-      navigateToStep,
-      next,
-      previous,
-      is,
-    },
-  ] = useWizard({ initialKey: OutboundImportStep.DETAILS, steps });
+  const [Step, { navigateToStep, next, previous, is }] = useWizard({
+    initialKey: OutboundImportStep.DETAILS,
+    steps,
+  });
 
   const {
     lineItems,
@@ -67,11 +65,8 @@ const OutboundImport = () => {
     trigger,
   } = useOutboundImportForm({ next });
 
-  const {
-    requestedBySchema,
-    originSchema,
-    destinationSchema,
-  } = useOutboundImportValidation();
+  const { requestedBySchema, originSchema, destinationSchema } =
+    useOutboundImportValidation();
 
   /** Redirect to first step if there is no cached data */
   useEffect(() => {
@@ -102,14 +97,17 @@ const OutboundImport = () => {
     const destination = destinationSchema.parse(values.destination);
     event.preventDefault();
     submitMethod({
-      ...values, requestedBy, origin, destination,
+      ...values,
+      requestedBy,
+      origin,
+      destination,
     });
   };
 
   const redoImport = () => {
     // clear uploaded file
-    setValue('packingList', undefined);
-    trigger('packingList');
+    setValue("packingList", undefined);
+    trigger("packingList");
     previous();
   };
 
@@ -117,17 +115,18 @@ const OutboundImport = () => {
     <PageWrapper>
       <WizardStepsV2 steps={stepsTitles} currentStepKey={Step.key} />
       <OutboundImportHeader
-        origin={getValues('origin.label')}
-        destination={getValues('destination.label')}
-        description={getValues('description')}
-        dateRequested={getValues('dateRequested')}
+        origin={getValues("origin.label")}
+        destination={getValues("destination.label")}
+        description={getValues("description")}
+        dateRequested={getValues("dateRequested")}
       />
       <form onSubmit={handleSubmit(onSubmitStockMovementDetails)}>
-        {is(OutboundImportStep.DETAILS) && (<Step.Component {...detailsComponentProps} />)}
+        {is(OutboundImportStep.DETAILS) && (
+          <Step.Component {...detailsComponentProps} />
+        )}
       </form>
       <form onSubmit={handleConfirmSubmitForm(onConfirmImport)}>
-        {is(OutboundImportStep.CONFIRM)
-          && (
+        {is(OutboundImportStep.CONFIRM) && (
           <Step.Component
             {...detailsComponentProps}
             previous={redoImport}
@@ -135,7 +134,7 @@ const OutboundImport = () => {
             tableErrors={lineItemErrors}
             hasErrors={validateStatus === HttpStatusCode.BadRequest}
           />
-          )}
+        )}
       </form>
     </PageWrapper>
   );

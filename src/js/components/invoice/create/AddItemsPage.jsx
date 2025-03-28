@@ -1,46 +1,59 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import invoiceApi from 'api/services/InvoiceApi';
-import invoiceItemApi from 'api/services/InvoiceItemApi';
-import ArrayField from 'components/form-elements/ArrayField';
-import ButtonField from 'components/form-elements/ButtonField';
-import LabelField from 'components/form-elements/LabelField';
-import TextField from 'components/form-elements/TextField';
-import InvoiceItemsModal from 'components/invoice/create/InvoiceItemsModal';
-import { INVOICE_URL, ORDER_URL, STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import { renderFormField } from 'utils/form-utils';
-import { getInvoiceDescription } from 'utils/form-values-utils';
-import accountingFormat from 'utils/number-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import invoiceApi from "api/services/InvoiceApi";
+import invoiceItemApi from "api/services/InvoiceItemApi";
+import ArrayField from "components/form-elements/ArrayField";
+import ButtonField from "components/form-elements/ButtonField";
+import LabelField from "components/form-elements/LabelField";
+import TextField from "components/form-elements/TextField";
+import InvoiceItemsModal from "components/invoice/create/InvoiceItemsModal";
+import {
+  INVOICE_URL,
+  ORDER_URL,
+  STOCK_MOVEMENT_URL,
+} from "consts/applicationUrls";
+import { renderFormField } from "utils/form-utils";
+import { getInvoiceDescription } from "utils/form-values-utils";
+import accountingFormat from "utils/number-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
 const DELETE_BUTTON_FIELD = {
   type: ButtonField,
-  label: 'react.default.button.delete.label',
-  defaultMessage: 'Delete',
-  flexWidth: '1',
-  fieldKey: '',
-  buttonLabel: 'react.default.button.delete.label',
-  buttonDefaultMessage: 'Delete',
+  label: "react.default.button.delete.label",
+  defaultMessage: "Delete",
+  flexWidth: "1",
+  fieldKey: "",
+  buttonLabel: "react.default.button.delete.label",
+  buttonDefaultMessage: "Delete",
   getDynamicAttr: ({
-    fieldValue, removeItem, updateTotalCount, values, rowIndex,
+    fieldValue,
+    removeItem,
+    updateTotalCount,
+    values,
+    rowIndex,
   }) => ({
-    onClick: fieldValue && fieldValue.id ? () => {
-      removeItem(fieldValue.id, values, rowIndex);
-      updateTotalCount(-1);
-    } : () => { updateTotalCount(-1); },
+    onClick:
+      fieldValue && fieldValue.id
+        ? () => {
+            removeItem(fieldValue.id, values, rowIndex);
+            updateTotalCount(-1);
+          }
+        : () => {
+            updateTotalCount(-1);
+          },
   }),
   attributes: {
-    className: 'btn btn-outline-danger',
+    className: "btn btn-outline-danger",
   },
 };
 
@@ -63,53 +76,57 @@ const FIELDS = {
     fields: {
       orderNumber: {
         type: LabelField,
-        label: 'react.invoice.orderNumber.label',
-        defaultMessage: 'PO Number',
-        flexWidth: '1',
+        label: "react.invoice.orderNumber.label",
+        defaultMessage: "PO Number",
+        flexWidth: "1",
         getDynamicAttr: ({ values, rowIndex }) => {
-          const orderId = values && values.invoiceItems
-              && values.invoiceItems[rowIndex]
-              && values.invoiceItems[rowIndex].orderId;
-          return { url: orderId ? ORDER_URL.show(orderId) : '' };
+          const orderId =
+            values &&
+            values.invoiceItems &&
+            values.invoiceItems[rowIndex] &&
+            values.invoiceItems[rowIndex].orderId;
+          return { url: orderId ? ORDER_URL.show(orderId) : "" };
         },
       },
       shipmentNumber: {
         type: LabelField,
-        label: 'react.invoice.shipmentNumber.label',
-        defaultMessage: 'Shipment Number',
-        flexWidth: '1',
+        label: "react.invoice.shipmentNumber.label",
+        defaultMessage: "Shipment Number",
+        flexWidth: "1",
         getDynamicAttr: ({ values, rowIndex }) => {
-          const shipmentId = values && values.invoiceItems
-              && values.invoiceItems[rowIndex]
-              && values.invoiceItems[rowIndex].shipmentId;
-          return { url: shipmentId ? STOCK_MOVEMENT_URL.show(shipmentId) : '' };
+          const shipmentId =
+            values &&
+            values.invoiceItems &&
+            values.invoiceItems[rowIndex] &&
+            values.invoiceItems[rowIndex].shipmentId;
+          return { url: shipmentId ? STOCK_MOVEMENT_URL.show(shipmentId) : "" };
         },
       },
       budgetCode: {
         type: LabelField,
-        label: 'react.invoice.budgetCode.label',
-        defaultMessage: 'Budget Code',
-        flexWidth: '1',
+        label: "react.invoice.budgetCode.label",
+        defaultMessage: "Budget Code",
+        flexWidth: "1",
       },
       glCode: {
         type: LabelField,
-        label: 'react.invoice.glCode.label',
-        defaultMessage: 'GL Code',
-        flexWidth: '1',
+        label: "react.invoice.glCode.label",
+        defaultMessage: "GL Code",
+        flexWidth: "1",
       },
       productCode: {
         type: LabelField,
-        label: 'react.invoice.itemNo.label',
-        defaultMessage: 'Item No',
-        flexWidth: '1',
+        label: "react.invoice.itemNo.label",
+        defaultMessage: "Item No",
+        flexWidth: "1",
       },
       description: {
         type: LabelField,
-        label: 'react.invoice.description.label',
-        defaultMessage: 'Description',
-        flexWidth: '5',
+        label: "react.invoice.description.label",
+        defaultMessage: "Description",
+        flexWidth: "5",
         attributes: {
-          className: 'text-left',
+          className: "text-left",
         },
         getDynamicAttr: (params) => ({
           formatValue: () => {
@@ -123,12 +140,12 @@ const FIELDS = {
       },
       quantity: {
         type: TextField,
-        label: 'react.invoice.qty.label',
-        defaultMessage: 'Qty',
-        flexWidth: '1.1',
+        label: "react.invoice.qty.label",
+        defaultMessage: "Qty",
+        flexWidth: "1.1",
         required: true,
         attributes: {
-          type: 'number',
+          type: "number",
           showError: true,
         },
         getDynamicAttr: ({
@@ -158,24 +175,24 @@ const FIELDS = {
       },
       uom: {
         type: LabelField,
-        label: 'react.invoice.uom.label',
-        defaultMessage: 'UOM',
-        flexWidth: '1',
+        label: "react.invoice.uom.label",
+        defaultMessage: "UOM",
+        flexWidth: "1",
       },
       unitPrice: {
         type: LabelField,
-        label: 'react.invoice.unitPrice.label',
-        defaultMessage: 'Unit Price',
-        flexWidth: '1',
+        label: "react.invoice.unitPrice.label",
+        defaultMessage: "Unit Price",
+        flexWidth: "1",
         attributes: {
           formatValue: (value) => (value ? accountingFormat(value) : value),
         },
       },
       amount: {
         type: LabelField,
-        label: 'react.invoice.totalPrice.label',
-        defaultMessage: 'Total Price',
-        flexWidth: '1',
+        label: "react.invoice.totalPrice.label",
+        defaultMessage: "Total Price",
+        flexWidth: "1",
         attributes: {
           formatValue: (value) => (value ? accountingFormat(value) : value),
         },
@@ -196,9 +213,11 @@ const validate = (values) => {
   errors.invoiceItems = [];
   _.forEach(values?.invoiceItems, (item, key) => {
     if (_.isNil(item?.quantity)) {
-      errors.invoiceItems[key] = { quantity: 'react.invoice.error.enterQuantity.label' };
+      errors.invoiceItems[key] = {
+        quantity: "react.invoice.error.enterQuantity.label",
+      };
     }
-    if (_.has(item, 'isValid') && !item.isValid) {
+    if (_.has(item, "isValid") && !item.isValid) {
       errors.invoiceItems[key] = { quantity: item?.errorMessage };
     }
   });
@@ -223,9 +242,13 @@ class AddItemsPage extends Component {
     this.validateInvoiceItem = this.validateInvoiceItem.bind(this);
     this.confirmSave = this.confirmSave.bind(this);
     this.save = this.save.bind(this);
-    this.saveBeforeOpenInvoiceCandidates = this.saveBeforeOpenInvoiceCandidates.bind(this);
+    this.saveBeforeOpenInvoiceCandidates =
+      this.saveBeforeOpenInvoiceCandidates.bind(this);
 
-    this.debouncedInvoiceItemValidation = _.debounce(this.validateInvoiceItem, 1000);
+    this.debouncedInvoiceItemValidation = _.debounce(
+      this.validateInvoiceItem,
+      1000,
+    );
   }
 
   /**
@@ -237,24 +260,35 @@ class AddItemsPage extends Component {
     this.props.showSpinner();
     const { data, totalCount } = response.data;
 
-    const invoiceItems = _.isNull(startIndex) || startIndex === 0 ? data : _.uniqBy(_.concat(this.state.values.invoiceItems, data), 'id');
-    const totalValue = _.reduce(invoiceItems, (sum, val) =>
-      (sum + (val.totalAmount ? parseFloat(val.totalAmount) : 0.0)), 0);
+    const invoiceItems =
+      _.isNull(startIndex) || startIndex === 0
+        ? data
+        : _.uniqBy(_.concat(this.state.values.invoiceItems, data), "id");
+    const totalValue = _.reduce(
+      invoiceItems,
+      (sum, val) => sum + (val.totalAmount ? parseFloat(val.totalAmount) : 0.0),
+      0,
+    );
 
-    this.setState((prev) => ({
-      values: {
-        ...prev.values,
-        invoiceItems,
-        totalCount,
-        totalValue,
+    this.setState(
+      (prev) => ({
+        values: {
+          ...prev.values,
+          invoiceItems,
+          totalCount,
+          totalValue,
+        },
+      }),
+      () => {
+        if (
+          !_.isNull(startIndex) &&
+          this.state.values.invoiceItems.length !== this.state.values.totalCount
+        ) {
+          this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
+        }
+        this.props.hideSpinner();
       },
-    }), () => {
-      if (!_.isNull(startIndex)
-        && this.state.values.invoiceItems.length !== this.state.values.totalCount) {
-        this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
-      }
-      this.props.hideSpinner();
-    });
+    );
   }
 
   /**
@@ -275,12 +309,13 @@ class AddItemsPage extends Component {
     this.setState({
       isFirstPageLoaded: true,
     });
-    invoiceApi.getInvoiceItems(this.state.values.id, {
-      params: {
-        offset: startIndex,
-        max: this.props.pageSize,
-      },
-    })
+    invoiceApi
+      .getInvoiceItems(this.state.values.id, {
+        params: {
+          offset: startIndex,
+          max: this.props.pageSize,
+        },
+      })
       .then((response) => {
         this.setInvoiceItems(response, startIndex);
       });
@@ -329,26 +364,34 @@ class AddItemsPage extends Component {
       })),
     };
     if (payload.invoiceItems.length) {
-      return invoiceApi.saveInvoiceItems(this.state.values.id, payload)
-        .catch(() => Promise.reject(new Error('react.invoice.error.saveInvoiceItems.label')));
+      return invoiceApi
+        .saveInvoiceItems(this.state.values.id, payload)
+        .catch(() =>
+          Promise.reject(
+            new Error("react.invoice.error.saveInvoiceItems.label"),
+          ),
+        );
     }
     return Promise.resolve();
   }
 
   confirmSave(onConfirm) {
     confirmAlert({
-      title: this.props.translate('react.invoice.message.confirmSave.label', 'Confirm save'),
+      title: this.props.translate(
+        "react.invoice.message.confirmSave.label",
+        "Confirm save",
+      ),
       message: this.props.translate(
-        'react.invoice.confirmSave.message',
-        'Are you sure you want to save? There are some lines with empty or zero quantity, those lines will be deleted.',
+        "react.invoice.confirmSave.message",
+        "Are you sure you want to save? There are some lines with empty or zero quantity, those lines will be deleted.",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: onConfirm,
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -377,7 +420,9 @@ class AddItemsPage extends Component {
   previousPage(values) {
     if (someItemsHaveZeroQuantity(values.invoiceItems)) {
       this.confirmSave(() => {
-        this.saveInvoiceItems(values).then(() => this.props.previousPage(values));
+        this.saveInvoiceItems(values).then(() =>
+          this.props.previousPage(values),
+        );
       });
     } else {
       this.saveInvoiceItems(values).then(() => this.props.previousPage(values));
@@ -391,17 +436,17 @@ class AddItemsPage extends Component {
    */
   removeItem(itemId, values, index) {
     const item = values.invoiceItems[index];
-    const newTotalValue = parseFloat(this.state.values.totalValue) - parseFloat(item.totalAmount);
+    const newTotalValue =
+      parseFloat(this.state.values.totalValue) - parseFloat(item.totalAmount);
 
-    return invoiceApi.removeInvoiceItem(itemId)
+    return invoiceApi
+      .removeInvoiceItem(itemId)
       .then(() => {
         this.setState((prev) => ({
           values: {
             ...prev.values,
             invoiceItems: update(prev.values.invoiceItems, {
-              $splice: [
-                [index, 1],
-              ],
+              $splice: [[index, 1]],
             }),
             totalValue: newTotalValue,
           },
@@ -409,19 +454,20 @@ class AddItemsPage extends Component {
       })
       .catch(() => {
         this.props.hideSpinner();
-        return Promise.reject(new Error('react.invoice.error.deleteInvoiceItem.label'));
+        return Promise.reject(
+          new Error("react.invoice.error.deleteInvoiceItem.label"),
+        );
       });
   }
 
-  async validateInvoiceItem({
-    invoiceItem,
-    rowIndex,
-  }) {
+  async validateInvoiceItem({ invoiceItem, rowIndex }) {
     this.debouncedInvoiceItemValidation.cancel();
 
     const { values } = this.state;
     try {
-      await invoiceItemApi.validateInvoiceItem(_.pick(invoiceItem, ['quantity', 'id', 'shipmentId']));
+      await invoiceItemApi.validateInvoiceItem(
+        _.pick(invoiceItem, ["quantity", "id", "shipmentId"]),
+      );
       const updatedValues = update(values, {
         invoiceItems: {
           [rowIndex]: {
@@ -437,7 +483,9 @@ class AddItemsPage extends Component {
         invoiceItems: {
           [rowIndex]: {
             isValid: { $set: false },
-            errorMessage: { $set: err?.response?.data?.errorMessages?.[0] || '' },
+            errorMessage: {
+              $set: err?.response?.data?.errorMessages?.[0] || "",
+            },
             quantity: { $set: invoiceItem.quantity },
           },
         },
@@ -451,9 +499,11 @@ class AddItemsPage extends Component {
     return new Promise((resolve) => {
       if (someItemsHaveZeroQuantity(values.invoiceItems)) {
         return this.confirmSave(() => {
-          this.saveInvoiceItems(values).then(() => {
-            this.loadMoreRows({ startIndex: 0 });
-          }).finally(() => resolve());
+          this.saveInvoiceItems(values)
+            .then(() => {
+              this.loadMoreRows({ startIndex: 0 });
+            })
+            .finally(() => resolve());
         });
       }
       return this.saveInvoiceItems(values).finally(() => resolve());
@@ -506,7 +556,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-floppy-o pr-2" />
-                  <Translate id="react.default.button.save.label" defaultMessage="Save" />
+                  <Translate
+                    id="react.default.button.save.label"
+                    defaultMessage="Save"
+                  />
                 </span>
               </button>
               <button
@@ -517,7 +570,10 @@ class AddItemsPage extends Component {
               >
                 <span>
                   <i className="fa fa-sign-out pr-2" />
-                  <Translate id="react.default.button.saveAndExit.label" defaultMessage="Save and exit" />
+                  <Translate
+                    id="react.default.button.saveAndExit.label"
+                    defaultMessage="Save and exit"
+                  />
                 </span>
               </button>
             </span>
@@ -532,17 +588,25 @@ class AddItemsPage extends Component {
                     isFirstPageLoaded: this.state.isFirstPageLoaded,
                     updateTotalCount: this.updateTotalCount,
                     removeItem: this.removeItem,
-                    saveBeforeOpenInvoiceCandidates: this.saveBeforeOpenInvoiceCandidates,
+                    saveBeforeOpenInvoiceCandidates:
+                      this.saveBeforeOpenInvoiceCandidates,
                     updateRow: this.updateRow,
                     validateInvoiceItem: this.validateInvoiceItem,
-                    debouncedInvoiceItemValidation: this.debouncedInvoiceItemValidation,
-                  }))}
+                    debouncedInvoiceItemValidation:
+                      this.debouncedInvoiceItemValidation,
+                  }),
+                )}
               </div>
               <div className="font-weight-bold float-right mr-5er e mt-1">
-                <Translate id="react.default.total.label" defaultMessage="Total" />
+                <Translate
+                  id="react.default.total.label"
+                  defaultMessage="Total"
+                />
                 :&nbsp;
-                {this.state.values.totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                {' '}
+                {this.state.values.totalValue.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{" "}
                 {this.state.values.currencyUom.code}
               </div>
               &nbsp;
@@ -552,19 +616,25 @@ class AddItemsPage extends Component {
                   onClick={() => this.previousPage(values)}
                   className="btn btn-outline-primary btn-form btn-xs"
                 >
-                  <Translate id="react.default.button.previous.label" defaultMessage="Previous" />
+                  <Translate
+                    id="react.default.button.previous.label"
+                    defaultMessage="Previous"
+                  />
                 </button>
                 <button
                   type="button"
                   disabled={
-                    invalid
-                    || !values.invoiceItems?.length
-                    || allItemsHaveZeroQuantity(values.invoiceItems)
-                }
+                    invalid ||
+                    !values.invoiceItems?.length ||
+                    allItemsHaveZeroQuantity(values.invoiceItems)
+                  }
                   onClick={() => this.nextPage(values)}
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                 >
-                  <Translate id="react.default.button.next.label" defaultMessage="Next" />
+                  <Translate
+                    id="react.default.button.next.label"
+                    defaultMessage="Next"
+                  />
                 </button>
               </div>
             </form>
@@ -580,7 +650,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default (connect(mapStateToProps, { showSpinner, hideSpinner })(AddItemsPage));
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  AddItemsPage,
+);
 
 AddItemsPage.propTypes = {
   /** Initial component's data */

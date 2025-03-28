@@ -1,38 +1,32 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { useFieldArray, useWatch } from 'react-hook-form';
-import { RiAddLine } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { RiAddLine } from "react-icons/ri";
 
-import DataTable from 'components/DataTable';
-import Button from 'components/form-elements/Button';
-import Subsection from 'components/Layout/v2/Subsection';
-import InvalidItemsIndicator from 'components/productSupplier/create/InvalidItemsIndicator';
-import usePreferenceTypeVariationsColumns
-  from 'hooks/productSupplier/form/usePreferenceTypeVariationsColumns';
-import usePreferenceTypeVariationsFiltering
-  from 'hooks/productSupplier/form/usePreferenceTypeVariationsFiltering';
-import useResetScrollbar from 'hooks/useResetScrollbar';
-import useTranslate from 'hooks/useTranslate';
-import { FormErrorPropType } from 'utils/propTypes';
+import DataTable from "components/DataTable";
+import Button from "components/form-elements/Button";
+import Subsection from "components/Layout/v2/Subsection";
+import InvalidItemsIndicator from "components/productSupplier/create/InvalidItemsIndicator";
+import usePreferenceTypeVariationsColumns from "hooks/productSupplier/form/usePreferenceTypeVariationsColumns";
+import usePreferenceTypeVariationsFiltering from "hooks/productSupplier/form/usePreferenceTypeVariationsFiltering";
+import useResetScrollbar from "hooks/useResetScrollbar";
+import useTranslate from "hooks/useTranslate";
+import { FormErrorPropType } from "utils/propTypes";
 
-const PreferenceTypeVariations = ({
-  control,
-  errors,
-  triggerValidation,
-}) => {
+const PreferenceTypeVariations = ({ control, errors, triggerValidation }) => {
   const { fields, remove, prepend } = useFieldArray({
     control,
-    name: 'productSupplierPreferences',
+    name: "productSupplierPreferences",
   });
 
   const updatedRows = useWatch({
-    name: 'productSupplierPreferences',
+    name: "productSupplierPreferences",
     control,
   });
 
   const { resetScrollbar } = useResetScrollbar({
-    selector: '.rt-table',
+    selector: ".rt-table",
   });
 
   const {
@@ -55,16 +49,16 @@ const PreferenceTypeVariations = ({
   });
 
   const defaultTableRow = {
-    destinationParty: '',
-    preferenceType: '',
+    destinationParty: "",
+    preferenceType: "",
     validityStartDate: null,
     validityEndDate: null,
-    comments: '',
+    comments: "",
   };
 
   const addNewLine = () => {
     prepend(defaultTableRow);
-    triggerValidation('productSupplierPreferences');
+    triggerValidation("productSupplierPreferences");
     resetScrollbar();
   };
 
@@ -73,8 +67,9 @@ const PreferenceTypeVariations = ({
       expandedByDefault={false}
       collapsable
       title={{
-        label: 'react.productSupplier.subsection.preferenceTypeVariations.title',
-        defaultMessage: 'Preference Type Variations',
+        label:
+          "react.productSupplier.subsection.preferenceTypeVariations.title",
+        defaultMessage: "Preference Type Variations",
       }}
     >
       <div className="preference-type-variations-subsection">
@@ -86,7 +81,7 @@ const PreferenceTypeVariations = ({
             setIsFiltered={setIsFiltered}
             triggerValidation={triggerValidation}
             handleOnFilterButtonClick={() => {
-              triggerValidation('productSupplierPreferences');
+              triggerValidation("productSupplierPreferences");
               if (invalidRowCount) {
                 setIsFiltered((value) => !value);
                 resetScrollbar();
@@ -111,8 +106,8 @@ const PreferenceTypeVariations = ({
           defaultFilterMethod={getFilterMethod}
           filtered={triggerFiltering()}
           noDataText={translate(
-            'react.productSupplier.table.empty.label',
-            'No Preference Type Variations to display',
+            "react.productSupplier.table.empty.label",
+            "No Preference Type Variations to display",
           )}
         />
       </div>

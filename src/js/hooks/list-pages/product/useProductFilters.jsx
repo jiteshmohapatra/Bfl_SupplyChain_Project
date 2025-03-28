@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import queryString from 'query-string';
-import { useHistory } from 'react-router-dom';
+import queryString from "query-string";
+import { useHistory } from "react-router-dom";
 
-import filterFields from 'components/products/FilterFields';
-import useCommonFiltersCleaner from 'hooks/list-pages/useCommonFiltersCleaner';
-import { getParamList, transformFilterParams } from 'utils/list-utils';
+import filterFields from "components/products/FilterFields";
+import useCommonFiltersCleaner from "hooks/list-pages/useCommonFiltersCleaner";
+import { getParamList, transformFilterParams } from "utils/list-utils";
 import {
   fetchHandlingRequirements,
   fetchProductGroups,
@@ -13,7 +13,7 @@ import {
   fetchProductsCategories,
   fetchProductsGlAccounts,
   fetchProductsTags,
-} from 'utils/option-utils';
+} from "utils/option-utils";
 
 const useProductFilters = () => {
   const [filterParams, setFilterParams] = useState({});
@@ -39,7 +39,10 @@ const useProductFilters = () => {
       return elementsList
         .filter(({ id }) => idList.includes(id))
         .map(({ id, label }) => ({
-          id, label, name: label, value: id,
+          id,
+          label,
+          name: label,
+          value: id,
         }));
     }
     return null;
@@ -47,13 +50,20 @@ const useProductFilters = () => {
 
   const initializeDefaultFilterValues = async () => {
     // INITIALIZE EMPTY FILTER OBJECT
-    const defaultValues = Object.keys(filterFields)
-      .reduce((acc, key) => ({ ...acc, [key]: '' }), {});
+    const defaultValues = Object.keys(filterFields).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      {},
+    );
 
     const queryProps = queryString.parse(history.location.search);
 
     const {
-      catalogId, tagId, categoryId, glAccountsId, productFamilyId, handlingRequirementId,
+      catalogId,
+      tagId,
+      categoryId,
+      glAccountsId,
+      productFamilyId,
+      handlingRequirementId,
     } = queryProps;
 
     // IF VALUE IS IN A SEARCH QUERY SET DEFAULT VALUES
@@ -61,7 +71,8 @@ const useProductFilters = () => {
       defaultValues.includeInactive = queryProps.includeInactive;
     }
     if (queryProps.includeCategoryChildren) {
-      defaultValues.includeCategoryChildren = queryProps.includeCategoryChildren;
+      defaultValues.includeCategoryChildren =
+        queryProps.includeCategoryChildren;
     }
     if (queryProps.createdAfter) {
       defaultValues.createdAfter = queryProps.createdAfter;
@@ -71,12 +82,14 @@ const useProductFilters = () => {
     }
     // If there are no values for catalogs, tags, glAccounts, categories or product family
     // then set default filters without waiting for those options to load
-    if (!catalogId
-      && !tagId
-      && !categoryId
-      && !glAccountsId
-      && !productFamilyId
-      && !handlingRequirementId) {
+    if (
+      !catalogId &&
+      !tagId &&
+      !categoryId &&
+      !glAccountsId &&
+      !productFamilyId &&
+      !handlingRequirementId
+    ) {
       setDefaultFilterValues(defaultValues);
     }
     const [
@@ -105,37 +118,46 @@ const useProductFilters = () => {
     defaultValues.tagId = setDefaultValue(tagId, tagList);
     defaultValues.categoryId = setDefaultValue(categoryId, categoryList);
     defaultValues.glAccountsId = setDefaultValue(glAccountsId, glAccountsList);
-    defaultValues.productFamilyId = setDefaultValue(productFamilyId, productGroupList);
+    defaultValues.productFamilyId = setDefaultValue(
+      productFamilyId,
+      productGroupList,
+    );
     defaultValues.handlingRequirementId = setDefaultValue(
       handlingRequirementId,
       handlingRequirementsList,
     );
-    if (catalogId
-      || tagId
-      || categoryId
-      || glAccountsId
-      || productFamilyId
-      || handlingRequirementId) {
+    if (
+      catalogId ||
+      tagId ||
+      categoryId ||
+      glAccountsId ||
+      productFamilyId ||
+      handlingRequirementId
+    ) {
       setDefaultFilterValues(defaultValues);
     }
     setFiltersInitialized(true);
   };
 
   // Custom hook for changing location/filters rebuilding logic
-  useCommonFiltersCleaner({ filtersInitialized, initializeDefaultFilterValues, clearFilterValues });
+  useCommonFiltersCleaner({
+    filtersInitialized,
+    initializeDefaultFilterValues,
+    clearFilterValues,
+  });
 
   const setFilterValues = (values) => {
     const filterAccessors = {
-      includeInactive: { name: 'includeInactive' },
-      includeCategoryChildren: { name: 'includeCategoryChildren' },
-      catalogId: { name: 'catalogId', accessor: 'id' },
-      tagId: { name: 'tagId', accessor: 'id' },
-      categoryId: { name: 'categoryId', accessor: 'id' },
-      glAccountsId: { name: 'glAccountsId', accessor: 'id' },
-      createdAfter: { name: 'createdAfter' },
-      createdBefore: { name: 'createdBefore' },
-      productFamilyId: { name: 'productFamilyId', accessor: 'id' },
-      handlingRequirementId: { name: 'handlingRequirementId', accessor: 'id' },
+      includeInactive: { name: "includeInactive" },
+      includeCategoryChildren: { name: "includeCategoryChildren" },
+      catalogId: { name: "catalogId", accessor: "id" },
+      tagId: { name: "tagId", accessor: "id" },
+      categoryId: { name: "categoryId", accessor: "id" },
+      glAccountsId: { name: "glAccountsId", accessor: "id" },
+      createdAfter: { name: "createdAfter" },
+      createdBefore: { name: "createdBefore" },
+      productFamilyId: { name: "productFamilyId", accessor: "id" },
+      handlingRequirementId: { name: "handlingRequirementId", accessor: "id" },
     };
     const transformedParams = transformFilterParams(values, filterAccessors);
     const queryFilterParams = queryString.stringify(transformedParams);

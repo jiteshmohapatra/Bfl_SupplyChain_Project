@@ -1,43 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import Alert from 'react-s-alert';
+import arrayMutators from "final-form-arrays";
+import _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import Alert from "react-s-alert";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import DateField from 'components/form-elements/DateField';
-import LabelField from 'components/form-elements/LabelField';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import { STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import DateFormat from 'consts/dateFormat';
-import apiClient, { flattenRequest, parseResponse } from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { formatProductDisplayName } from 'utils/form-values-utils';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
-import splitTranslation, { formatDate } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import DateField from "components/form-elements/DateField";
+import LabelField from "components/form-elements/LabelField";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import DateFormat from "consts/dateFormat";
+import apiClient, { flattenRequest, parseResponse } from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import { formatProductDisplayName } from "utils/form-values-utils";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
+import splitTranslation, { formatDate } from "utils/translation-utils";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const SHIPMENT_FIELDS = {
-  'origin.name': {
-    label: 'react.outboundReturns.origin.label',
-    defaultMessage: 'Origin',
+  "origin.name": {
+    label: "react.outboundReturns.origin.label",
+    defaultMessage: "Origin",
     type: (params) => <TextField {...params} />,
     attributes: {
       disabled: true,
     },
   },
-  'destination.name': {
-    label: 'react.outboundReturns.destination.label',
-    defaultMessage: 'Origin',
+  "destination.name": {
+    label: "react.outboundReturns.destination.label",
+    defaultMessage: "Origin",
     type: (params) => <TextField {...params} />,
     attributes: {
       disabled: true,
@@ -45,13 +45,13 @@ const SHIPMENT_FIELDS = {
   },
   dateShipped: {
     type: DateField,
-    label: 'react.stockMovement.shipDate.label',
-    defaultMessage: 'Shipment date',
+    label: "react.stockMovement.shipDate.label",
+    defaultMessage: "Shipment date",
     attributes: {
       localizeDate: true,
       localizedDateFormat: DateFormat.COMMON,
       required: true,
-      autoComplete: 'off',
+      autoComplete: "off",
       showError: true,
     },
     getDynamicAttr: ({ issued }) => ({
@@ -60,11 +60,11 @@ const SHIPMENT_FIELDS = {
   },
   shipmentType: {
     type: SelectField,
-    label: 'react.stockMovement.shipmentType.label',
-    defaultMessage: 'Shipment type',
+    label: "react.stockMovement.shipmentType.label",
+    defaultMessage: "Shipment type",
     attributes: {
-      valueKey: 'id',
-      labelKey: 'name',
+      valueKey: "id",
+      labelKey: "name",
       required: true,
       showValueTooltip: true,
     },
@@ -75,37 +75,37 @@ const SHIPMENT_FIELDS = {
   },
   trackingNumber: {
     type: TextField,
-    label: 'react.stockMovement.trackingNumber.label',
-    defaultMessage: 'Tracking number',
+    label: "react.stockMovement.trackingNumber.label",
+    defaultMessage: "Tracking number",
     getDynamicAttr: ({ issued }) => ({
       disabled: issued,
     }),
   },
   driverName: {
     type: TextField,
-    label: 'react.stockMovement.driverName.label',
-    defaultMessage: 'Driver name',
+    label: "react.stockMovement.driverName.label",
+    defaultMessage: "Driver name",
     getDynamicAttr: ({ issued }) => ({
       disabled: issued,
     }),
   },
   comments: {
     type: TextField,
-    label: 'react.stockMovement.comments.label',
-    defaultMessage: 'Comments',
+    label: "react.stockMovement.comments.label",
+    defaultMessage: "Comments",
     getDynamicAttr: ({ issued }) => ({
       disabled: issued,
     }),
   },
   expectedDeliveryDate: {
     type: DateField,
-    label: 'react.stockMovement.expectedDeliveryDate.label',
-    defaultMessage: 'Expected receipt date',
+    label: "react.stockMovement.expectedDeliveryDate.label",
+    defaultMessage: "Expected receipt date",
     attributes: {
       localizeDate: true,
       localizedDateFormat: DateFormat.COMMON,
       required: true,
-      autoComplete: 'off',
+      autoComplete: "off",
     },
     getDynamicAttr: ({ issued }) => ({
       disabled: issued,
@@ -117,83 +117,83 @@ const FIELDS = {
   picklistItems: {
     type: ArrayField,
     getDynamicRowAttr: ({ rowValues, translate }) => {
-      let className = '';
-      let tooltip = '';
+      let className = "";
+      let tooltip = "";
       if (rowValues.recalled && rowValues.onHold) {
-        className = 'recalled-and-on-hold';
-        tooltip = translate('react.outboundReturns.recalledAndOnHold.label');
+        className = "recalled-and-on-hold";
+        tooltip = translate("react.outboundReturns.recalledAndOnHold.label");
       } else if (rowValues.recalled) {
-        className = 'recalled';
-        tooltip = translate('react.outboundReturns.recalled.label');
+        className = "recalled";
+        tooltip = translate("react.outboundReturns.recalled.label");
       } else if (rowValues.onHold) {
-        className = 'on-hold';
-        tooltip = translate('react.outboundReturns.onHold.label');
+        className = "on-hold";
+        tooltip = translate("react.outboundReturns.onHold.label");
       }
       return { className, tooltip };
     },
     fields: {
-      'product.productCode': {
+      "product.productCode": {
         type: LabelField,
-        label: 'react.stockMovement.productCode.label',
-        defaultMessage: 'Code',
-        flexWidth: '0.5',
+        label: "react.stockMovement.productCode.label",
+        defaultMessage: "Code",
+        flexWidth: "0.5",
       },
       product: {
         type: LabelField,
-        label: 'react.stockMovement.product.label',
-        defaultMessage: 'Product',
-        flexWidth: '2',
-        headerAlign: 'left',
+        label: "react.stockMovement.product.label",
+        defaultMessage: "Product",
+        flexWidth: "2",
+        headerAlign: "left",
         getDynamicAttr: ({ fieldValue }) => ({
           tooltipValue: fieldValue?.name,
         }),
         attributes: {
           formatValue: formatProductDisplayName,
           showValueTooltip: true,
-          className: 'text-left ml-1',
+          className: "text-left ml-1",
         },
       },
       originZone: {
         type: LabelField,
-        label: 'react.outboundReturns.zone.label',
-        defaultMessage: 'Zone',
-        flexWidth: '0.5',
+        label: "react.outboundReturns.zone.label",
+        defaultMessage: "Zone",
+        flexWidth: "0.5",
         attributes: {
           showValueTooltip: true,
         },
       },
-      'originBinLocation.name': {
+      "originBinLocation.name": {
         type: LabelField,
-        label: 'react.outboundReturns.bin.label',
-        defaultMessage: 'Bin Location',
-        flexWidth: '1',
+        label: "react.outboundReturns.bin.label",
+        defaultMessage: "Bin Location",
+        flexWidth: "1",
         attributes: {
           showValueTooltip: true,
         },
         getDynamicAttr: () => ({
-          formatValue: (value) => value || 'DEFAULT',
+          formatValue: (value) => value || "DEFAULT",
         }),
       },
       lotNumber: {
         type: LabelField,
-        label: 'react.outboundReturns.lot.label',
-        defaultMessage: 'Lot',
-        flexWidth: '1',
+        label: "react.outboundReturns.lot.label",
+        defaultMessage: "Lot",
+        flexWidth: "1",
       },
       expirationDate: {
         type: LabelField,
-        label: 'react.outboundReturns.expiry.label',
-        defaultMessage: 'Expiry',
-        flexWidth: '1',
+        label: "react.outboundReturns.expiry.label",
+        defaultMessage: "Expiry",
+        flexWidth: "1",
         getDynamicAttr: ({ formatLocalizedDate }) => ({
           formatValue: (value) => formatLocalizedDate(value, DateFormat.COMMON),
         }),
       },
       quantity: {
         type: LabelField,
-        label: 'react.outboundReturns.quantity.label',
-        defaultMessage: 'Qty to Return',
-        flexWidth: '1',
+        label: "react.outboundReturns.quantity.label",
+        defaultMessage: "Qty to Return",
+        flexWidth: "1",
       },
     },
   },
@@ -227,12 +227,14 @@ class SendMovementPage extends Component {
   }
 
   fetchShipmentTypes() {
-    const url = '/api/generic/shipmentType';
+    const url = "/api/generic/shipmentType";
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((response) => {
         const shipmentTypes = _.map(response.data.data, (type) => ({
-          ...type, label: splitTranslation(type.name, this.props.locale),
+          ...type,
+          label: splitTranslation(type.name, this.props.locale),
         }));
         this.setState({ shipmentTypes }, () => this.props.hideSpinner());
       })
@@ -244,22 +246,31 @@ class SendMovementPage extends Component {
   fetchOutboundReturn() {
     this.props.showSpinner();
     const url = `/api/stockTransfers/${this.props.match.params.outboundReturnId}`;
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((resp) => {
         const outboundReturn = parseResponse(resp.data.data);
-        const picklistItems = _.flatten(_.map(outboundReturn.stockTransferItems, 'picklistItems'));
-        this.setState({
-          values: {
-            outboundReturn: {
-              ...outboundReturn,
-              picklistItems,
-              shipmentType: {
-                ...outboundReturn.shipmentType,
-                label: splitTranslation(outboundReturn.shipmentType.name, this.props.locale),
+        const picklistItems = _.flatten(
+          _.map(outboundReturn.stockTransferItems, "picklistItems"),
+        );
+        this.setState(
+          {
+            values: {
+              outboundReturn: {
+                ...outboundReturn,
+                picklistItems,
+                shipmentType: {
+                  ...outboundReturn.shipmentType,
+                  label: splitTranslation(
+                    outboundReturn.shipmentType.name,
+                    this.props.locale,
+                  ),
+                },
               },
             },
           },
-        }, () => this.fetchShipmentTypes());
+          () => this.fetchShipmentTypes(),
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -271,17 +282,18 @@ class SendMovementPage extends Component {
     const isOrigin = this.props.currentLocationId === values.origin.id;
 
     if (isOrigin) {
-      apiClient.post(url)
-        .then(() => {
-          this.props.hideSpinner();
-          window.location.reload();
-        });
+      apiClient.post(url).then(() => {
+        this.props.hideSpinner();
+        window.location.reload();
+      });
     } else {
       this.props.hideSpinner();
-      Alert.error(this.props.translate(
-        'react.stockMovement.alert.rollbackShipment.label',
-        'You are not able to rollback shipment from your location.',
-      ));
+      Alert.error(
+        this.props.translate(
+          "react.stockMovement.alert.rollbackShipment.label",
+          "You are not able to rollback shipment from your location.",
+        ),
+      );
     }
   }
 
@@ -295,9 +307,12 @@ class SendMovementPage extends Component {
 
       this.saveValues(payload)
         .then(() => {
-          apiClient.post(url, flattenRequest(payload))
+          apiClient
+            .post(url, flattenRequest(payload))
             .then(() => {
-              window.location = STOCK_MOVEMENT_URL.show(this.props.match.params.outboundReturnId);
+              window.location = STOCK_MOVEMENT_URL.show(
+                this.props.match.params.outboundReturnId,
+              );
             })
             .catch(() => {
               this.props.hideSpinner();
@@ -309,25 +324,30 @@ class SendMovementPage extends Component {
 
   validate(values) {
     const errors = {};
-    const date = moment(this.props.minimumExpirationDate, 'MM/DD/YYYY');
-    const dateShipped = moment(values.dateShipped, 'MM/DD/YYYY');
-    const expectedDeliveryDate = moment(values.expectedDeliveryDate, 'MM/DD/YYYY');
+    const date = moment(this.props.minimumExpirationDate, "MM/DD/YYYY");
+    const dateShipped = moment(values.dateShipped, "MM/DD/YYYY");
+    const expectedDeliveryDate = moment(
+      values.expectedDeliveryDate,
+      "MM/DD/YYYY",
+    );
 
     if (date.diff(dateShipped) > 0) {
-      errors.dateShipped = 'react.stockMovement.error.invalidDate.label';
+      errors.dateShipped = "react.stockMovement.error.invalidDate.label";
     }
     if (!values.dateShipped) {
-      errors.dateShipped = 'react.default.error.requiredField.label';
+      errors.dateShipped = "react.default.error.requiredField.label";
     }
     if (!values.shipmentType) {
-      errors.shipmentType = 'react.default.error.requiredField.label';
+      errors.shipmentType = "react.default.error.requiredField.label";
     }
     if (!values.expectedDeliveryDate) {
-      errors.expectedDeliveryDate = 'react.default.error.requiredField.label';
+      errors.expectedDeliveryDate = "react.default.error.requiredField.label";
     }
     if (moment(dateShipped).diff(expectedDeliveryDate) > 0) {
-      errors.expectedDeliveryDate = 'react.stockMovement.error.deliveryDateBeforeShipDate.label';
-      errors.dateShipped = 'react.stockMovement.error.deliveryDateBeforeShipDate.label';
+      errors.expectedDeliveryDate =
+        "react.stockMovement.error.deliveryDateBeforeShipDate.label";
+      errors.dateShipped =
+        "react.stockMovement.error.deliveryDateBeforeShipDate.label";
     }
 
     return errors;
@@ -336,26 +356,32 @@ class SendMovementPage extends Component {
   saveAndExit(values) {
     const errors = this.validate(values);
     if (_.isEmpty(errors)) {
-      this.saveValues(values)
-        .then(() => {
-          window.location = STOCK_MOVEMENT_URL.show(this.props.match.params.outboundReturnId);
-        });
+      this.saveValues(values).then(() => {
+        window.location = STOCK_MOVEMENT_URL.show(
+          this.props.match.params.outboundReturnId,
+        );
+      });
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmExit.label', 'Confirm save'),
+        title: this.props.translate(
+          "react.stockMovement.confirmExit.label",
+          "Confirm save",
+        ),
         message: this.props.translate(
-          'react.stockMovement.confirmExit.message',
-          'Validation errors occurred. Are you sure you want to exit and lose unsaved data?',
+          "react.stockMovement.confirmExit.message",
+          "Validation errors occurred. Are you sure you want to exit and lose unsaved data?",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
+            label: this.props.translate("react.default.yes.label", "Yes"),
             onClick: () => {
-              window.location = STOCK_MOVEMENT_URL.show(this.props.match.params.outboundReturnId);
+              window.location = STOCK_MOVEMENT_URL.show(
+                this.props.match.params.outboundReturnId,
+              );
             },
           },
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
           },
         ],
       });
@@ -373,15 +399,20 @@ class SendMovementPage extends Component {
             label: splitTranslation(data.shipmentType.name, this.props.locale),
           },
         };
-        const picklistItems = _.flatten(_.map(outboundReturn.stockTransferItems, 'picklistItems'));
-        this.setState({
-          values: {
-            outboundReturn: {
-              ...outboundReturn,
-              picklistItems,
+        const picklistItems = _.flatten(
+          _.map(outboundReturn.stockTransferItems, "picklistItems"),
+        );
+        this.setState(
+          {
+            values: {
+              outboundReturn: {
+                ...outboundReturn,
+                picklistItems,
+              },
             },
           },
-        }, () => this.props.hideSpinner());
+          () => this.props.hideSpinner(),
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -394,11 +425,11 @@ class SendMovementPage extends Component {
       shipmentType: {
         id: values.shipmentType.id,
       },
-      trackingNumber: values.trackingNumber || '',
-      driverName: values.driverName || '',
-      comments: values.comments || '',
-      dateShipped: values.dateShipped || '',
-      expectedDeliveryDate: values.expectedDeliveryDate || '',
+      trackingNumber: values.trackingNumber || "",
+      driverName: values.driverName || "",
+      comments: values.comments || "",
+      dateShipped: values.dateShipped || "",
+      expectedDeliveryDate: values.expectedDeliveryDate || "",
     };
 
     return apiClient.put(url, flattenRequest(payload));
@@ -406,18 +437,29 @@ class SendMovementPage extends Component {
 
   previousPage(values, invalid) {
     if (!invalid) {
-      this.saveValues(values)
-        .then(() => this.props.previousPage(values));
+      this.saveValues(values).then(() => this.props.previousPage(values));
     } else {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmPreviousPage.label', 'Validation error'),
-        message: this.props.translate('react.stockMovement.confirmPreviousPage.message.label', 'Cannot save due to validation error on page'),
+        title: this.props.translate(
+          "react.stockMovement.confirmPreviousPage.label",
+          "Validation error",
+        ),
+        message: this.props.translate(
+          "react.stockMovement.confirmPreviousPage.message.label",
+          "Cannot save due to validation error on page",
+        ),
         buttons: [
           {
-            label: this.props.translate('react.stockMovement.confirmPreviousPage.correctError.label', 'Correct error'),
+            label: this.props.translate(
+              "react.stockMovement.confirmPreviousPage.correctError.label",
+              "Correct error",
+            ),
           },
           {
-            label: this.props.translate('react.stockMovement.confirmPreviousPage.continue.label', 'Continue (lose unsaved work)'),
+            label: this.props.translate(
+              "react.stockMovement.confirmPreviousPage.continue.label",
+              "Continue (lose unsaved work)",
+            ),
             onClick: () => this.props.previousPage(values),
           },
         ],
@@ -438,88 +480,107 @@ class SendMovementPage extends Component {
           <form onSubmit={handleSubmit}>
             <div className="classic-form classic-form-condensed">
               <span className="buttons-container classic-form-buttons">
-                { !(values && values.status === 'COMPLETED')
-                  ? (
-                    <span>
-                      <button
-                        type="button"
-                        onClick={() => this.save(values)}
-                        className="btn btn-outline-secondary float-right btn-form btn-xs"
-                        disabled={invalid}
-                      >
-                        <span>
-                          <i className="fa fa-save pr-2" />
-                          <Translate id="react.default.button.save.label" defaultMessage="Save" />
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => this.saveAndExit(values)}
-                        className="float-right mb-1 btn btn-outline-secondary align-self-end btn-xs"
-                      >
-                        <span>
-                          <i className="fa fa-sign-out pr-2" />
-                          <Translate id="react.default.button.saveAndExit.label" defaultMessage="Save and exit" />
-                        </span>
-                      </button>
-                    </span>
-                  )
-                  : (
+                {!(values && values.status === "COMPLETED") ? (
+                  <span>
                     <button
                       type="button"
+                      onClick={() => this.save(values)}
+                      className="btn btn-outline-secondary float-right btn-form btn-xs"
                       disabled={invalid}
-                      onClick={() => {
-                        window.location = STOCK_MOVEMENT_URL.show(
-                          this.props.match.params.outboundReturnId,
-                        );
-                      }}
-                      className="float-right mb-1 btn btn-outline-danger align-self-end btn-xs mr-2"
+                    >
+                      <span>
+                        <i className="fa fa-save pr-2" />
+                        <Translate
+                          id="react.default.button.save.label"
+                          defaultMessage="Save"
+                        />
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => this.saveAndExit(values)}
+                      className="float-right mb-1 btn btn-outline-secondary align-self-end btn-xs"
                     >
                       <span>
                         <i className="fa fa-sign-out pr-2" />
-                        {' '}
-                        <Translate id="react.default.button.exit.label" defaultMessage="Exit" />
-                        {' '}
+                        <Translate
+                          id="react.default.button.saveAndExit.label"
+                          defaultMessage="Save and exit"
+                        />
                       </span>
                     </button>
-                  ) }
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={invalid}
+                    onClick={() => {
+                      window.location = STOCK_MOVEMENT_URL.show(
+                        this.props.match.params.outboundReturnId,
+                      );
+                    }}
+                    className="float-right mb-1 btn btn-outline-danger align-self-end btn-xs mr-2"
+                  >
+                    <span>
+                      <i className="fa fa-sign-out pr-2" />{" "}
+                      <Translate
+                        id="react.default.button.exit.label"
+                        defaultMessage="Exit"
+                      />{" "}
+                    </span>
+                  </button>
+                )}
               </span>
-              <div className="form-title"><Translate id="react.attribute.options.label" defaultMessage="Sending options" /></div>
+              <div className="form-title">
+                <Translate
+                  id="react.attribute.options.label"
+                  defaultMessage="Sending options"
+                />
+              </div>
               {_.map(SHIPMENT_FIELDS, (fieldConfig, fieldName) =>
                 renderFormField(fieldConfig, fieldName, {
                   shipmentTypes: this.state.shipmentTypes,
-                  issued: values && values.status === 'COMPLETED',
-                }))}
+                  issued: values && values.status === "COMPLETED",
+                }),
+              )}
             </div>
             <div>
               <div className="d-flex justify-content-between">
                 <button
                   type="submit"
                   className="btn btn-outline-primary btn-form btn-xs mx-0"
-                  disabled={values && values.status === 'COMPLETED'}
+                  disabled={values && values.status === "COMPLETED"}
                   onClick={() => this.previousPage(values, invalid)}
                 >
-                  <Translate id="react.outboundReturns.previous.label" defaultMessage="Previous" />
+                  <Translate
+                    id="react.outboundReturns.previous.label"
+                    defaultMessage="Previous"
+                  />
                 </button>
                 <div className="d-flex">
-                  {values.status === 'COMPLETED' && this.props.isUserAdmin
-                  && (
-                  <button
-                    type="button"
-                    onClick={() => this.rollbackReturnOrder(values)}
-                    className="btn btn-outline-success float-right btn-form btn-xs"
-                  >
-                    <i className="fa fa-undo pr-2" />
-                    <Translate id="react.default.button.rollback.label" defaultMessage="Rollback" />
-                  </button>
+                  {values.status === "COMPLETED" && this.props.isUserAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => this.rollbackReturnOrder(values)}
+                      className="btn btn-outline-success float-right btn-form btn-xs"
+                    >
+                      <i className="fa fa-undo pr-2" />
+                      <Translate
+                        id="react.default.button.rollback.label"
+                        defaultMessage="Rollback"
+                      />
+                    </button>
                   )}
                   <button
                     type="submit"
                     onClick={() => this.sendOutboundReturn(values, invalid)}
                     className="btn btn-outline-success float-right btn-form btn-xs mx-0"
-                    disabled={values && values.status === 'COMPLETED'}
+                    disabled={values && values.status === "COMPLETED"}
                   >
-                    <Translate id="react.stockMovement.sendShipment.label" defaultMessage="Send shipment" />
+                    <Translate
+                      id="react.stockMovement.sendShipment.label"
+                      defaultMessage="Send shipment"
+                    />
                   </button>
                 </div>
               </div>
@@ -529,7 +590,8 @@ class SendMovementPage extends Component {
                     translate: this.props.translate,
                     formatLocalizedDate: this.props.formatLocalizedDate,
                     values,
-                  }))}
+                  }),
+                )}
               </div>
             </div>
           </form>
@@ -541,7 +603,8 @@ class SendMovementPage extends Component {
 
 const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
-  outboundReturnsTranslationsFetched: state.session.fetchedTranslations.outboundReturns,
+  outboundReturnsTranslationsFetched:
+    state.session.fetchedTranslations.outboundReturns,
   minimumExpirationDate: state.session.minimumExpirationDate,
   locale: state.session.activeLanguage,
   isUserAdmin: state.session.isUserAdmin,
@@ -549,7 +612,9 @@ const mapStateToProps = (state) => ({
   formatLocalizedDate: formatDate(state.localize),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(SendMovementPage);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  SendMovementPage,
+);
 
 SendMovementPage.propTypes = {
   initialValues: PropTypes.shape({}).isRequired,

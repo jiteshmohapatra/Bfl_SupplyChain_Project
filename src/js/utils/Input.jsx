@@ -1,9 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const Input = ({
-  fieldRef, onChange, className = '', arrowLeft, arrowUp, arrowRight, arrowDown, copyDown, onTabPress, isFormElement, ...props
+  fieldRef,
+  onChange,
+  className = "",
+  arrowLeft,
+  arrowUp,
+  arrowRight,
+  arrowDown,
+  copyDown,
+  onTabPress,
+  isFormElement,
+  ...props
 }) => {
   const handleChange = (event) => {
     const { value } = event.target;
@@ -31,32 +41,38 @@ const Input = ({
       }}
       onKeyDown={(event) => {
         keys[event.keyCode] = true;
-        if (keys[40] && keys[17]) { /* CTRL + arrow down */
+        if (keys[40] && keys[17]) {
+          /* CTRL + arrow down */
           if (copyDown) {
             copyDown();
             event.preventDefault();
           }
-        } else if (keys[37]) { /* Arrow left */
+        } else if (keys[37]) {
+          /* Arrow left */
           if (arrowLeft) {
             arrowLeft();
             event.preventDefault();
           }
-        } else if (keys[38]) { /* Arrow up */
+        } else if (keys[38]) {
+          /* Arrow up */
           if (arrowUp) {
             arrowUp();
             event.preventDefault();
           }
-        } else if (keys[39]) { /* Arrow right */
+        } else if (keys[39]) {
+          /* Arrow right */
           if (arrowRight) {
             arrowRight();
             event.preventDefault();
           }
-        } else if (keys[40]) { /* Arrow down */
+        } else if (keys[40]) {
+          /* Arrow down */
           if (arrowDown) {
             arrowDown();
             event.preventDefault();
           }
-        } else if (keys[9]) { /* Tab */
+        } else if (keys[9]) {
+          /* Tab */
           if (onTabPress) {
             onTabPress(event);
           }
@@ -68,7 +84,7 @@ const Input = ({
         onChange(value);
       }}
       /* eslint-disable-next-line react/prop-types */
-      className={`${isFormElement ? 'form-control form-control-xs' : ''} ${className} ${props.type === 'number' ? 'text-right mr-2' : ''}`}
+      className={`${isFormElement ? "form-control form-control-xs" : ""} ${className} ${props.type === "number" ? "text-right mr-2" : ""}`}
       {...props}
       onChange={handleChange}
       onFocus={handleFocus}
@@ -97,7 +113,7 @@ Input.propTypes = {
 
 Input.defaultProps = {
   onChange: null,
-  className: '',
+  className: "",
   arrowLeft: null,
   arrowUp: null,
   arrowRight: null,

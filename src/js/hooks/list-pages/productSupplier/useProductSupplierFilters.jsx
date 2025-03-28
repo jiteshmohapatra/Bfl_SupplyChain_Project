@@ -1,15 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import queryString from 'query-string';
-import { useSelector } from 'react-redux';
+import queryString from "query-string";
+import { useSelector } from "react-redux";
 
-import { fetchPreferenceTypes } from 'actions';
-import filterFields from 'components/productSupplier/FilterFields';
-import { DETAILS_TAB } from 'consts/productSupplierList';
-import useCommonFilters from 'hooks/list-pages/useCommonFilters';
-import useCommonFiltersCleaner from 'hooks/list-pages/useCommonFiltersCleaner';
-import { clearQueryParams, transformFilterParams } from 'utils/list-utils';
-import { fetchOrganization, fetchProduct } from 'utils/option-utils';
+import { fetchPreferenceTypes } from "actions";
+import filterFields from "components/productSupplier/FilterFields";
+import { DETAILS_TAB } from "consts/productSupplierList";
+import useCommonFilters from "hooks/list-pages/useCommonFilters";
+import useCommonFiltersCleaner from "hooks/list-pages/useCommonFiltersCleaner";
+import { clearQueryParams, transformFilterParams } from "utils/list-utils";
+import { fetchOrganization, fetchProduct } from "utils/option-utils";
 
 const useProductSupplierFilters = (ignoreClearFilters) => {
   const {
@@ -23,9 +23,7 @@ const useProductSupplierFilters = (ignoreClearFilters) => {
     dispatch,
   } = useCommonFilters();
 
-  const {
-    preferenceTypes,
-  } = useSelector((state) => ({
+  const { preferenceTypes } = useSelector((state) => ({
     preferenceTypes: state.productSupplier.preferenceTypes,
   }));
 
@@ -47,17 +45,22 @@ const useProductSupplierFilters = (ignoreClearFilters) => {
   const clearFilterValues = () => {
     const { pathname, search } = history.location;
     const queryParams = queryString.parse(search);
-    const clearedParams = clearQueryParams({ fieldsToIgnore: ignoreClearFilters, queryParams });
+    const clearedParams = clearQueryParams({
+      fieldsToIgnore: ignoreClearFilters,
+      queryParams,
+    });
     history.push({ pathname, search: clearedParams });
   };
 
   const initializeDefaultFilterValues = async () => {
     // INITIALIZE EMPTY FILTER OBJECT
-    const defaultValues = Object.keys(filterFields)
-      .reduce((acc, key) => ({
+    const defaultValues = Object.keys(filterFields).reduce(
+      (acc, key) => ({
         ...acc,
-        [key]: '',
-      }), {});
+        [key]: "",
+      }),
+      {},
+    );
 
     if (!defaultValues.tab) {
       defaultValues.tab = DETAILS_TAB;
@@ -91,8 +94,9 @@ const useProductSupplierFilters = (ignoreClearFilters) => {
       defaultValues.active = queryProps.active;
     }
     if (queryProps.defaultPreferenceTypes) {
-      defaultValues.defaultPreferenceTypes = preferenceTypes
-        .filter(({ id }) => queryProps?.defaultPreferenceTypes?.includes(id));
+      defaultValues.defaultPreferenceTypes = preferenceTypes.filter(({ id }) =>
+        queryProps?.defaultPreferenceTypes?.includes(id),
+      );
     }
 
     setDefaultFilterValues(defaultValues);
@@ -101,14 +105,17 @@ const useProductSupplierFilters = (ignoreClearFilters) => {
 
   const setFilterValues = (values) => {
     const filterAccessors = {
-      searchTerm: { name: 'searchTerm' },
-      product: { name: 'product', accessor: 'id' },
-      tab: { name: 'tab' },
-      supplier: { name: 'supplier', accessor: 'id' },
-      createdFrom: { name: 'createdFrom' },
-      createdTo: { name: 'createdTo' },
-      defaultPreferenceTypes: { name: 'defaultPreferenceTypes', accessor: 'id' },
-      includeInactive: { name: 'includeInactive' },
+      searchTerm: { name: "searchTerm" },
+      product: { name: "product", accessor: "id" },
+      tab: { name: "tab" },
+      supplier: { name: "supplier", accessor: "id" },
+      createdFrom: { name: "createdFrom" },
+      createdTo: { name: "createdTo" },
+      defaultPreferenceTypes: {
+        name: "defaultPreferenceTypes",
+        accessor: "id",
+      },
+      includeInactive: { name: "includeInactive" },
     };
     const transformedParams = transformFilterParams(values, filterAccessors);
     const queryFilterParams = queryString.stringify(transformedParams);
@@ -120,7 +127,11 @@ const useProductSupplierFilters = (ignoreClearFilters) => {
   };
 
   // Custom hook for changing location/filters rebuilding logic
-  useCommonFiltersCleaner({ filtersInitialized, initializeDefaultFilterValues, clearFilterValues });
+  useCommonFiltersCleaner({
+    filtersInitialized,
+    initializeDefaultFilterValues,
+    clearFilterValues,
+  });
 
   return {
     defaultFilterValues,

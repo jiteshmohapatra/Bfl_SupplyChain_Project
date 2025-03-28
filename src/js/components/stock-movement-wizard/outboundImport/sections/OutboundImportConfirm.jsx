@@ -1,16 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 
-import { setScrollToBottom } from 'actions';
-import Button from 'components/form-elements/Button';
-import Section from 'components/Layout/v2/Section';
-import OutboundImportItems
-  from 'components/stock-movement-wizard/outboundImport/subsections/OutboundImportItems';
-import OutboundImportShipmentDetails
-  from 'components/stock-movement-wizard/outboundImport/subsections/OutboundImportShipmentDetails';
-import { FormErrorPropType } from 'utils/propTypes';
+import { setScrollToBottom } from "actions";
+import Button from "components/form-elements/Button";
+import Section from "components/Layout/v2/Section";
+import OutboundImportItems from "components/stock-movement-wizard/outboundImport/subsections/OutboundImportItems";
+import OutboundImportShipmentDetails from "components/stock-movement-wizard/outboundImport/subsections/OutboundImportShipmentDetails";
+import { FormErrorPropType } from "utils/propTypes";
 
 const OutboundImportConfirm = ({
   control,
@@ -24,8 +22,8 @@ const OutboundImportConfirm = ({
   return (
     <Section
       title={{
-        label: 'react.outboundImport.form.confirmation.label',
-        defaultMessage: 'Confirmation',
+        label: "react.outboundImport.form.confirmation.label",
+        defaultMessage: "Confirmation",
       }}
     >
       <OutboundImportShipmentDetails control={control} errors={errors} />
@@ -33,7 +31,7 @@ const OutboundImportConfirm = ({
         <Button
           label="react.outboundImport.form.redoImport.label"
           defaultLabel="Redo import"
-          variant={hasErrors ? 'primary' : 'secondary'}
+          variant={hasErrors ? "primary" : "secondary"}
           onClick={() => {
             previous();
             dispatch(setScrollToBottom(true));

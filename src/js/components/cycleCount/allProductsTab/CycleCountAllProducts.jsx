@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import PropTypes from 'prop-types';
-import { RiCalculatorLine, RiDownload2Line } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiCalculatorLine, RiDownload2Line } from "react-icons/ri";
 
-import AllProductsTabFooter from 'components/cycleCount/allProductsTab/AllProductsTabFooter';
-import DataTable from 'components/DataTable/v2/DataTable';
-import Button from 'components/form-elements/Button';
-import useAllProductsTab from 'hooks/cycleCount/useAllProductsTab';
-import useTranslate from 'hooks/useTranslate';
+import AllProductsTabFooter from "components/cycleCount/allProductsTab/AllProductsTabFooter";
+import DataTable from "components/DataTable/v2/DataTable";
+import Button from "components/form-elements/Button";
+import useAllProductsTab from "hooks/cycleCount/useAllProductsTab";
+import useTranslate from "hooks/useTranslate";
 
 const CycleCountAllProducts = ({
   filterParams,
@@ -16,12 +16,8 @@ const CycleCountAllProducts = ({
   setToCountCheckedCheckboxes,
   tablePaginationProps,
 }) => {
-  const {
-    paginationProps,
-    offset,
-    pageSize,
-    setTotalCount,
-  } = tablePaginationProps;
+  const { paginationProps, offset, pageSize, setTotalCount } =
+    tablePaginationProps;
 
   const {
     columns,
@@ -50,9 +46,8 @@ const CycleCountAllProducts = ({
     <div>
       <div className="d-flex justify-content-sm-between align-items-center">
         <span className="selected-rows-indicator pl-4">
-          {selectedCheckboxesAmount}
-          {' '}
-          {translate('react.default.selected.label', 'selected')}
+          {selectedCheckboxesAmount}{" "}
+          {translate("react.default.selected.label", "selected")}
         </span>
         <div className="d-flex m-2 gap-8">
           <Button

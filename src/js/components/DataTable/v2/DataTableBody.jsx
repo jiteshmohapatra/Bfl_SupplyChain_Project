@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import { flexRender } from '@tanstack/react-table';
-import PropTypes from 'prop-types';
+import { flexRender } from "@tanstack/react-table";
+import PropTypes from "prop-types";
 
-import TableRow from 'components/DataTable/TableRow';
-import DataTableStatus from 'components/DataTable/v2/DataTableStatus';
+import TableRow from "components/DataTable/TableRow";
+import DataTableStatus from "components/DataTable/v2/DataTableStatus";
 
 const DataTableBody = ({
   emptyTableMessage,
@@ -19,35 +19,41 @@ const DataTableBody = ({
     <DataTableStatus
       label={emptyTableMessage?.id || defaultEmptyTableMessage.id}
       defaultMessage={
-          emptyTableMessage?.defaultMessage || defaultEmptyTableMessage.defaultMessage
-        }
+        emptyTableMessage?.defaultMessage ||
+        defaultEmptyTableMessage.defaultMessage
+      }
       shouldDisplay={!dataLength && !loading}
     />
     <DataTableStatus
       label={loadingMessage?.id || defaultLoadingTableMessage.id}
       defaultMessage={
-          loadingMessage?.defaultMessage || defaultLoadingTableMessage.defaultMessage
-        }
+        loadingMessage?.defaultMessage ||
+        defaultLoadingTableMessage.defaultMessage
+      }
       shouldDisplay={loading}
     />
-    {(dataLength > 0 && !loading) && rowModel
-      .rows
-      .map((row) => (
+    {dataLength > 0 &&
+      !loading &&
+      rowModel.rows.map((row) => (
         <div key={row.id} className="rt-tr-group cell-wrapper" role="rowgroup">
           <TableRow key={row.id} className="rt-tr">
-            {row.getVisibleCells()
-              .map((cell) => {
-                if (cell.column.columnDef?.meta?.hide) {
-                  return null;
-                }
-                const className = cell.column.columnDef?.meta?.getCellContext?.()?.className;
-                const flexWidth = cell.column.columnDef.meta?.flexWidth || 1;
-                return (
-                  <div className={`d-flex ${className}`} style={{ flex: flexWidth }} key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                );
-              })}
+            {row.getVisibleCells().map((cell) => {
+              if (cell.column.columnDef?.meta?.hide) {
+                return null;
+              }
+              const className =
+                cell.column.columnDef?.meta?.getCellContext?.()?.className;
+              const flexWidth = cell.column.columnDef.meta?.flexWidth || 1;
+              return (
+                <div
+                  className={`d-flex ${className}`}
+                  style={{ flex: flexWidth }}
+                  key={cell.id}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              );
+            })}
           </TableRow>
         </div>
       ))}
@@ -75,9 +81,7 @@ DataTableBody.propTypes = {
   }).isRequired,
   loading: PropTypes.bool,
   rowModel: PropTypes.shape({
-    rows: PropTypes.arrayOf(
-      PropTypes.shape({}),
-    ).isRequired,
+    rows: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   }).isRequired,
   dataLength: PropTypes.number.isRequired,
 };

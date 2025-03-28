@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 import {
   changeCurrentLocation,
   fetchMenuConfig,
   fetchSessionInfo,
-} from 'actions';
-import LocationChooserButton
-  from 'components/location/LocationChooser/LocationChooserButton/LocationChooserButton';
-import LocationChooserModal
-  from 'components/location/LocationChooser/LocationChooserModal/LocationChooserModal';
-import apiClient from 'utils/apiClient';
+} from "actions";
+import LocationChooserButton from "components/location/LocationChooser/LocationChooserButton/LocationChooserButton";
+import LocationChooserModal from "components/location/LocationChooser/LocationChooserModal/LocationChooserModal";
+import apiClient from "utils/apiClient";
 
 const LocationChooser = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,19 +20,26 @@ const LocationChooser = (props) => {
 
   const transformLocationListData = (data) => {
     /*
-    * Transforms a simple Array of locations into an Array of objects like:
-    * { organization: String, groups: [ { group: String, locations: [Array(location)] } ] }
-    * sort by organization name and group name
-    * null organizations and location groups are sorted as last
-    * */
-    const noOrganizationTag = 'NO_ORGANIZATION';
-    const noGroupTag = 'NO_GROUP';
-    const locationsGroupedByOrganization = _.groupBy(data, (location) =>
-      _.get(location, 'organizationName', noOrganizationTag) || noOrganizationTag);
+     * Transforms a simple Array of locations into an Array of objects like:
+     * { organization: String, groups: [ { group: String, locations: [Array(location)] } ] }
+     * sort by organization name and group name
+     * null organizations and location groups are sorted as last
+     * */
+    const noOrganizationTag = "NO_ORGANIZATION";
+    const noGroupTag = "NO_GROUP";
+    const locationsGroupedByOrganization = _.groupBy(
+      data,
+      (location) =>
+        _.get(location, "organizationName", noOrganizationTag) ||
+        noOrganizationTag,
+    );
     return Object.entries(locationsGroupedByOrganization)
       .map(([organization, locations]) => {
-        const locationsGroupedByGroup = _.groupBy(locations, (location) =>
-          _.get(location, 'locationGroup.name', noGroupTag) || noGroupTag);
+        const locationsGroupedByGroup = _.groupBy(
+          locations,
+          (location) =>
+            _.get(location, "locationGroup.name", noGroupTag) || noGroupTag,
+        );
         const groups = Object.entries(locationsGroupedByGroup)
           .map(([group, locationList]) => ({ group, locations: locationList }))
           .sort((a, b) => {
@@ -52,20 +57,22 @@ const LocationChooser = (props) => {
   };
 
   const fetchLocations = () => {
-    const url = '/api/locations';
+    const url = "/api/locations";
     const params = {
       locationChooser: true,
       applyUserFilter: true,
-      locationTypeCode: 'DEPOT',
-      activityCodes: 'MANAGE_INVENTORY',
+      locationTypeCode: "DEPOT",
+      activityCodes: "MANAGE_INVENTORY",
     };
     setIsLoading(true);
-    return apiClient.get(url, { params })
+    return apiClient
+      .get(url, { params })
       .then((response) => {
         const { data } = response.data;
         const locations = transformLocationListData(data);
         setLocationData(locations);
-      }).finally(() => setIsLoading(false));
+      })
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {

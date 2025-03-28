@@ -6,17 +6,15 @@
  *
  * http://github.com/scottgonzalez/jquery-ui-extensions
  */
-(function( $ ) {
+(function ($) {
+  $('.ui-autocomplete-input').live('autocompleteopen', function () {
+    const autocomplete = $(this).data('autocomplete');
+    const { menu } = autocomplete;
 
-$( ".ui-autocomplete-input" ).live( "autocompleteopen", function() {
-	var autocomplete = $( this ).data( "autocomplete" ),
-		menu = autocomplete.menu;
+    if (!autocomplete.options.selectFirst) {
+      return;
+    }
 
-	if ( !autocomplete.options.selectFirst ) {
-		return;
-	}
-
-	menu.activate( $.Event({ type: "mouseenter" }), menu.element.children().first() );
-});
-
-}( jQuery ));
+    menu.activate($.Event({ type: 'mouseenter' }), menu.element.children().first());
+  });
+}(jQuery));

@@ -1,19 +1,22 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
 
-import { DASHBOARD_URL } from 'consts/applicationUrls';
-import Translate from 'utils/Translate';
+import { DASHBOARD_URL } from "consts/applicationUrls";
+import Translate from "utils/Translate";
 
-import 'components/locations-configuration/SuccessMessage.scss';
+import "components/locations-configuration/SuccessMessage.scss";
 
 const LoadDemoDataErrorMessage = ({ history, supportLinks }) => (
   <div className="success-wrapper">
     <div className="success-content">
       <i className="fa fa-exclamation-circle error-icon" aria-hidden="true" />
       <h2 className="font-weight-bold">
-        <Translate id="react.loadData.error.title.label" defaultMessage="Error occurred while loading demo data" />
+        <Translate
+          id="react.loadData.error.title.label"
+          defaultMessage="Error occurred while loading demo data"
+        />
       </h2>
       <p className="w-75 text-break">
         <Translate
@@ -23,14 +26,22 @@ const LoadDemoDataErrorMessage = ({ history, supportLinks }) => (
         You can find a link to restart the load process in the configuration menu.
         You can also ask your administrator to reset your instance.
         If you aren't sure how to proceed, you can request support on the OpenBoxes"
-        />
-        {' '}
+        />{" "}
         <a href={supportLinks.discussionForum} className="knowledge-base-link">
-          <Translate id="react.loadData.error.discussionForum.link.label" defaultMessage="discussion forum" />
+          <Translate
+            id="react.loadData.error.discussionForum.link.label"
+            defaultMessage="discussion forum"
+          />
         </a>
       </p>
       <div className="success-buttons-section d-flex flex-column w-50">
-        <button type="button" className="btn btn-outline-primary" onClick={() => history.push(DASHBOARD_URL.base)}>Back to dashboard</button>
+        <button
+          type="button"
+          className="btn btn-outline-primary"
+          onClick={() => history.push(DASHBOARD_URL.base)}
+        >
+          Back to dashboard
+        </button>
       </div>
     </div>
   </div>

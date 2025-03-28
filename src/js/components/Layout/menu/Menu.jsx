@@ -1,32 +1,35 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { useParams, withRouter } from 'react-router-dom';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { useParams, withRouter } from "react-router-dom";
 
-import MenuItem from 'components/Layout/menu/MenuItem';
-import MenuSection from 'components/Layout/menu/MenuSection';
-import MenuSubsection from 'components/Layout/menu/MenuSubsection';
-import { checkActiveSection, getAllMenuUrls } from 'utils/menu-utils';
+import MenuItem from "components/Layout/menu/MenuItem";
+import MenuSection from "components/Layout/menu/MenuSection";
+import MenuSubsection from "components/Layout/menu/MenuSubsection";
+import { checkActiveSection, getAllMenuUrls } from "utils/menu-utils";
 
 const Menu = ({ menuConfig, location, menuSectionsUrlParts }) => {
   const params = useParams();
 
   const allMenuUrls = useMemo(() => getAllMenuUrls(menuConfig), [menuConfig]);
-  const activeSection = useMemo(() =>
-    checkActiveSection({
-      menuUrls: allMenuUrls,
-      path: location,
-      params,
-      menuSectionsUrlParts,
-    }), [allMenuUrls, location]);
+  const activeSection = useMemo(
+    () =>
+      checkActiveSection({
+        menuUrls: allMenuUrls,
+        path: location,
+        params,
+        menuSectionsUrlParts,
+      }),
+    [allMenuUrls, location],
+  );
 
   return (
     <div className="menu-wrapper" id="navbarSupportedContent">
       <ul className="d-flex align-items-center navbar-nav mr-auto flex-wrap">
-        { _.chain(menuConfig)
-          .filter((section) => section.id !== 'configuration')
+        {_.chain(menuConfig)
+          .filter((section) => section.id !== "configuration")
           .map((section) => {
             if (section.href) {
               return (

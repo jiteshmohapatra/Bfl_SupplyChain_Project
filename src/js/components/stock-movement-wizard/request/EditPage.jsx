@@ -1,43 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import arrayMutators from 'final-form-arrays';
-import update from 'immutability-helper';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import { Form } from 'react-final-form';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import Alert from 'react-s-alert';
-import { Tooltip } from 'react-tippy';
+import arrayMutators from "final-form-arrays";
+import update from "immutability-helper";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import { Form } from "react-final-form";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import Alert from "react-s-alert";
+import { Tooltip } from "react-tippy";
 
-import { fetchReasonCodes, hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import Button from 'components/form-elements/Button';
-import ButtonField from 'components/form-elements/ButtonField';
-import LabelField from 'components/form-elements/LabelField';
-import SelectField from 'components/form-elements/SelectField';
-import TableRowWithSubfields from 'components/form-elements/TableRowWithSubfields';
-import TextField from 'components/form-elements/TextField';
-import DetailsModal from 'components/stock-movement-wizard/modals/DetailsModal';
-import SubstitutionsModal from 'components/stock-movement-wizard/modals/SubstitutionsModal';
-import { DASHBOARD_URL, STOCK_MOVEMENT_URL } from 'consts/applicationUrls';
-import RequisitionStatus from 'consts/requisitionStatus';
-import apiClient from 'utils/apiClient';
-import { renderFormField } from 'utils/form-utils';
-import { formatProductDisplayName, showOutboundEditValidationErrors } from 'utils/form-values-utils';
-import canEditRequest from 'utils/permissionUtils';
-import renderHandlingIcons from 'utils/product-handling-icons';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { fetchReasonCodes, hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import Button from "components/form-elements/Button";
+import ButtonField from "components/form-elements/ButtonField";
+import LabelField from "components/form-elements/LabelField";
+import SelectField from "components/form-elements/SelectField";
+import TableRowWithSubfields from "components/form-elements/TableRowWithSubfields";
+import TextField from "components/form-elements/TextField";
+import DetailsModal from "components/stock-movement-wizard/modals/DetailsModal";
+import SubstitutionsModal from "components/stock-movement-wizard/modals/SubstitutionsModal";
+import { DASHBOARD_URL, STOCK_MOVEMENT_URL } from "consts/applicationUrls";
+import RequisitionStatus from "consts/requisitionStatus";
+import apiClient from "utils/apiClient";
+import { renderFormField } from "utils/form-utils";
+import {
+  formatProductDisplayName,
+  showOutboundEditValidationErrors,
+} from "utils/form-values-utils";
+import canEditRequest from "utils/permissionUtils";
+import renderHandlingIcons from "utils/product-handling-icons";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const BTN_CLASS_MAPPER = {
-  YES: 'btn btn-outline-success',
-  NO: 'btn btn-outline-secondary',
-  EARLIER: 'btn btn-outline-warning',
-  HIDDEN: 'btn invisible',
+  YES: "btn btn-outline-success",
+  NO: "btn btn-outline-secondary",
+  EARLIER: "btn btn-outline-warning",
+  HIDDEN: "btn invisible",
 };
 
 const AD_HOCK_FIELDS = {
@@ -51,55 +54,61 @@ const AD_HOCK_FIELDS = {
     loadMoreRows: ({ loadMoreRows }) => loadMoreRows(),
     rowComponent: TableRowWithSubfields,
     getDynamicRowAttr: ({ rowValues, showOnlyErroredItems, itemFilter }) => {
-      let className = rowValues.statusCode === 'SUBSTITUTED' ? 'crossed-out ' : '';
+      let className =
+        rowValues.statusCode === "SUBSTITUTED" ? "crossed-out " : "";
       if (rowValues.quantityAvailable < rowValues.quantityRequested) {
-        className += 'font-weight-bold';
+        className += "font-weight-bold";
       }
-      const filterOutItems = itemFilter && !(
-        rowValues.product.name.toLowerCase().includes(itemFilter.toLowerCase())
-        || rowValues.productCode.toLowerCase().includes(itemFilter.toLowerCase())
-      );
-      const hideRow = (showOnlyErroredItems && !rowValues.hasError) || filterOutItems;
+      const filterOutItems =
+        itemFilter &&
+        !(
+          rowValues.product.name
+            .toLowerCase()
+            .includes(itemFilter.toLowerCase()) ||
+          rowValues.productCode.toLowerCase().includes(itemFilter.toLowerCase())
+        );
+      const hideRow =
+        (showOnlyErroredItems && !rowValues.hasError) || filterOutItems;
       return { className, hideRow };
     },
-    subfieldKey: 'substitutionItems',
+    subfieldKey: "substitutionItems",
     headerGroupings: {
       requestInformation: {
-        label: 'react.verifyRequest.requestInformation.label',
-        defaultLabel: 'Request Information',
+        label: "react.verifyRequest.requestInformation.label",
+        defaultLabel: "Request Information",
         flexWidth: 0.5 + 3 + 1 + 1 + 1, // = Sum of fields flexWidth
       },
       availability: {
-        label: 'react.verifyRequest.availability.label',
-        defaultLabel: 'Availability',
+        label: "react.verifyRequest.availability.label",
+        defaultLabel: "Availability",
         flexWidth: 1 + 1 + 1 + 1, // = Sum of fields flexWidth
       },
       edit: {
-        label: 'react.verifyRequest.edit.label',
-        defaultLabel: 'Edit',
+        label: "react.verifyRequest.edit.label",
+        defaultLabel: "Edit",
         flexWidth: 1 + 1 + 1 + 0.5, // = Sum of fields flexWidth
       },
     },
     fields: {
       productCode: {
         type: LabelField,
-        headerAlign: 'left',
-        flexWidth: '0.5',
+        headerAlign: "left",
+        flexWidth: "0.5",
         getDynamicAttr: ({ subfield }) => ({
-          className: subfield ? 'text-center' : 'text-left ml-1',
+          className: subfield ? "text-center" : "text-left ml-1",
         }),
-        label: 'react.stockMovement.code.label',
-        defaultMessage: 'Code',
+        label: "react.stockMovement.code.label",
+        defaultMessage: "Code",
         attributes: {
           showValueTooltip: true,
         },
       },
       product: {
         type: LabelField,
-        headerAlign: 'left',
-        flexWidth: '3',
-        label: 'react.stockMovement.productName.label',
-        defaultMessage: 'Product name',
+        headerAlign: "left",
+        flexWidth: "3",
+        label: "react.stockMovement.productName.label",
+        defaultMessage: "Product name",
         attributes: {
           formatValue: (value) => (
             <Tooltip
@@ -118,34 +127,36 @@ const AD_HOCK_FIELDS = {
           ),
         },
         getDynamicAttr: ({ fieldValue, subfield }) => ({
-          className: subfield ? 'text-center' : 'text-left ml-1',
+          className: subfield ? "text-center" : "text-left ml-1",
           color: fieldValue?.color,
         }),
       },
       quantityOnHandRequesting: {
         type: LabelField,
-        label: 'react.stockMovement.requesterQuantityOnHand.label',
-        defaultMessage: 'Requester QOH',
-        flexWidth: '1',
+        label: "react.stockMovement.requesterQuantityOnHand.label",
+        defaultMessage: "Requester QOH",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityDemandRequesting: {
         type: LabelField,
-        label: 'react.stockMovement.quantityDemand.label',
-        defaultMessage: 'Demand',
-        flexWidth: '1',
+        label: "react.stockMovement.quantityDemand.label",
+        defaultMessage: "Demand",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityRequested: {
         type: (params) => {
           const { fieldName, values } = params;
-          const fieldNameParts = _.split(fieldName, '.');
+          const fieldNameParts = _.split(fieldName, ".");
           if (fieldNameParts.length === 2) {
             const rowIdx = fieldNameParts[0];
             const rowValues = _.get(values, rowIdx);
@@ -153,7 +164,9 @@ const AD_HOCK_FIELDS = {
               return (
                 <div className="d-flex align-items-center">
                   {/* flex: 1 to center qty label, marginLeft: 14px to mitigate icon font size */}
-                  <div style={{ flex: 1, marginLeft: '14px' }}><LabelField {...params} /></div>
+                  <div style={{ flex: 1, marginLeft: "14px" }}>
+                    <LabelField {...params} />
+                  </div>
                   <Tooltip
                     html={rowValues.comments}
                     theme="transparent"
@@ -169,60 +182,70 @@ const AD_HOCK_FIELDS = {
           }
           return <LabelField {...params} />;
         },
-        label: 'react.verifyRequest.quantityRequested.label',
-        defaultMessage: 'Qty Requested',
-        flexWidth: '1',
+        label: "react.verifyRequest.quantityRequested.label",
+        defaultMessage: "Qty Requested",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityOnHand: {
         type: LabelField,
-        label: 'react.stockMovement.quantityOnHand.label',
-        defaultMessage: 'QOH',
-        flexWidth: '1',
-        fieldKey: '',
-        headerClassName: 'left-border',
+        label: "react.stockMovement.quantityOnHand.label",
+        defaultMessage: "QOH",
+        flexWidth: "1",
+        fieldKey: "",
+        headerClassName: "left-border",
         attributes: {
-          formatValue: (value) => (value.quantityOnHand ? (value.quantityOnHand.toLocaleString('en-US')) : value.quantityOnHand),
+          formatValue: (value) =>
+            value.quantityOnHand
+              ? value.quantityOnHand.toLocaleString("en-US")
+              : value.quantityOnHand,
           numberField: true,
-          className: 'left-border',
+          className: "left-border",
         },
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.stockMovement.available.label',
-        defaultMessage: 'Available',
-        flexWidth: '1',
-        fieldKey: '',
+        label: "react.stockMovement.available.label",
+        defaultMessage: "Available",
+        flexWidth: "1",
+        fieldKey: "",
         getDynamicAttr: ({ fieldValue }) => {
-          let className = '';
-          if (fieldValue && (!fieldValue.quantityAvailable
-              || fieldValue.quantityAvailable < fieldValue.quantityRequested)) {
-            className += 'text-danger';
+          let className = "";
+          if (
+            fieldValue &&
+            (!fieldValue.quantityAvailable ||
+              fieldValue.quantityAvailable < fieldValue.quantityRequested)
+          ) {
+            className += "text-danger";
           }
           return {
             className,
           };
         },
         attributes: {
-          formatValue: (value) => (value.quantityAvailable ? (value.quantityAvailable.toLocaleString('en-US')) : value.quantityAvailable),
+          formatValue: (value) =>
+            value.quantityAvailable
+              ? value.quantityAvailable.toLocaleString("en-US")
+              : value.quantityAvailable,
           numberField: true,
         },
       },
       quantityDemandFulfilling: {
         type: LabelField,
-        label: 'react.stockMovement.demandPerMonth.label',
-        defaultMessage: 'Demand per Month',
-        flexWidth: '1',
+        label: "react.stockMovement.demandPerMonth.label",
+        defaultMessage: "Demand per Month",
+        flexWidth: "1",
         getDynamicAttr: () => ({
           formatValue: (value) => {
-            if (value && value !== '0') {
-              return value.toLocaleString('en-US');
+            if (value && value !== "0") {
+              return value.toLocaleString("en-US");
             }
 
-            return '0';
+            return "0";
           },
           showValueTooltip: true,
         }),
@@ -231,57 +254,69 @@ const AD_HOCK_FIELDS = {
         },
       },
       detailsButton: {
-        label: 'react.stockMovement.details.label',
-        defaultMessage: 'Details',
+        label: "react.stockMovement.details.label",
+        defaultMessage: "Details",
         type: DetailsModal,
-        flexWidth: '1',
-        fieldKey: '',
+        flexWidth: "1",
+        fieldKey: "",
         attributes: {
-          title: 'react.stockMovement.pendingRequisitionDetails.label',
-          defaultTitleMessage: 'Pending Requisition Details',
+          title: "react.stockMovement.pendingRequisitionDetails.label",
+          defaultTitleMessage: "Pending Requisition Details",
         },
         getDynamicAttr: ({ fieldValue, stockMovementId, values }) => ({
           productId: fieldValue && fieldValue.product && fieldValue.product.id,
-          productCode: fieldValue && fieldValue.product && fieldValue.product.productCode,
-          productName: fieldValue && fieldValue.product && fieldValue.product.name,
+          productCode:
+            fieldValue && fieldValue.product && fieldValue.product.productCode,
+          productName:
+            fieldValue && fieldValue.product && fieldValue.product.name,
           displayName: fieldValue?.product?.displayNames?.default,
           originId: values && values.origin && values.origin.id,
           stockMovementId,
           quantityRequested: fieldValue && fieldValue.quantityRequested,
           quantityOnHand: fieldValue && fieldValue.quantityOnHand,
           quantityAvailable: fieldValue && fieldValue.quantityAvailable,
-          btnOpenText: 'react.stockMovement.details.label',
-          btnOpenDefaultText: 'Details',
-          btnCancelText: 'Close',
-          btnSaveStyle: { display: 'none' },
-          btnContainerClassName: 'float-right',
+          btnOpenText: "react.stockMovement.details.label",
+          btnOpenDefaultText: "Details",
+          btnCancelText: "Close",
+          btnSaveStyle: { display: "none" },
+          btnContainerClassName: "float-right",
           btnOpenAsIcon: true,
-          btnOpenStyle: { border: 'none', cursor: 'pointer' },
-          btnOpenIcon: 'fa-search',
+          btnOpenStyle: { border: "none", cursor: "pointer" },
+          btnOpenIcon: "fa-search",
         }),
       },
       substituteButton: {
-        label: 'react.stockMovement.substitution.label',
-        defaultMessage: 'Substitution',
+        label: "react.stockMovement.substitution.label",
+        defaultMessage: "Substitution",
         type: SubstitutionsModal,
-        fieldKey: '',
-        flexWidth: '1',
-        headerClassName: 'left-border',
+        fieldKey: "",
+        flexWidth: "1",
+        headerClassName: "left-border",
         attributes: {
-          cellClassName: 'left-border',
-          title: 'react.stockMovement.substitutes.label',
-          defaultTitleMessage: 'Substitutes',
+          cellClassName: "left-border",
+          title: "react.stockMovement.substitutes.label",
+          defaultTitleMessage: "Substitutes",
         },
         getDynamicAttr: ({
-          fieldValue, rowIndex, stockMovementId, onResponse,
-          reviseRequisitionItems, values, reasonCodes, showOnly,
+          fieldValue,
+          rowIndex,
+          stockMovementId,
+          onResponse,
+          reviseRequisitionItems,
+          values,
+          reasonCodes,
+          showOnly,
         }) => ({
           onOpen: () => reviseRequisitionItems(values),
           productCode: fieldValue && fieldValue.productCode,
           btnOpenText: `react.stockMovement.${fieldValue && fieldValue.substitutionStatus}.label`,
           btnOpenDefaultText: `${fieldValue && fieldValue.substitutionStatus}`,
-          btnOpenDisabled: (fieldValue && fieldValue.statusCode === 'SUBSTITUTED') || showOnly,
-          btnOpenClassName: BTN_CLASS_MAPPER[(fieldValue && fieldValue.substitutionStatus) || 'HIDDEN'],
+          btnOpenDisabled:
+            (fieldValue && fieldValue.statusCode === "SUBSTITUTED") || showOnly,
+          btnOpenClassName:
+            BTN_CLASS_MAPPER[
+              (fieldValue && fieldValue.substitutionStatus) || "HIDDEN"
+            ],
           rowIndex,
           lineItem: fieldValue,
           stockMovementId,
@@ -290,37 +325,53 @@ const AD_HOCK_FIELDS = {
         }),
       },
       quantityRevised: {
-        label: 'react.stockMovement.quantityRevised.label',
-        defaultMessage: 'Qty revised',
+        label: "react.stockMovement.quantityRevised.label",
+        defaultMessage: "Qty revised",
         type: TextField,
-        fieldKey: 'statusCode',
-        flexWidth: '1',
+        fieldKey: "statusCode",
+        flexWidth: "1",
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({
-          fieldValue, subfield, showOnly, updateRow, values, rowIndex,
+          fieldValue,
+          subfield,
+          showOnly,
+          updateRow,
+          values,
+          rowIndex,
         }) => ({
-          disabled: (fieldValue && fieldValue === 'SUBSTITUTED') || subfield || showOnly,
+          disabled:
+            (fieldValue && fieldValue === "SUBSTITUTED") ||
+            subfield ||
+            showOnly,
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       reasonCode: {
         type: SelectField,
-        label: 'react.stockMovement.reasonCode.label',
-        defaultMessage: 'Reason code',
-        flexWidth: '1',
-        fieldKey: 'quantityRevised',
+        label: "react.stockMovement.reasonCode.label",
+        defaultMessage: "Reason code",
+        flexWidth: "1",
+        fieldKey: "quantityRevised",
         getDynamicAttr: ({
-          fieldValue, subfield, reasonCodes, updateRow, values, rowIndex, showOnly,
+          fieldValue,
+          subfield,
+          reasonCodes,
+          updateRow,
+          values,
+          rowIndex,
+          showOnly,
         }) => {
-          const isSubstituted = fieldValue && fieldValue.statusCode === 'SUBSTITUTED';
+          const isSubstituted =
+            fieldValue && fieldValue.statusCode === "SUBSTITUTED";
           return {
-            disabled: fieldValue === null
-              || fieldValue === undefined
-              || subfield
-              || isSubstituted
-              || showOnly,
+            disabled:
+              fieldValue === null ||
+              fieldValue === undefined ||
+              subfield ||
+              isSubstituted ||
+              showOnly,
             options: reasonCodes,
             showValueTooltip: true,
             onBlur: () => updateRow(values, rowIndex),
@@ -329,22 +380,25 @@ const AD_HOCK_FIELDS = {
       },
       revert: {
         type: ButtonField,
-        label: 'react.default.button.undo.label',
-        defaultMessage: 'Undo',
-        flexWidth: '0.5',
-        fieldKey: '',
-        buttonLabel: 'react.default.button.undo.label',
-        buttonDefaultMessage: 'Undo',
-        getDynamicAttr: ({
-          fieldValue, revertItem, values, showOnly,
-        }) => ({
-          onClick: fieldValue && fieldValue.requisitionItemId
-            ? () => revertItem(values, fieldValue.requisitionItemId) : () => null,
-          hidden: fieldValue && fieldValue.statusCode ? !_.includes(['CHANGED', 'CANCELED'], fieldValue.statusCode) : false,
+        label: "react.default.button.undo.label",
+        defaultMessage: "Undo",
+        flexWidth: "0.5",
+        fieldKey: "",
+        buttonLabel: "react.default.button.undo.label",
+        buttonDefaultMessage: "Undo",
+        getDynamicAttr: ({ fieldValue, revertItem, values, showOnly }) => ({
+          onClick:
+            fieldValue && fieldValue.requisitionItemId
+              ? () => revertItem(values, fieldValue.requisitionItemId)
+              : () => null,
+          hidden:
+            fieldValue && fieldValue.statusCode
+              ? !_.includes(["CHANGED", "CANCELED"], fieldValue.statusCode)
+              : false,
           disabled: showOnly,
         }),
         attributes: {
-          className: 'btn btn-outline-danger',
+          className: "btn btn-outline-danger",
         },
       },
     },
@@ -362,60 +416,66 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
     loadMoreRows: ({ loadMoreRows }) => loadMoreRows(),
     rowComponent: TableRowWithSubfields,
     getDynamicRowAttr: ({ rowValues, showOnlyErroredItems, itemFilter }) => {
-      let className = rowValues.statusCode === 'SUBSTITUTED' ? 'crossed-out ' : '';
+      let className =
+        rowValues.statusCode === "SUBSTITUTED" ? "crossed-out " : "";
       if (rowValues.quantityAvailable < rowValues.quantityRequested) {
-        className += 'font-weight-bold';
+        className += "font-weight-bold";
       }
-      const filterOutItems = itemFilter && !(
-        rowValues.product.name.toLowerCase().includes(itemFilter.toLowerCase())
-        || rowValues.productCode.toLowerCase().includes(itemFilter.toLowerCase())
-      );
-      const hideRow = (showOnlyErroredItems && !rowValues.hasError) || filterOutItems;
+      const filterOutItems =
+        itemFilter &&
+        !(
+          rowValues.product.name
+            .toLowerCase()
+            .includes(itemFilter.toLowerCase()) ||
+          rowValues.productCode.toLowerCase().includes(itemFilter.toLowerCase())
+        );
+      const hideRow =
+        (showOnlyErroredItems && !rowValues.hasError) || filterOutItems;
       return { className, hideRow };
     },
-    subfieldKey: 'substitutionItems',
+    subfieldKey: "substitutionItems",
     headerGroupings: {
       requestInformation: {
-        label: 'react.verifyRequest.requestInformation.label',
-        defaultLabel: 'Request Information',
+        label: "react.verifyRequest.requestInformation.label",
+        defaultLabel: "Request Information",
         flexWidth: 0.5 + 3 + 1 + 1 + 1, // = Sum of fields flexWidth
       },
       availability: {
-        label: 'react.verifyRequest.availability.label',
-        defaultLabel: 'Availability',
+        label: "react.verifyRequest.availability.label",
+        defaultLabel: "Availability",
         flexWidth: 1 + 1 + 1 + 1, // = Sum of fields flexWidth
       },
       edit: {
-        label: 'react.verifyRequest.edit.label',
-        defaultLabel: 'Edit',
+        label: "react.verifyRequest.edit.label",
+        defaultLabel: "Edit",
         flexWidth: 1 + 1 + 1 + 0.5, // = Sum of fields flexWidth
       },
     },
     fields: {
       productCode: {
         type: LabelField,
-        headerAlign: 'left',
-        flexWidth: '0.5',
+        headerAlign: "left",
+        flexWidth: "0.5",
         getDynamicAttr: ({ subfield }) => ({
-          className: subfield ? 'text-center' : 'text-left ml-1',
+          className: subfield ? "text-center" : "text-left ml-1",
         }),
-        label: 'react.stockMovement.code.label',
-        defaultMessage: 'Code',
+        label: "react.stockMovement.code.label",
+        defaultMessage: "Code",
         attributes: {
           showValueTooltip: true,
         },
       },
       product: {
         type: LabelField,
-        headerAlign: 'left',
-        flexWidth: '3',
-        label: 'react.stockMovement.productName.label',
-        defaultMessage: 'Product name',
+        headerAlign: "left",
+        flexWidth: "3",
+        label: "react.stockMovement.productName.label",
+        defaultMessage: "Product name",
         attributes: {
           formatValue: formatProductDisplayName,
         },
         getDynamicAttr: ({ subfield, fieldValue }) => ({
-          className: subfield ? 'text-center' : 'text-left ml-1',
+          className: subfield ? "text-center" : "text-left ml-1",
           showValueTooltip: !!fieldValue?.displayNames?.default,
           tooltipValue: fieldValue?.name,
           color: fieldValue?.color,
@@ -423,28 +483,30 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
       },
       quantityOnStocklist: {
         type: LabelField,
-        label: 'react.stockMovement.quantityOnStocklist.label',
-        defaultMessage: 'Stocklist QTY',
-        flexWidth: '1',
+        label: "react.stockMovement.quantityOnStocklist.label",
+        defaultMessage: "Stocklist QTY",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityOnHandRequesting: {
         type: LabelField,
-        label: 'react.stockMovement.requesterQuantityOnHand.label',
-        defaultMessage: 'Requester QOH',
-        flexWidth: '1',
+        label: "react.stockMovement.requesterQuantityOnHand.label",
+        defaultMessage: "Requester QOH",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityRequested: {
         type: (params) => {
           const { fieldName, values } = params;
-          const fieldNameParts = _.split(fieldName, '.');
+          const fieldNameParts = _.split(fieldName, ".");
           if (fieldNameParts.length === 2) {
             const rowIdx = fieldNameParts[0];
             const rowValues = _.get(values, rowIdx);
@@ -452,7 +514,9 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
               return (
                 <div className="d-flex align-items-center">
                   {/* flex: 1 to center qty label, marginLeft: 14px to mitigate icon font size */}
-                  <div style={{ flex: 1, marginLeft: '14px' }}><LabelField {...params} /></div>
+                  <div style={{ flex: 1, marginLeft: "14px" }}>
+                    <LabelField {...params} />
+                  </div>
                   <Tooltip
                     html={rowValues.comments}
                     theme="transparent"
@@ -468,60 +532,70 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
           }
           return <LabelField {...params} />;
         },
-        label: 'react.verifyRequest.quantityRequested.label',
-        defaultMessage: 'Qty Requested',
-        flexWidth: '1',
+        label: "react.verifyRequest.quantityRequested.label",
+        defaultMessage: "Qty Requested",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityOnHand: {
         type: LabelField,
-        label: 'react.stockMovement.quantityOnHand.label',
-        defaultMessage: 'QOH',
-        flexWidth: '1',
-        fieldKey: '',
-        headerClassName: 'left-border',
+        label: "react.stockMovement.quantityOnHand.label",
+        defaultMessage: "QOH",
+        flexWidth: "1",
+        fieldKey: "",
+        headerClassName: "left-border",
         attributes: {
-          formatValue: (value) => (value.quantityOnHand ? (value.quantityOnHand.toLocaleString('en-US')) : value.quantityOnHand),
+          formatValue: (value) =>
+            value.quantityOnHand
+              ? value.quantityOnHand.toLocaleString("en-US")
+              : value.quantityOnHand,
           numberField: true,
-          className: 'left-border',
+          className: "left-border",
         },
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.stockMovement.available.label',
-        defaultMessage: 'Available',
-        flexWidth: '1',
-        fieldKey: '',
+        label: "react.stockMovement.available.label",
+        defaultMessage: "Available",
+        flexWidth: "1",
+        fieldKey: "",
         getDynamicAttr: ({ fieldValue }) => {
-          let className = '';
-          if (fieldValue && (!fieldValue.quantityAvailable
-              || fieldValue.quantityAvailable < fieldValue.quantityRequested)) {
-            className += 'text-danger';
+          let className = "";
+          if (
+            fieldValue &&
+            (!fieldValue.quantityAvailable ||
+              fieldValue.quantityAvailable < fieldValue.quantityRequested)
+          ) {
+            className += "text-danger";
           }
           return {
             className,
           };
         },
         attributes: {
-          formatValue: (value) => (value.quantityAvailable ? (value.quantityAvailable.toLocaleString('en-US')) : value.quantityAvailable),
+          formatValue: (value) =>
+            value.quantityAvailable
+              ? value.quantityAvailable.toLocaleString("en-US")
+              : value.quantityAvailable,
           numberField: true,
         },
       },
       quantityDemandFulfilling: {
         type: LabelField,
-        label: 'react.stockMovement.demandPerMonth.label',
-        defaultMessage: 'Demand per Month',
-        flexWidth: '1',
+        label: "react.stockMovement.demandPerMonth.label",
+        defaultMessage: "Demand per Month",
+        flexWidth: "1",
         getDynamicAttr: () => ({
           formatValue: (value) => {
-            if (value && value !== '0') {
-              return value.toLocaleString('en-US');
+            if (value && value !== "0") {
+              return value.toLocaleString("en-US");
             }
 
-            return '0';
+            return "0";
           },
           showValueTooltip: true,
         }),
@@ -530,57 +604,69 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
         },
       },
       detailsButton: {
-        label: 'react.stockMovement.details.label',
-        defaultMessage: 'Details',
+        label: "react.stockMovement.details.label",
+        defaultMessage: "Details",
         type: DetailsModal,
-        flexWidth: '1',
-        fieldKey: '',
+        flexWidth: "1",
+        fieldKey: "",
         attributes: {
-          title: 'react.stockMovement.pendingRequisitionDetails.label',
-          defaultTitleMessage: 'Pending Requisition Details',
+          title: "react.stockMovement.pendingRequisitionDetails.label",
+          defaultTitleMessage: "Pending Requisition Details",
         },
         getDynamicAttr: ({ fieldValue, stockMovementId, values }) => ({
           productId: fieldValue && fieldValue.product && fieldValue.product.id,
-          productCode: fieldValue && fieldValue.product && fieldValue.product.productCode,
-          productName: fieldValue && fieldValue.product && fieldValue.product.name,
+          productCode:
+            fieldValue && fieldValue.product && fieldValue.product.productCode,
+          productName:
+            fieldValue && fieldValue.product && fieldValue.product.name,
           displayName: fieldValue?.product?.displayNames?.default,
           originId: values && values.origin && values.origin.id,
           stockMovementId,
           quantityRequested: fieldValue && fieldValue.quantityRequested,
           quantityOnHand: fieldValue && fieldValue.quantityOnHand,
           quantityAvailable: fieldValue && fieldValue.quantityAvailable,
-          btnOpenText: 'react.stockMovement.details.label',
-          btnOpenDefaultText: 'Details',
-          btnCancelText: 'Close',
-          btnSaveStyle: { display: 'none' },
-          btnContainerClassName: 'float-right',
+          btnOpenText: "react.stockMovement.details.label",
+          btnOpenDefaultText: "Details",
+          btnCancelText: "Close",
+          btnSaveStyle: { display: "none" },
+          btnContainerClassName: "float-right",
           btnOpenAsIcon: true,
-          btnOpenStyle: { border: 'none', cursor: 'pointer' },
-          btnOpenIcon: 'fa-search',
+          btnOpenStyle: { border: "none", cursor: "pointer" },
+          btnOpenIcon: "fa-search",
         }),
       },
       substituteButton: {
-        label: 'react.stockMovement.substitution.label',
-        defaultMessage: 'Substitution',
+        label: "react.stockMovement.substitution.label",
+        defaultMessage: "Substitution",
         type: SubstitutionsModal,
-        fieldKey: '',
-        flexWidth: '1',
-        headerClassName: 'left-border',
+        fieldKey: "",
+        flexWidth: "1",
+        headerClassName: "left-border",
         attributes: {
-          cellClassName: 'left-border',
-          title: 'react.stockMovement.substitutes.label',
-          defaultTitleMessage: 'Substitutes',
+          cellClassName: "left-border",
+          title: "react.stockMovement.substitutes.label",
+          defaultTitleMessage: "Substitutes",
         },
         getDynamicAttr: ({
-          fieldValue, rowIndex, stockMovementId, onResponse,
-          reviseRequisitionItems, values, reasonCodes, showOnly,
+          fieldValue,
+          rowIndex,
+          stockMovementId,
+          onResponse,
+          reviseRequisitionItems,
+          values,
+          reasonCodes,
+          showOnly,
         }) => ({
           onOpen: () => reviseRequisitionItems(values),
           productCode: fieldValue && fieldValue.productCode,
           btnOpenText: `react.stockMovement.${fieldValue && fieldValue.substitutionStatus}.label`,
           btnOpenDefaultText: `${fieldValue && fieldValue.substitutionStatus}`,
-          btnOpenDisabled: (fieldValue && fieldValue.statusCode === 'SUBSTITUTED') || showOnly,
-          btnOpenClassName: BTN_CLASS_MAPPER[(fieldValue && fieldValue.substitutionStatus) || 'HIDDEN'],
+          btnOpenDisabled:
+            (fieldValue && fieldValue.statusCode === "SUBSTITUTED") || showOnly,
+          btnOpenClassName:
+            BTN_CLASS_MAPPER[
+              (fieldValue && fieldValue.substitutionStatus) || "HIDDEN"
+            ],
           rowIndex,
           lineItem: fieldValue,
           stockMovementId,
@@ -589,37 +675,53 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
         }),
       },
       quantityRevised: {
-        label: 'react.stockMovement.quantityRevised.label',
-        defaultMessage: 'Qty revised',
+        label: "react.stockMovement.quantityRevised.label",
+        defaultMessage: "Qty revised",
         type: TextField,
-        fieldKey: 'statusCode',
-        flexWidth: '1',
+        fieldKey: "statusCode",
+        flexWidth: "1",
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({
-          fieldValue, subfield, showOnly, updateRow, values, rowIndex,
+          fieldValue,
+          subfield,
+          showOnly,
+          updateRow,
+          values,
+          rowIndex,
         }) => ({
-          disabled: (fieldValue && fieldValue === 'SUBSTITUTED') || subfield || showOnly,
+          disabled:
+            (fieldValue && fieldValue === "SUBSTITUTED") ||
+            subfield ||
+            showOnly,
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       reasonCode: {
         type: SelectField,
-        label: 'react.stockMovement.reasonCode.label',
-        defaultMessage: 'Reason code',
-        flexWidth: '1',
-        fieldKey: 'quantityRevised',
+        label: "react.stockMovement.reasonCode.label",
+        defaultMessage: "Reason code",
+        flexWidth: "1",
+        fieldKey: "quantityRevised",
         getDynamicAttr: ({
-          fieldValue, subfield, reasonCodes, updateRow, values, rowIndex, showOnly,
+          fieldValue,
+          subfield,
+          reasonCodes,
+          updateRow,
+          values,
+          rowIndex,
+          showOnly,
         }) => {
-          const isSubstituted = fieldValue && fieldValue.statusCode === 'SUBSTITUTED';
+          const isSubstituted =
+            fieldValue && fieldValue.statusCode === "SUBSTITUTED";
           return {
-            disabled: fieldValue === null
-              || fieldValue === undefined
-              || subfield
-              || isSubstituted
-              || showOnly,
+            disabled:
+              fieldValue === null ||
+              fieldValue === undefined ||
+              subfield ||
+              isSubstituted ||
+              showOnly,
             options: reasonCodes,
             showValueTooltip: true,
             onBlur: () => updateRow(values, rowIndex),
@@ -628,22 +730,25 @@ const STOCKLIST_FIELDS_PUSH_TYPE = {
       },
       revert: {
         type: ButtonField,
-        label: 'react.default.button.undo.label',
-        defaultMessage: 'Undo',
-        flexWidth: '0.5',
-        fieldKey: '',
-        buttonLabel: 'react.default.button.undo.label',
-        buttonDefaultMessage: 'Undo',
-        getDynamicAttr: ({
-          fieldValue, revertItem, values, showOnly,
-        }) => ({
-          onClick: fieldValue && fieldValue.requisitionItemId
-            ? () => revertItem(values, fieldValue.requisitionItemId) : () => null,
-          hidden: fieldValue && fieldValue.statusCode ? !_.includes(['CHANGED', 'CANCELED'], fieldValue.statusCode) : false,
+        label: "react.default.button.undo.label",
+        defaultMessage: "Undo",
+        flexWidth: "0.5",
+        fieldKey: "",
+        buttonLabel: "react.default.button.undo.label",
+        buttonDefaultMessage: "Undo",
+        getDynamicAttr: ({ fieldValue, revertItem, values, showOnly }) => ({
+          onClick:
+            fieldValue && fieldValue.requisitionItemId
+              ? () => revertItem(values, fieldValue.requisitionItemId)
+              : () => null,
+          hidden:
+            fieldValue && fieldValue.statusCode
+              ? !_.includes(["CHANGED", "CANCELED"], fieldValue.statusCode)
+              : false,
           disabled: showOnly,
         }),
         attributes: {
-          className: 'btn btn-outline-danger',
+          className: "btn btn-outline-danger",
         },
       },
     },
@@ -661,60 +766,66 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
     loadMoreRows: ({ loadMoreRows }) => loadMoreRows(),
     rowComponent: TableRowWithSubfields,
     getDynamicRowAttr: ({ rowValues, showOnlyErroredItems, itemFilter }) => {
-      let className = rowValues.statusCode === 'SUBSTITUTED' ? 'crossed-out ' : '';
+      let className =
+        rowValues.statusCode === "SUBSTITUTED" ? "crossed-out " : "";
       if (rowValues.quantityAvailable < rowValues.quantityRequested) {
-        className += 'font-weight-bold';
+        className += "font-weight-bold";
       }
-      const filterOutItems = itemFilter && !(
-        rowValues.product.name.toLowerCase().includes(itemFilter.toLowerCase())
-        || rowValues.productCode.toLowerCase().includes(itemFilter.toLowerCase())
-      );
-      const hideRow = (showOnlyErroredItems && !rowValues.hasError) || filterOutItems;
+      const filterOutItems =
+        itemFilter &&
+        !(
+          rowValues.product.name
+            .toLowerCase()
+            .includes(itemFilter.toLowerCase()) ||
+          rowValues.productCode.toLowerCase().includes(itemFilter.toLowerCase())
+        );
+      const hideRow =
+        (showOnlyErroredItems && !rowValues.hasError) || filterOutItems;
       return { className, hideRow };
     },
-    subfieldKey: 'substitutionItems',
+    subfieldKey: "substitutionItems",
     headerGroupings: {
       requestInformation: {
-        label: 'react.verifyRequest.requestInformation.label',
-        defaultLabel: 'Request Information',
+        label: "react.verifyRequest.requestInformation.label",
+        defaultLabel: "Request Information",
         flexWidth: 0.5 + 3.5 + 1 + 1 + 1, // = Sum of fields flexWidth
       },
       availability: {
-        label: 'react.verifyRequest.availability.label',
-        defaultLabel: 'Availability',
+        label: "react.verifyRequest.availability.label",
+        defaultLabel: "Availability",
         flexWidth: 1 + 1 + 1 + 1, // = Sum of fields flexWidth
       },
       edit: {
-        label: 'react.verifyRequest.edit.label',
-        defaultLabel: 'Edit',
+        label: "react.verifyRequest.edit.label",
+        defaultLabel: "Edit",
         flexWidth: 1 + 1 + 1.5 + 0.5, // = Sum of fields flexWidth
       },
     },
     fields: {
       productCode: {
         type: LabelField,
-        headerAlign: 'left',
-        flexWidth: '0.5',
+        headerAlign: "left",
+        flexWidth: "0.5",
         getDynamicAttr: ({ subfield }) => ({
-          className: subfield ? 'text-center' : 'text-left ml-1',
+          className: subfield ? "text-center" : "text-left ml-1",
         }),
-        label: 'react.stockMovement.code.label',
-        defaultMessage: 'Code',
+        label: "react.stockMovement.code.label",
+        defaultMessage: "Code",
         attributes: {
           showValueTooltip: true,
         },
       },
       product: {
         type: LabelField,
-        headerAlign: 'left',
-        flexWidth: '3.5',
-        label: 'react.stockMovement.productName.label',
-        defaultMessage: 'Product name',
+        headerAlign: "left",
+        flexWidth: "3.5",
+        label: "react.stockMovement.productName.label",
+        defaultMessage: "Product name",
         attributes: {
           formatValue: formatProductDisplayName,
         },
         getDynamicAttr: ({ subfield, fieldValue }) => ({
-          className: subfield ? 'text-center' : 'text-left ml-1',
+          className: subfield ? "text-center" : "text-left ml-1",
           showValueTooltip: !!fieldValue?.displayNames?.default,
           tooltipValue: fieldValue?.name,
           color: fieldValue?.color,
@@ -722,28 +833,30 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
       },
       demandPerReplenishmentPeriod: {
         type: LabelField,
-        label: 'react.stockMovement.demandPerReplenishmentPeriod.label',
-        defaultMessage: 'Demand per Replenishment Period',
-        flexWidth: '1',
+        label: "react.stockMovement.demandPerReplenishmentPeriod.label",
+        defaultMessage: "Demand per Replenishment Period",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityOnHandRequesting: {
         type: LabelField,
-        label: 'react.stockMovement.requesterQuantityOnHand.label',
-        defaultMessage: 'Requester QOH',
-        flexWidth: '1',
+        label: "react.stockMovement.requesterQuantityOnHand.label",
+        defaultMessage: "Requester QOH",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityRequested: {
         type: (params) => {
           const { fieldName, values } = params;
-          const fieldNameParts = _.split(fieldName, '.');
+          const fieldNameParts = _.split(fieldName, ".");
           if (fieldNameParts.length === 2) {
             const rowIdx = fieldNameParts[0];
             const rowValues = _.get(values, rowIdx);
@@ -751,7 +864,9 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
               return (
                 <div className="d-flex align-items-center">
                   {/* flex: 1 to center qty label, marginLeft: 14px to mitigate icon font size */}
-                  <div style={{ flex: 1, marginLeft: '14px' }}><LabelField {...params} /></div>
+                  <div style={{ flex: 1, marginLeft: "14px" }}>
+                    <LabelField {...params} />
+                  </div>
                   <Tooltip
                     html={rowValues.comments}
                     theme="transparent"
@@ -767,60 +882,70 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
           }
           return <LabelField {...params} />;
         },
-        label: 'react.verifyRequest.quantityRequested.label',
-        defaultMessage: 'Qty Requested',
-        flexWidth: '1',
+        label: "react.verifyRequest.quantityRequested.label",
+        defaultMessage: "Qty Requested",
+        flexWidth: "1",
         attributes: {
-          formatValue: (value) => (value ? (value.toLocaleString('en-US')) : value),
+          formatValue: (value) =>
+            value ? value.toLocaleString("en-US") : value,
           numberField: true,
         },
       },
       quantityOnHand: {
         type: LabelField,
-        label: 'react.stockMovement.quantityOnHand.label',
-        defaultMessage: 'QOH',
-        flexWidth: '1',
-        fieldKey: '',
-        headerClassName: 'left-border',
+        label: "react.stockMovement.quantityOnHand.label",
+        defaultMessage: "QOH",
+        flexWidth: "1",
+        fieldKey: "",
+        headerClassName: "left-border",
         attributes: {
-          formatValue: (value) => (value.quantityOnHand ? (value.quantityOnHand.toLocaleString('en-US')) : value.quantityOnHand),
+          formatValue: (value) =>
+            value.quantityOnHand
+              ? value.quantityOnHand.toLocaleString("en-US")
+              : value.quantityOnHand,
           numberField: true,
-          className: 'left-border',
+          className: "left-border",
         },
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.stockMovement.available.label',
-        defaultMessage: 'Available',
-        flexWidth: '1',
-        fieldKey: '',
+        label: "react.stockMovement.available.label",
+        defaultMessage: "Available",
+        flexWidth: "1",
+        fieldKey: "",
         getDynamicAttr: ({ fieldValue }) => {
-          let className = '';
-          if (fieldValue && (!fieldValue.quantityAvailable
-              || fieldValue.quantityAvailable < fieldValue.quantityRequested)) {
-            className += 'text-danger';
+          let className = "";
+          if (
+            fieldValue &&
+            (!fieldValue.quantityAvailable ||
+              fieldValue.quantityAvailable < fieldValue.quantityRequested)
+          ) {
+            className += "text-danger";
           }
           return {
             className,
           };
         },
         attributes: {
-          formatValue: (value) => (value.quantityAvailable ? (value.quantityAvailable.toLocaleString('en-US')) : value.quantityAvailable),
+          formatValue: (value) =>
+            value.quantityAvailable
+              ? value.quantityAvailable.toLocaleString("en-US")
+              : value.quantityAvailable,
           numberField: true,
         },
       },
       quantityDemandFulfilling: {
         type: LabelField,
-        label: 'react.stockMovement.demandPerMonth.labe',
-        defaultMessage: 'Demand per Month',
-        flexWidth: '1',
+        label: "react.stockMovement.demandPerMonth.labe",
+        defaultMessage: "Demand per Month",
+        flexWidth: "1",
         getDynamicAttr: () => ({
           formatValue: (value) => {
-            if (value && value !== '0') {
-              return value.toLocaleString('en-US');
+            if (value && value !== "0") {
+              return value.toLocaleString("en-US");
             }
 
-            return '0';
+            return "0";
           },
           showValueTooltip: true,
         }),
@@ -829,57 +954,69 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
         },
       },
       detailsButton: {
-        label: 'react.stockMovement.details.label',
-        defaultMessage: 'Details',
+        label: "react.stockMovement.details.label",
+        defaultMessage: "Details",
         type: DetailsModal,
-        fieldKey: '',
-        flexWidth: '1',
+        fieldKey: "",
+        flexWidth: "1",
         attributes: {
-          title: 'react.stockMovement.pendingRequisitionDetails.label',
-          defaultTitleMessage: 'Pending Requisition Details',
+          title: "react.stockMovement.pendingRequisitionDetails.label",
+          defaultTitleMessage: "Pending Requisition Details",
         },
         getDynamicAttr: ({ fieldValue, stockMovementId, values }) => ({
           productId: fieldValue && fieldValue.product && fieldValue.product.id,
-          productCode: fieldValue && fieldValue.product && fieldValue.product.productCode,
-          productName: fieldValue && fieldValue.product && fieldValue.product.name,
+          productCode:
+            fieldValue && fieldValue.product && fieldValue.product.productCode,
+          productName:
+            fieldValue && fieldValue.product && fieldValue.product.name,
           displayName: fieldValue?.product?.displayNames?.default,
           originId: values && values.origin && values.origin.id,
           stockMovementId,
           quantityRequested: fieldValue && fieldValue.quantityRequested,
           quantityOnHand: fieldValue && fieldValue.quantityOnHand,
           quantityAvailable: fieldValue && fieldValue.quantityAvailable,
-          btnOpenText: 'react.stockMovement.details.label',
-          btnOpenDefaultText: 'Details',
-          btnCancelText: 'Close',
-          btnSaveStyle: { display: 'none' },
-          btnContainerClassName: 'float-right',
+          btnOpenText: "react.stockMovement.details.label",
+          btnOpenDefaultText: "Details",
+          btnCancelText: "Close",
+          btnSaveStyle: { display: "none" },
+          btnContainerClassName: "float-right",
           btnOpenAsIcon: true,
-          btnOpenStyle: { border: 'none', cursor: 'pointer' },
-          btnOpenIcon: 'fa-search',
+          btnOpenStyle: { border: "none", cursor: "pointer" },
+          btnOpenIcon: "fa-search",
         }),
       },
       substituteButton: {
-        label: 'react.stockMovement.substitution.label',
-        defaultMessage: 'Substitution',
+        label: "react.stockMovement.substitution.label",
+        defaultMessage: "Substitution",
         type: SubstitutionsModal,
-        fieldKey: '',
-        flexWidth: '1',
-        headerClassName: 'left-border',
+        fieldKey: "",
+        flexWidth: "1",
+        headerClassName: "left-border",
         attributes: {
-          cellClassName: 'left-border',
-          title: 'react.stockMovement.substitutes.label',
-          defaultTitleMessage: 'Substitutes',
+          cellClassName: "left-border",
+          title: "react.stockMovement.substitutes.label",
+          defaultTitleMessage: "Substitutes",
         },
         getDynamicAttr: ({
-          fieldValue, rowIndex, stockMovementId, onResponse,
-          reviseRequisitionItems, values, reasonCodes, showOnly,
+          fieldValue,
+          rowIndex,
+          stockMovementId,
+          onResponse,
+          reviseRequisitionItems,
+          values,
+          reasonCodes,
+          showOnly,
         }) => ({
           onOpen: () => reviseRequisitionItems(values),
           productCode: fieldValue && fieldValue.productCode,
           btnOpenText: `react.stockMovement.${fieldValue && fieldValue.substitutionStatus}.label`,
           btnOpenDefaultText: `${fieldValue && fieldValue.substitutionStatus}`,
-          btnOpenDisabled: (fieldValue && fieldValue.statusCode === 'SUBSTITUTED') || showOnly,
-          btnOpenClassName: BTN_CLASS_MAPPER[(fieldValue && fieldValue.substitutionStatus) || 'HIDDEN'],
+          btnOpenDisabled:
+            (fieldValue && fieldValue.statusCode === "SUBSTITUTED") || showOnly,
+          btnOpenClassName:
+            BTN_CLASS_MAPPER[
+              (fieldValue && fieldValue.substitutionStatus) || "HIDDEN"
+            ],
           rowIndex,
           lineItem: fieldValue,
           stockMovementId,
@@ -888,37 +1025,53 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
         }),
       },
       quantityRevised: {
-        label: 'react.stockMovement.quantityRevised.label',
-        defaultMessage: 'Qty revised',
+        label: "react.stockMovement.quantityRevised.label",
+        defaultMessage: "Qty revised",
         type: TextField,
-        fieldKey: 'statusCode',
-        flexWidth: '1',
+        fieldKey: "statusCode",
+        flexWidth: "1",
         attributes: {
-          type: 'number',
+          type: "number",
         },
         getDynamicAttr: ({
-          fieldValue, subfield, showOnly, updateRow, values, rowIndex,
+          fieldValue,
+          subfield,
+          showOnly,
+          updateRow,
+          values,
+          rowIndex,
         }) => ({
-          disabled: (fieldValue && fieldValue === 'SUBSTITUTED') || subfield || showOnly,
+          disabled:
+            (fieldValue && fieldValue === "SUBSTITUTED") ||
+            subfield ||
+            showOnly,
           onBlur: () => updateRow(values, rowIndex),
         }),
       },
       reasonCode: {
         type: SelectField,
-        label: 'react.stockMovement.reasonCode.label',
-        defaultMessage: 'Reason code',
-        flexWidth: '1.5',
-        fieldKey: 'quantityRevised',
+        label: "react.stockMovement.reasonCode.label",
+        defaultMessage: "Reason code",
+        flexWidth: "1.5",
+        fieldKey: "quantityRevised",
         getDynamicAttr: ({
-          fieldValue, subfield, reasonCodes, updateRow, values, rowIndex, showOnly,
+          fieldValue,
+          subfield,
+          reasonCodes,
+          updateRow,
+          values,
+          rowIndex,
+          showOnly,
         }) => {
-          const isSubstituted = fieldValue && fieldValue.statusCode === 'SUBSTITUTED';
+          const isSubstituted =
+            fieldValue && fieldValue.statusCode === "SUBSTITUTED";
           return {
-            disabled: fieldValue === null
-              || fieldValue === undefined
-              || subfield
-              || isSubstituted
-              || showOnly,
+            disabled:
+              fieldValue === null ||
+              fieldValue === undefined ||
+              subfield ||
+              isSubstituted ||
+              showOnly,
             options: reasonCodes,
             showValueTooltip: true,
             onBlur: () => updateRow(values, rowIndex),
@@ -927,29 +1080,32 @@ const STOCKLIST_FIELDS_PULL_TYPE = {
       },
       revert: {
         type: ButtonField,
-        label: 'react.default.button.undo.label',
-        defaultMessage: 'Undo',
-        flexWidth: '0.5',
-        fieldKey: '',
-        buttonLabel: 'react.default.button.undo.label',
-        buttonDefaultMessage: 'Undo',
-        getDynamicAttr: ({
-          fieldValue, revertItem, values, showOnly,
-        }) => ({
-          onClick: fieldValue && fieldValue.requisitionItemId
-            ? () => revertItem(values, fieldValue.requisitionItemId) : () => null,
-          hidden: fieldValue && fieldValue.statusCode ? !_.includes(['CHANGED', 'CANCELED'], fieldValue.statusCode) : false,
+        label: "react.default.button.undo.label",
+        defaultMessage: "Undo",
+        flexWidth: "0.5",
+        fieldKey: "",
+        buttonLabel: "react.default.button.undo.label",
+        buttonDefaultMessage: "Undo",
+        getDynamicAttr: ({ fieldValue, revertItem, values, showOnly }) => ({
+          onClick:
+            fieldValue && fieldValue.requisitionItemId
+              ? () => revertItem(values, fieldValue.requisitionItemId)
+              : () => null,
+          hidden:
+            fieldValue && fieldValue.statusCode
+              ? !_.includes(["CHANGED", "CANCELED"], fieldValue.statusCode)
+              : false,
           disabled: showOnly,
         }),
         attributes: {
-          className: 'btn btn-outline-danger',
+          className: "btn btn-outline-danger",
         },
       },
     },
   },
 };
 
-const REPLENISHMENT_TYPE_PULL = 'PULL';
+const REPLENISHMENT_TYPE_PULL = "PULL";
 
 function validateForSave(values) {
   const errors = {};
@@ -957,21 +1113,37 @@ function validateForSave(values) {
 
   _.forEach(values.editPageItems, (item, key) => {
     if (!_.isEmpty(item.quantityRevised) && _.isEmpty(item.reasonCode)) {
-      errors.editPageItems[key] = { reasonCode: 'react.stockMovement.errors.reasonCodeRequired.label' };
-    } else if (_.isNil(item.quantityRevised) && !_.isEmpty(item.reasonCode) && item.statusCode !== 'SUBSTITUTED') {
-      errors.editPageItems[key] = { quantityRevised: 'react.stockMovement.errors.revisedQuantityRequired.label' };
+      errors.editPageItems[key] = {
+        reasonCode: "react.stockMovement.errors.reasonCodeRequired.label",
+      };
+    } else if (
+      _.isNil(item.quantityRevised) &&
+      !_.isEmpty(item.reasonCode) &&
+      item.statusCode !== "SUBSTITUTED"
+    ) {
+      errors.editPageItems[key] = {
+        quantityRevised:
+          "react.stockMovement.errors.revisedQuantityRequired.label",
+      };
     }
     if (parseInt(item.quantityRevised, 10) === item.quantityRequested) {
       errors.editPageItems[key] = {
-        quantityRevised: 'react.stockMovement.errors.sameRevisedQty.label',
+        quantityRevised: "react.stockMovement.errors.sameRevisedQty.label",
       };
     }
-    if (!_.isEmpty(item.quantityRevised) && item.quantityAvailable >= 0
-      && (item.quantityRevised > item.quantityAvailable)) {
-      errors.editPageItems[key] = { quantityRevised: 'react.stockMovement.errors.higherQty.label' };
+    if (
+      !_.isEmpty(item.quantityRevised) &&
+      item.quantityAvailable >= 0 &&
+      item.quantityRevised > item.quantityAvailable
+    ) {
+      errors.editPageItems[key] = {
+        quantityRevised: "react.stockMovement.errors.higherQty.label",
+      };
     }
-    if (!_.isEmpty(item.quantityRevised) && (item.quantityRevised < 0)) {
-      errors.editPageItems[key] = { quantityRevised: 'react.stockMovement.errors.negativeQty.label' };
+    if (!_.isEmpty(item.quantityRevised) && item.quantityRevised < 0) {
+      errors.editPageItems[key] = {
+        quantityRevised: "react.stockMovement.errors.negativeQty.label",
+      };
     }
   });
   return errors;
@@ -987,14 +1159,14 @@ class EditItemsPage extends Component {
     super(props);
 
     this.state = {
-      statusCode: '',
+      statusCode: "",
       revisedItems: [],
       values: { ...this.props.initialValues, editPageItems: [] },
       hasItemsLoaded: false,
       totalCount: 0,
       isFirstPageLoaded: false,
       showOnlyErroredItems: false,
-      itemFilter: '',
+      itemFilter: "",
     };
 
     this.revertItem = this.revertItem.bind(this);
@@ -1032,54 +1204,74 @@ class EditItemsPage extends Component {
   setEditPageItems(response, startIndex) {
     this.props.showSpinner();
     const { data } = response.data;
-    const editPageItems = _.map(
-      data,
-      (val) => ({
-        ...val,
-        disabled: true,
-        quantityOnHand: val.quantityOnHand > 0 ? val.quantityOnHand : 0,
-        quantityAvailable:
-            val.quantityAvailable > 0 ? val.quantityAvailable : 0,
-        quantityOnHandRequesting: val.quantityCounted,
+    const editPageItems = _.map(data, (val) => ({
+      ...val,
+      disabled: true,
+      quantityOnHand: val.quantityOnHand > 0 ? val.quantityOnHand : 0,
+      quantityAvailable: val.quantityAvailable > 0 ? val.quantityAvailable : 0,
+      quantityOnHandRequesting: val.quantityCounted,
+      product: {
+        ...val.product,
+        label: `${val.productCode} ${val.productName}`,
+      },
+      // eslint-disable-next-line max-len
+      reasonCode: _.find(this.props.reasonCodes, ({ value }) =>
+        _.includes(val.reasonCode, value),
+      ),
+      substitutionItems: _.map(val.substitutionItems, (sub) => ({
+        ...sub,
+        requisitionItemId: val.requisitionItemId,
         product: {
-          ...val.product,
-          label: `${val.productCode} ${val.productName}`,
+          ...sub.product,
+          label: `${sub.productCode} ${sub.productName}`,
         },
         // eslint-disable-next-line max-len
-        reasonCode: _.find(this.props.reasonCodes, ({ value }) => _.includes(val.reasonCode, value)),
-        substitutionItems: _.map(val.substitutionItems, (sub) => ({
-          ...sub,
-          requisitionItemId: val.requisitionItemId,
-          product: {
-            ...sub.product,
-            label: `${sub.productCode} ${sub.productName}`,
-          },
-          // eslint-disable-next-line max-len
-          reasonCode: _.find(this.props.reasonCodes, ({ value }) => _.includes(val.reasonCode, value)),
-        })),
-      }),
-    );
+        reasonCode: _.find(this.props.reasonCodes, ({ value }) =>
+          _.includes(val.reasonCode, value),
+        ),
+      })),
+    }));
 
-    this.setState((prev) => ({
-      revisedItems: _.filter(editPageItems, (item) => item.statusCode === 'CHANGED'),
-      values: {
-        ...prev.values,
-        editPageItems: _.uniqBy(_.concat(prev.values.editPageItems, editPageItems), 'requisitionItemId'),
+    this.setState(
+      (prev) => ({
+        revisedItems: _.filter(
+          editPageItems,
+          (item) => item.statusCode === "CHANGED",
+        ),
+        values: {
+          ...prev.values,
+          editPageItems: _.uniqBy(
+            _.concat(prev.values.editPageItems, editPageItems),
+            "requisitionItemId",
+          ),
+        },
+        hasItemsLoaded:
+          prev.hasItemsLoaded ||
+          prev.totalCount ===
+            _.uniqBy(
+              _.concat(prev.values.editPageItems, editPageItems),
+              "requisitionItemId",
+            ).length,
+      }),
+      () => {
+        // eslint-disable-next-line max-len
+        if (
+          !_.isNull(startIndex) &&
+          this.state.values.editPageItems.length !== this.state.totalCount
+        ) {
+          this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
+        }
+        this.props.hideSpinner();
       },
-      hasItemsLoaded: prev.hasItemsLoaded
-      || prev.totalCount === _.uniqBy(_.concat(prev.values.editPageItems, editPageItems), 'requisitionItemId').length,
-    }), () => {
-      // eslint-disable-next-line max-len
-      if (!_.isNull(startIndex) && this.state.values.editPageItems.length !== this.state.totalCount) {
-        this.loadMoreRows({ startIndex: startIndex + this.props.pageSize });
-      }
-      this.props.hideSpinner();
-    });
+    );
   }
 
   getFields() {
-    if (_.get(this.state.values.stocklist, 'id')) {
-      if (_.get(this.state.values.replenishmentType, 'name') === REPLENISHMENT_TYPE_PULL) {
+    if (_.get(this.state.values.stocklist, "id")) {
+      if (
+        _.get(this.state.values.replenishmentType, "name") ===
+        REPLENISHMENT_TYPE_PULL
+      ) {
         return STOCKLIST_FIELDS_PULL_TYPE;
       }
       return STOCKLIST_FIELDS_PUSH_TYPE;
@@ -1092,8 +1284,14 @@ class EditItemsPage extends Component {
     const errors = validateForSave(values);
 
     _.forEach(values.editPageItems, (item, key) => {
-      if (_.isNil(item.quantityRevised) && (item.quantityRequested > item.quantityAvailable) && (item.statusCode !== 'SUBSTITUTED')) {
-        errors.editPageItems[key] = { quantityRevised: 'react.stockMovement.errors.lowerQty.label' };
+      if (
+        _.isNil(item.quantityRevised) &&
+        item.quantityRequested > item.quantityAvailable &&
+        item.statusCode !== "SUBSTITUTED"
+      ) {
+        errors.editPageItems[key] = {
+          quantityRevised: "react.stockMovement.errors.lowerQty.label",
+        };
       }
     });
 
@@ -1110,7 +1308,10 @@ class EditItemsPage extends Component {
         editPageItems: {
           [itemIdx]: {
             hasError: {
-              $set: !!_.find(errors.editPageItems, (error, errorIdx) => itemIdx === errorIdx),
+              $set: !!_.find(
+                errors.editPageItems,
+                (error, errorIdx) => itemIdx === errorIdx,
+              ),
             },
           },
         },
@@ -1119,7 +1320,9 @@ class EditItemsPage extends Component {
 
     this.setState((prev) => ({
       values: updatedValues,
-      showOnlyErroredItems: !errors.editPageItems.length ? false : prev.showOnlyErroredItems,
+      showOnlyErroredItems: !errors.editPageItems.length
+        ? false
+        : prev.showOnlyErroredItems,
     }));
   }
 
@@ -1135,67 +1338,80 @@ class EditItemsPage extends Component {
     // TODO: When having full React, fetch only if not fetched yet or language changed
     this.props.fetchReasonCodes();
 
-    this.fetchEditPageData().then((resp) => {
-      const { statusCode, associations } = resp.data.data;
-      const { totalCount } = resp.data;
+    this.fetchEditPageData()
+      .then((resp) => {
+        const { statusCode, associations } = resp.data.data;
+        const { totalCount } = resp.data;
 
-      this.setState((prev) => ({
-        statusCode,
-        totalCount,
-        values: {
-          ...prev.values,
-          associations,
-        },
-      }), () => {
-        if (!this.props.isPaginated || forceFetch) {
-          this.fetchItems();
-        }
+        this.setState(
+          (prev) => ({
+            statusCode,
+            totalCount,
+            values: {
+              ...prev.values,
+              associations,
+            },
+          }),
+          () => {
+            if (!this.props.isPaginated || forceFetch) {
+              this.fetchItems();
+            }
+          },
+        );
+      })
+      .catch(() => {
+        this.props.hideSpinner();
       });
-    }).catch(() => {
-      this.props.hideSpinner();
-    });
   }
 
   fetchItems() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?stepNumber=3`;
-    apiClient.get(url)
-      .then((response) => {
-        this.setEditPageItems(response, null);
-        this.setState({
-          hasItemsLoaded: true,
-        });
+    apiClient.get(url).then((response) => {
+      this.setEditPageItems(response, null);
+      this.setState({
+        hasItemsLoaded: true,
       });
+    });
   }
 
   fetchEditPageItems() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?stepNumber=3`;
-    apiClient.get(url)
+    apiClient
+      .get(url)
       .then((response) => {
         const { data } = response.data;
-        this.setState((prev) => ({
-          hasItemsLoaded: true,
-          values: {
-            ...prev.values,
-            associations: data?.associations,
-            editPageItems: _.map(data, (item) => ({
-              ...item,
-              quantityOnHandRequesting: item.quantityCounted,
-              quantityOnHand: item.quantityOnHand || 0,
-              // eslint-disable-next-line max-len
-              reasonCode: _.find(this.props.reasonCodes, ({ value }) => _.includes(item.reasonCode, value)),
-              substitutionItems: _.map(item.substitutionItems, (sub) => ({
-                ...sub,
-                requisitionItemId: item.requisitionItemId,
+        this.setState(
+          (prev) => ({
+            hasItemsLoaded: true,
+            values: {
+              ...prev.values,
+              associations: data?.associations,
+              editPageItems: _.map(data, (item) => ({
+                ...item,
+                quantityOnHandRequesting: item.quantityCounted,
+                quantityOnHand: item.quantityOnHand || 0,
                 // eslint-disable-next-line max-len
-                reasonCode: _.find(this.props.reasonCodes, ({ value }) => _.includes(item.reasonCode, value)),
+                reasonCode: _.find(this.props.reasonCodes, ({ value }) =>
+                  _.includes(item.reasonCode, value),
+                ),
+                substitutionItems: _.map(item.substitutionItems, (sub) => ({
+                  ...sub,
+                  requisitionItemId: item.requisitionItemId,
+                  // eslint-disable-next-line max-len
+                  reasonCode: _.find(this.props.reasonCodes, ({ value }) =>
+                    _.includes(item.reasonCode, value),
+                  ),
+                })),
               })),
-            })),
+            },
+          }),
+          () => {
+            this.fetchAllData(false);
+            this.props.hideSpinner();
           },
-        }), () => {
-          this.fetchAllData(false);
-          this.props.hideSpinner();
-        });
-      }).catch(() => {
+        );
+      })
+      .catch(() => {
         this.props.hideSpinner();
       });
   }
@@ -1206,10 +1422,9 @@ class EditItemsPage extends Component {
         isFirstPageLoaded: true,
       });
       const url = `/api/stockMovements/${this.state.values.stockMovementId}/stockMovementItems?offset=${startIndex}&max=${this.props.pageSize}&stepNumber=3`;
-      apiClient.get(url)
-        .then((response) => {
-          this.setEditPageItems(response, startIndex);
-        });
+      apiClient.get(url).then((response) => {
+        this.setEditPageItems(response, startIndex);
+      });
     }
   }
 
@@ -1223,33 +1438,35 @@ class EditItemsPage extends Component {
    * @public
    */
   reviseRequisitionItems(values) {
-    const itemsToRevise = _.filter(
-      values.editPageItems,
-      (item) => {
-        if (item.quantityRevised && item.reasonCode) {
-          const oldRevision = _.find(
-            this.state.revisedItems,
-            (revision) => revision.requisitionItemId === item.requisitionItemId,
-          );
-          return _.isEmpty(oldRevision) ? true
-            : ((_.toInteger(oldRevision.quantityRevised) !== _.toInteger(item.quantityRevised))
-              || (oldRevision.reasonCode !== item.reasonCode));
-        }
-        return false;
-      },
-    );
+    const itemsToRevise = _.filter(values.editPageItems, (item) => {
+      if (item.quantityRevised && item.reasonCode) {
+        const oldRevision = _.find(
+          this.state.revisedItems,
+          (revision) => revision.requisitionItemId === item.requisitionItemId,
+        );
+        return _.isEmpty(oldRevision)
+          ? true
+          : _.toInteger(oldRevision.quantityRevised) !==
+              _.toInteger(item.quantityRevised) ||
+              oldRevision.reasonCode !== item.reasonCode;
+      }
+      return false;
+    });
 
     let updatedValues = values;
 
     _.forEach(itemsToRevise, (item) => {
-      const editPageItemIndex = _.findIndex(this.state.values.editPageItems, (editPageItem) =>
-        item.requisitionItemId === editPageItem.requisitionItemId);
+      const editPageItemIndex = _.findIndex(
+        this.state.values.editPageItems,
+        (editPageItem) =>
+          item.requisitionItemId === editPageItem.requisitionItemId,
+      );
 
       updatedValues = update(updatedValues, {
         editPageItems: {
           [editPageItemIndex]: {
             statusCode: {
-              $set: 'CHANGED',
+              $set: "CHANGED",
             },
           },
         },
@@ -1298,7 +1515,10 @@ class EditItemsPage extends Component {
     const errors = validateForSave(formValues).editPageItems;
 
     if (errors.length) {
-      showOutboundEditValidationErrors({ translate: this.props.translate, errors });
+      showOutboundEditValidationErrors({
+        translate: this.props.translate,
+        errors,
+      });
 
       this.props.hideSpinner();
       return null;
@@ -1315,9 +1535,8 @@ class EditItemsPage extends Component {
           const savedItems = payload.lineItems.map((item) => ({
             ...item,
             requisitionItemId: item.id,
-            reasonCode: _.find(
-              this.props.reasonCodes,
-              ({ value }) => _.includes(item.reasonCode, value),
+            reasonCode: _.find(this.props.reasonCodes, ({ value }) =>
+              _.includes(item.reasonCode, value),
             ),
           }));
           // Get old revise items, that were not changed in this request
@@ -1331,7 +1550,13 @@ class EditItemsPage extends Component {
         }
 
         this.props.hideSpinner();
-        Alert.success(this.props.translate('react.stockMovement.alert.saveSuccess.label', 'Changes saved successfully'), { timeout: 3000 });
+        Alert.success(
+          this.props.translate(
+            "react.stockMovement.alert.saveSuccess.label",
+            "Changes saved successfully",
+          ),
+          { timeout: 3000 },
+        );
       })
       .catch(() => this.props.hideSpinner());
   }
@@ -1342,14 +1567,17 @@ class EditItemsPage extends Component {
    */
   refresh() {
     confirmAlert({
-      title: this.props.translate('react.stockMovement.message.confirmRefresh.label', 'Confirm refresh'),
+      title: this.props.translate(
+        "react.stockMovement.message.confirmRefresh.label",
+        "Confirm refresh",
+      ),
       message: this.props.translate(
-        'react.stockMovement.confirmRefresh.message',
-        'Are you sure you want to refresh? Your progress since last save will be lost.',
+        "react.stockMovement.confirmRefresh.message",
+        "Are you sure you want to refresh? Your progress since last save will be lost.",
       ),
       buttons: [
         {
-          label: this.props.translate('react.default.yes.label', 'Yes'),
+          label: this.props.translate("react.default.yes.label", "Yes"),
           onClick: () => {
             this.setState({
               revisedItems: [],
@@ -1362,7 +1590,7 @@ class EditItemsPage extends Component {
           },
         },
         {
-          label: this.props.translate('react.default.no.label', 'No'),
+          label: this.props.translate("react.default.no.label", "No"),
         },
       ],
     });
@@ -1376,8 +1604,8 @@ class EditItemsPage extends Component {
   transitionToNextStep() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}/status`;
     const payload = {
-      status: 'PICKING',
-      createPicklist: this.state.statusCode === 'REQUESTED' ? 'true' : 'false',
+      status: "PICKING",
+      createPicklist: this.state.statusCode === "REQUESTED" ? "true" : "false",
     };
 
     return apiClient.post(url, payload);
@@ -1390,7 +1618,8 @@ class EditItemsPage extends Component {
   fetchEditPageData() {
     const url = `/api/stockMovements/${this.state.values.stockMovementId}`;
 
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((resp) => resp)
       .catch((err) => err);
   }
@@ -1407,7 +1636,8 @@ class EditItemsPage extends Component {
         this.transitionToNextStep()
           .then(() => this.props.nextPage(formValues))
           .catch(() => this.props.hideSpinner());
-      }).catch(() => this.props.hideSpinner());
+      })
+      .catch(() => this.props.hideSpinner());
   }
 
   /**
@@ -1416,10 +1646,14 @@ class EditItemsPage extends Component {
    * @public
    */
   updateEditPageItem(values, editPageItem) {
-    const editPageItemIndex = _.findIndex(this.state.values.editPageItems, (item) =>
-      item.requisitionItemId === editPageItem.requisitionItemId);
-    const revisedItemIndex = _.findIndex(this.state.revisedItems, (item) =>
-      item.requisitionItemId === editPageItem.requisitionItemId);
+    const editPageItemIndex = _.findIndex(
+      this.state.values.editPageItems,
+      (item) => item.requisitionItemId === editPageItem.requisitionItemId,
+    );
+    const revisedItemIndex = _.findIndex(
+      this.state.revisedItems,
+      (item) => item.requisitionItemId === editPageItem.requisitionItemId,
+    );
 
     this.setState((prev) => ({
       values: {
@@ -1432,17 +1666,25 @@ class EditItemsPage extends Component {
               quantityOnHandRequesting: editPageItem.quantityCounted,
               quantityOnHand: editPageItem.quantityOnHand || 0,
               quantityAvailable: editPageItem.quantityAvailable || 0,
-              substitutionItems: _.map(editPageItem.substitutionItems, (sub) => ({
-                ...sub,
-                requisitionItemId: editPageItem.requisitionItemId,
-              })),
+              substitutionItems: _.map(
+                editPageItem.substitutionItems,
+                (sub) => ({
+                  ...sub,
+                  requisitionItemId: editPageItem.requisitionItemId,
+                }),
+              ),
             },
           },
         }),
       },
-      revisedItems: update(prev.revisedItems, revisedItemIndex > -1 ? {
-        $splice: [[revisedItemIndex, 1]],
-      } : {}),
+      revisedItems: update(
+        prev.revisedItems,
+        revisedItemIndex > -1
+          ? {
+              $splice: [[revisedItemIndex, 1]],
+            }
+          : {},
+      ),
     }));
   }
 
@@ -1456,29 +1698,33 @@ class EditItemsPage extends Component {
 
     if (errors.length) {
       confirmAlert({
-        title: this.props.translate('react.stockMovement.confirmExit.label', 'Confirm save'),
+        title: this.props.translate(
+          "react.stockMovement.confirmExit.label",
+          "Confirm save",
+        ),
         message: this.props.translate(
-          'react.stockMovement.confirmExit.message',
-          'Validation errors occurred. Are you sure you want to exit and lose unsaved data?',
+          "react.stockMovement.confirmExit.message",
+          "Validation errors occurred. Are you sure you want to exit and lose unsaved data?",
         ),
         buttons: [
           {
-            label: this.props.translate('react.default.yes.label', 'Yes'),
+            label: this.props.translate("react.default.yes.label", "Yes"),
             onClick: () => {
-              window.location = STOCK_MOVEMENT_URL.show(formValues.stockMovementId);
+              window.location = STOCK_MOVEMENT_URL.show(
+                formValues.stockMovementId,
+              );
             },
           },
           {
-            label: this.props.translate('react.default.no.label', 'No'),
+            label: this.props.translate("react.default.no.label", "No"),
           },
         ],
       });
       this.props.hideSpinner();
     } else {
-      this.reviseRequisitionItems(formValues)
-        .then(() => {
-          window.location = STOCK_MOVEMENT_URL.show(formValues.stockMovementId);
-        });
+      this.reviseRequisitionItems(formValues).then(() => {
+        window.location = STOCK_MOVEMENT_URL.show(formValues.stockMovementId);
+      });
     }
   }
 
@@ -1492,20 +1738,38 @@ class EditItemsPage extends Component {
     const revertItemsUrl = `/api/stockMovementItems/${itemId}/revertItem`;
     const itemsUrl = `/api/stockMovementItems/${itemId}?stepNumber=3`;
 
-    return apiClient.post(revertItemsUrl)
-      .then(() => apiClient.get(itemsUrl)
-        .then((response) => {
-          const editPageItem = response.data.data;
-          this.updateEditPageItem(values, editPageItem);
-          this.props.hideSpinner();
-        })
-        .catch(() => {
-          this.props.hideSpinner();
-          return Promise.reject(new Error(this.props.translate('react.stockMovement.error.revertRequisitionItem.label', 'Could not revert requisition items')));
-        }))
+    return apiClient
+      .post(revertItemsUrl)
+      .then(() =>
+        apiClient
+          .get(itemsUrl)
+          .then((response) => {
+            const editPageItem = response.data.data;
+            this.updateEditPageItem(values, editPageItem);
+            this.props.hideSpinner();
+          })
+          .catch(() => {
+            this.props.hideSpinner();
+            return Promise.reject(
+              new Error(
+                this.props.translate(
+                  "react.stockMovement.error.revertRequisitionItem.label",
+                  "Could not revert requisition items",
+                ),
+              ),
+            );
+          }),
+      )
       .catch(() => {
         this.props.hideSpinner();
-        return Promise.reject(new Error(this.props.translate('react.stockMovement.error.revertRequisitionItem.label', 'Could not revert requisition items')));
+        return Promise.reject(
+          new Error(
+            this.props.translate(
+              "react.stockMovement.error.revertRequisitionItem.label",
+              "Could not revert requisition items",
+            ),
+          ),
+        );
       });
   }
 
@@ -1520,14 +1784,21 @@ class EditItemsPage extends Component {
       RequisitionStatus.VERIFYING,
       RequisitionStatus.PENDING_APPROVAL,
     ];
-    return canEditRequest(currentUser, values, currentLocation) && allowedStatuses.includes(status);
+    return (
+      canEditRequest(currentUser, values, currentLocation) &&
+      allowedStatuses.includes(status)
+    );
   }
 
   render() {
     const { showOnlyErroredItems, itemFilter } = this.state;
     const { showOnly } = this.props;
     const isAddingItemsAllowed = this.isAddingItemsAllowed();
-    const erroredItemsCount = this.state.values && this.state.values.editPageItems.length > 0 ? _.filter(this.state.values.editPageItems, (item) => item.hasError).length : '0';
+    const erroredItemsCount =
+      this.state.values && this.state.values.editPageItems.length > 0
+        ? _.filter(this.state.values.editPageItems, (item) => item.hasError)
+            .length
+        : "0";
     return (
       <Form
         onSubmit={() => {}}
@@ -1536,107 +1807,121 @@ class EditItemsPage extends Component {
         initialValues={this.state.values}
         render={({ handleSubmit, values, invalid }) => (
           <div className="d-flex flex-column">
-            { !showOnly
-              ? (
-                <span className="buttons-container">
-                  <div className="d-flex mr-auto justify-content-center align-items-center">
-                    <input
-                      value={itemFilter}
-                      onChange={(event) => this.setState({ itemFilter: event.target.value })}
-                      className="float-left btn btn-outline-secondary btn-xs filter-input mr-1 mb-1"
-                      placeholder={this.props.translate('react.stockMovement.searchPlaceholder.label', 'Search...')}
-                    />
-                    {itemFilter
-                    && (
+            {!showOnly ? (
+              <span className="buttons-container">
+                <div className="d-flex mr-auto justify-content-center align-items-center">
+                  <input
+                    value={itemFilter}
+                    onChange={(event) =>
+                      this.setState({ itemFilter: event.target.value })
+                    }
+                    className="float-left btn btn-outline-secondary btn-xs filter-input mr-1 mb-1"
+                    placeholder={this.props.translate(
+                      "react.stockMovement.searchPlaceholder.label",
+                      "Search...",
+                    )}
+                  />
+                  {itemFilter && (
                     <i
                       aria-label="Clear filter"
                       role="button"
                       className="fa fa-times-circle"
-                      style={{ color: 'grey', cursor: 'pointer' }}
-                      onClick={() => this.setState({ itemFilter: '' })}
-                      onKeyPress={() => this.setState({ itemFilter: '' })}
+                      style={{ color: "grey", cursor: "pointer" }}
+                      onClick={() => this.setState({ itemFilter: "" })}
+                      onKeyPress={() => this.setState({ itemFilter: "" })}
                       tabIndex={0}
                     />
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => this.setState({ showOnlyErroredItems: !showOnlyErroredItems })}
-                    className={`float-right mb-1 btn btn-outline-secondary align-self-end ml-3 btn-xs ${showOnlyErroredItems ? 'active' : ''}`}
-                  >
-                    <span>
-                      {erroredItemsCount}
-                      {' '}
-                      <Translate id="react.stockMovement.erroredItemsCount.label" defaultMessage="item(s) require your attention" />
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => this.refresh()}
-                    className="float-right mb-1 btn btn-outline-secondary align-self-end ml-3 btn-xs"
-                  >
-                    <span>
-                      <i className="fa fa-refresh pr-2" />
-                      <Translate
-                        id="react.default.button.refresh.label"
-                        defaultMessage="Reload"
-                      />
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => this.save(values)}
-                    className="float-right mb-1 btn btn-outline-secondary align-self-end ml-3 btn-xs"
-                  >
-                    <span>
-                      <i className="fa fa-save pr-2" />
-                      <Translate
-                        id="react.default.button.saveProgress.label"
-                        defaultMessage="Save Progress"
-                      />
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => this.saveAndExit(values)}
-                    className="float-right mb-1 btn btn-outline-secondary align-self-end btn-xs"
-                  >
-                    <span>
-                      <i className="fa fa-sign-out pr-2" />
-                      <Translate
-                        id="react.default.button.saveAndExit.label"
-                        defaultMessage="Save and exit"
-                      />
-                    </span>
-                  </button>
-                </span>
-              )
-              : (
+                  )}
+                </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!this.props.supportedActivities.includes('MANAGE_INVENTORY') && this.props.supportedActivities.includes('SUBMIT_REQUEST')) {
-                      this.props.history.push(DASHBOARD_URL.base);
-                    } else {
-                      this.props.history.push(STOCK_MOVEMENT_URL.listInbound());
-                    }
-                  }}
-                  className="float-right mb-1 btn btn-outline-danger align-self-end btn-xs mr-2"
+                  onClick={() =>
+                    this.setState({
+                      showOnlyErroredItems: !showOnlyErroredItems,
+                    })
+                  }
+                  className={`float-right mb-1 btn btn-outline-secondary align-self-end ml-3 btn-xs ${showOnlyErroredItems ? "active" : ""}`}
+                >
+                  <span>
+                    {erroredItemsCount}{" "}
+                    <Translate
+                      id="react.stockMovement.erroredItemsCount.label"
+                      defaultMessage="item(s) require your attention"
+                    />
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => this.refresh()}
+                  className="float-right mb-1 btn btn-outline-secondary align-self-end ml-3 btn-xs"
+                >
+                  <span>
+                    <i className="fa fa-refresh pr-2" />
+                    <Translate
+                      id="react.default.button.refresh.label"
+                      defaultMessage="Reload"
+                    />
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => this.save(values)}
+                  className="float-right mb-1 btn btn-outline-secondary align-self-end ml-3 btn-xs"
+                >
+                  <span>
+                    <i className="fa fa-save pr-2" />
+                    <Translate
+                      id="react.default.button.saveProgress.label"
+                      defaultMessage="Save Progress"
+                    />
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => this.saveAndExit(values)}
+                  className="float-right mb-1 btn btn-outline-secondary align-self-end btn-xs"
                 >
                   <span>
                     <i className="fa fa-sign-out pr-2" />
-                    {' '}
-                    <Translate id="react.default.button.exit.label" defaultMessage="Exit" />
-                    {' '}
+                    <Translate
+                      id="react.default.button.saveAndExit.label"
+                      defaultMessage="Save and exit"
+                    />
                   </span>
                 </button>
-              ) }
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  if (
+                    !this.props.supportedActivities.includes(
+                      "MANAGE_INVENTORY",
+                    ) &&
+                    this.props.supportedActivities.includes("SUBMIT_REQUEST")
+                  ) {
+                    this.props.history.push(DASHBOARD_URL.base);
+                  } else {
+                    this.props.history.push(STOCK_MOVEMENT_URL.listInbound());
+                  }
+                }}
+                className="float-right mb-1 btn btn-outline-danger align-self-end btn-xs mr-2"
+              >
+                <span>
+                  <i className="fa fa-sign-out pr-2" />{" "}
+                  <Translate
+                    id="react.default.button.exit.label"
+                    defaultMessage="Exit"
+                  />{" "}
+                </span>
+              </button>
+            )}
             <form onSubmit={handleSubmit}>
               <div className="table-form">
                 {_.map(this.getFields(), (fieldConfig, fieldName) =>
                   renderFormField(fieldConfig, fieldName, {
                     stockMovementId: values.stockMovementId,
-                    hasStockList: !!_.get(values.stocklist, 'id'),
+                    hasStockList: !!_.get(values.stocklist, "id"),
                     translate: this.props.translate,
                     reasonCodes: this.props.reasonCodes,
                     onResponse: this.fetchEditPageItems,
@@ -1652,21 +1937,25 @@ class EditItemsPage extends Component {
                     showOnly,
                     showOnlyErroredItems,
                     itemFilter,
-                  }))}
+                  }),
+                )}
               </div>
-              <div className={`submit-buttons ${isAddingItemsAllowed ? 'd-flex justify-content-between' : ''}`}>
-                {isAddingItemsAllowed
-                  && (
+              <div
+                className={`submit-buttons ${isAddingItemsAllowed ? "d-flex justify-content-between" : ""}`}
+              >
+                {isAddingItemsAllowed && (
                   <Button
                     label="react.stockMovement.editRequestItems.label"
                     defaultLabel="Edit request items"
                     variant="primary-outline"
                     onClick={() => {
                       const { history } = this.props;
-                      history.push(STOCK_MOVEMENT_URL.editRequest(this.state.values?.id));
+                      history.push(
+                        STOCK_MOVEMENT_URL.editRequest(this.state.values?.id),
+                      );
                     }}
                   />
-                  )}
+                )}
                 <button
                   type="submit"
                   disabled={!this.state.hasItemsLoaded || showOnly || invalid}
@@ -1677,7 +1966,10 @@ class EditItemsPage extends Component {
                   }}
                   className="btn btn-outline-primary btn-form float-right btn-xs"
                 >
-                  <Translate id="react.stockMovement.button.generatePicklist.label" defaultMessage="Generate Picklist" />
+                  <Translate
+                    id="react.stockMovement.button.generatePicklist.label"
+                    defaultMessage="Generate Picklist"
+                  />
                 </button>
               </div>
             </form>
@@ -1691,7 +1983,8 @@ class EditItemsPage extends Component {
 const mapStateToProps = (state) => ({
   reasonCodes: state.reasonCodes.data,
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
-  stockMovementTranslationsFetched: state.session.fetchedTranslations.stockMovement,
+  stockMovementTranslationsFetched:
+    state.session.fetchedTranslations.stockMovement,
   isPaginated: state.session.isPaginated,
   pageSize: state.session.pageSize,
   supportedActivities: state.session.supportedActivities,
@@ -1700,9 +1993,13 @@ const mapStateToProps = (state) => ({
   currentLocation: state.session.currentLocation,
 });
 
-export default withRouter(connect(mapStateToProps, {
-  fetchReasonCodes, showSpinner, hideSpinner,
-})(EditItemsPage));
+export default withRouter(
+  connect(mapStateToProps, {
+    fetchReasonCodes,
+    showSpinner,
+    hideSpinner,
+  })(EditItemsPage),
+);
 
 EditItemsPage.propTypes = {
   /** Initial component's data */

@@ -1,86 +1,90 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { getTranslate } from 'react-localize-redux';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { getTranslate } from "react-localize-redux";
+import { connect } from "react-redux";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import TextField from 'components/form-elements/TextField';
-import apiClient from 'utils/apiClient';
-import Translate, { translateWithDefaultMessage } from 'utils/Translate';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import TextField from "components/form-elements/TextField";
+import apiClient from "utils/apiClient";
+import Translate, { translateWithDefaultMessage } from "utils/Translate";
 
 const FIELDS = {
   availableItems: {
     type: ArrayField,
     getDynamicRowAttr: ({ rowValues }) => {
-      let className = '';
+      let className = "";
       if (!rowValues.quantityAvailable) {
-        className = 'text-disabled';
+        className = "text-disabled";
       }
       return { className };
     },
     fields: {
       status: {
         type: LabelField,
-        fieldKey: '',
+        fieldKey: "",
         flexWidth: 6,
         getDynamicAttr: ({ translate }) => ({
           showValueTooltip: true,
           formatValue: (fieldValue) => {
-            if (!fieldValue.status || fieldValue.status === 'AVAILABLE') {
-              return '';
+            if (!fieldValue.status || fieldValue.status === "AVAILABLE") {
+              return "";
             }
 
-            return translate(`react.stockMovement.enum.AvailableItemStatus.${fieldValue.status}`, fieldValue.status);
+            return translate(
+              `react.stockMovement.enum.AvailableItemStatus.${fieldValue.status}`,
+              fieldValue.status,
+            );
           },
         }),
       },
       lotNumber: {
         type: LabelField,
-        label: 'react.stockMovement.lot.label',
-        defaultMessage: 'Lot',
+        label: "react.stockMovement.lot.label",
+        defaultMessage: "Lot",
       },
       expirationDate: {
         type: LabelField,
-        label: 'react.stockMovement.expiry.label',
-        defaultMessage: 'Expiry',
-        fixedWidth: '120px',
+        label: "react.stockMovement.expiry.label",
+        defaultMessage: "Expiry",
+        fixedWidth: "120px",
       },
-      'zone.name': {
+      "zone.name": {
         type: LabelField,
-        label: 'react.stockMovement.binLocation.label',
-        defaultMessage: 'Zone',
+        label: "react.stockMovement.binLocation.label",
+        defaultMessage: "Zone",
       },
-      'binLocation.name': {
+      "binLocation.name": {
         type: LabelField,
-        label: 'react.stockMovement.binLocation.label',
-        defaultMessage: 'Bin Location',
+        label: "react.stockMovement.binLocation.label",
+        defaultMessage: "Bin Location",
       },
       quantityAvailable: {
         type: LabelField,
-        label: 'react.stockMovement.quantityAvailable.label',
-        defaultMessage: 'Qty Available',
-        fixedWidth: '150px',
-        headerAlign: 'right',
+        label: "react.stockMovement.quantityAvailable.label",
+        defaultMessage: "Qty Available",
+        fixedWidth: "150px",
+        headerAlign: "right",
         attributes: {
-          cellClassName: 'text-right',
-          formatValue: (value) => (value || value === 0 ? value.toLocaleString('en-US') : null),
+          cellClassName: "text-right",
+          formatValue: (value) =>
+            value || value === 0 ? value.toLocaleString("en-US") : null,
         },
       },
       quantityPicked: {
         type: TextField,
-        fieldKey: '',
-        label: 'react.stockMovement.quantityPicked.label',
-        defaultMessage: 'Qty Picked',
-        fixedWidth: '120px',
-        headerAlign: 'right',
+        fieldKey: "",
+        label: "react.stockMovement.quantityPicked.label",
+        defaultMessage: "Qty Picked",
+        fixedWidth: "120px",
+        headerAlign: "right",
         attributes: {
-          cellClassName: 'text-right',
-          type: 'number',
+          cellClassName: "text-right",
+          type: "number",
         },
         getDynamicAttr: ({ fieldValue }) => ({
           disabled: fieldValue && !fieldValue.quantityAvailable,
@@ -95,20 +99,31 @@ function validate(values) {
   errors.availableItems = [];
 
   const pickedSum = _.reduce(
-    values.availableItems, (sum, val) =>
-      (sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0)),
+    values.availableItems,
+    (sum, val) =>
+      sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0),
     0,
   );
 
   _.forEach(values.availableItems, (item, key) => {
-    if (!Number.isNaN(item.quantityPicked) && pickedSum !== values.quantityRequired && item.status !== 'NOT_AVAILABLE') {
-      errors.availableItems[key] = { quantityPicked: 'react.stockMovement.errors.differentTotalQty.label' };
+    if (
+      !Number.isNaN(item.quantityPicked) &&
+      pickedSum !== values.quantityRequired &&
+      item.status !== "NOT_AVAILABLE"
+    ) {
+      errors.availableItems[key] = {
+        quantityPicked: "react.stockMovement.errors.differentTotalQty.label",
+      };
     }
     if (item.quantityPicked > item.quantityAvailable) {
-      errors.availableItems[key] = { quantityPicked: 'react.stockMovement.errors.higherTyPicked.label' };
+      errors.availableItems[key] = {
+        quantityPicked: "react.stockMovement.errors.higherTyPicked.label",
+      };
     }
     if (item.quantityPicked < 0) {
-      errors.availableItems[key] = { quantityPicked: 'react.stockMovement.errors.negativeQtyPicked.label' };
+      errors.availableItems[key] = {
+        quantityPicked: "react.stockMovement.errors.negativeQtyPicked.label",
+      };
     }
   });
 
@@ -165,19 +180,24 @@ class EditPickModal extends Component {
     const picklistUrl = `/api/replenishments/${this.state.attr.itemId}/picklists`;
     const payload = {
       picklistItems: _.map(values.availableItems, (avItem) => ({
-        id: avItem.id || '',
-        'inventoryItem.id': avItem['inventoryItem.id'],
-        'binLocation.id': avItem['binLocation.id'] || '',
-        quantityPicked: _.isNil(avItem.quantityPicked) ? '' : avItem.quantityPicked,
+        id: avItem.id || "",
+        "inventoryItem.id": avItem["inventoryItem.id"],
+        "binLocation.id": avItem["binLocation.id"] || "",
+        quantityPicked: _.isNil(avItem.quantityPicked)
+          ? ""
+          : avItem.quantityPicked,
       })),
     };
 
-    apiClient.put(picklistUrl, payload)
+    apiClient
+      .put(picklistUrl, payload)
       .then(() => {
         this.props.hideSpinner();
         this.state.attr.onResponse();
       })
-      .catch(() => { this.props.hideSpinner(); });
+      .catch(() => {
+        this.props.hideSpinner();
+      });
   }
 
   /**
@@ -190,10 +210,17 @@ class EditPickModal extends Component {
     return (
       <div>
         <div className="font-weight-bold pb-2">
-          <Translate id="react.stockMovement.quantityPicked.label" defaultMessage="Qty Picked" />
+          <Translate
+            id="react.stockMovement.quantityPicked.label"
+            defaultMessage="Qty Picked"
+          />
           :
-          {_.reduce(values.availableItems, (sum, val) =>
-            (sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0)), 0)}
+          {_.reduce(
+            values.availableItems,
+            (sum, val) =>
+              sum + (val.quantityPicked ? _.toInteger(val.quantityPicked) : 0),
+            0,
+          )}
         </div>
         <hr />
       </div>
@@ -203,26 +230,32 @@ class EditPickModal extends Component {
   fetchPickPageItem() {
     const itemsUrl = `/api/replenishments/${this.state.attr.itemId}/picklists`;
 
-    apiClient.get(itemsUrl)
+    apiClient
+      .get(itemsUrl)
       .then((resp) => {
         const pickPageItem = resp.data.data;
 
         const availableItems = _.map(pickPageItem.availableItems, (avItem) => {
           // check if this picklist item already exists
-          const picklistItem = _.find(pickPageItem.picklistItems, (item) => item['inventoryItem.id'] === avItem['inventoryItem.id'] && item['binLocation.id'] === avItem['binLocation.id']);
+          const picklistItem = _.find(
+            pickPageItem.picklistItems,
+            (item) =>
+              item["inventoryItem.id"] === avItem["inventoryItem.id"] &&
+              item["binLocation.id"] === avItem["binLocation.id"],
+          );
 
-          if (picklistItem && avItem.status !== 'NOT_AVAILABLE') {
+          if (picklistItem && avItem.status !== "NOT_AVAILABLE") {
             return {
               ...avItem,
               id: picklistItem.id,
               quantityPicked: picklistItem.quantityPicked,
               binLocation: {
-                id: picklistItem['binLocation.id'],
-                name: picklistItem['binLocation.name'],
+                id: picklistItem["binLocation.id"],
+                name: picklistItem["binLocation.name"],
               },
               zone: {
-                id: picklistItem['binLocation.zoneId'],
-                name: picklistItem['binLocation.zoneName'],
+                id: picklistItem["binLocation.zoneId"],
+                name: picklistItem["binLocation.zoneName"],
               },
             };
           }
@@ -235,13 +268,15 @@ class EditPickModal extends Component {
             availableItems,
             quantityRequired: pickPageItem.quantityRequired,
             productCode: pickPageItem.productCode,
-            productName: pickPageItem['product.name'],
+            productName: pickPageItem["product.name"],
           },
         });
 
         this.props.hideSpinner();
       })
-      .catch(() => { this.props.hideSpinner(); });
+      .catch(() => {
+        this.props.hideSpinner();
+      });
   }
 
   render() {
@@ -264,19 +299,25 @@ class EditPickModal extends Component {
       >
         <div>
           <div className="font-weight-bold">
-            <Translate id="react.stockMovement.productCode.label" defaultMessage="Product code" />
-            :
-            {this.state.formValues.productCode}
+            <Translate
+              id="react.stockMovement.productCode.label"
+              defaultMessage="Product code"
+            />
+            :{this.state.formValues.productCode}
           </div>
           <div className="font-weight-bold">
-            <Translate id="react.stockMovement.productName.label" defaultMessage="Product name" />
-            :
-            {this.state.formValues.productName}
+            <Translate
+              id="react.stockMovement.productName.label"
+              defaultMessage="Product name"
+            />
+            :{this.state.formValues.productName}
           </div>
           <div className="font-weight-bold">
-            <Translate id="react.stockMovement.quantityRequired.label" defaultMessage="Qty Required" />
-            :
-            {this.state.formValues.quantityRequired}
+            <Translate
+              id="react.stockMovement.quantityRequired.label"
+              defaultMessage="Qty Required"
+            />
+            :{this.state.formValues.quantityRequired}
           </div>
         </div>
       </ModalWrapper>
@@ -288,7 +329,9 @@ const mapStateToProps = (state) => ({
   translate: translateWithDefaultMessage(getTranslate(state.localize)),
 });
 
-export default connect(mapStateToProps, { showSpinner, hideSpinner })(EditPickModal);
+export default connect(mapStateToProps, { showSpinner, hideSpinner })(
+  EditPickModal,
+);
 
 EditPickModal.propTypes = {
   /** Name of the field */

@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import InputWrapper from 'wrappers/InputWrapper';
+import InputWrapper from "wrappers/InputWrapper";
 
-import './style.scss';
+import "./style.scss";
 
 const Checkbox = ({
   title,
@@ -25,7 +25,7 @@ const Checkbox = ({
       name={name}
       type="checkbox"
       disabled={disabled}
-      className={`checkbox-v2 ${errorMessage ? 'has-errors' : ''}`}
+      className={`checkbox-v2 ${errorMessage ? "has-errors" : ""}`}
       {...fieldProps}
       checked={fieldProps.value}
       ref={(checkboxRef) => {
@@ -37,21 +37,19 @@ const Checkbox = ({
     />
   );
 
-  return (
-    noWrapper ? checkbox : (
-      <InputWrapper
-        title={title}
-        tooltip={tooltip}
-        button={button}
-        errorMessage={errorMessage}
-        inputId={id || name}
-        labelPosition={labelPosition}
-      >
-        <div className="form-element-checkbox">
-          {checkbox}
-        </div>
-      </InputWrapper>
-    )
+  return noWrapper ? (
+    checkbox
+  ) : (
+    <InputWrapper
+      title={title}
+      tooltip={tooltip}
+      button={button}
+      errorMessage={errorMessage}
+      inputId={id || name}
+      labelPosition={labelPosition}
+    >
+      <div className="form-element-checkbox">{checkbox}</div>
+    </InputWrapper>
   );
 };
 
@@ -80,7 +78,7 @@ Checkbox.propTypes = {
   // and the message is displayed under the input
   errorMessage: PropTypes.string,
   // position of input label
-  labelPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+  labelPosition: PropTypes.oneOf(["top", "bottom", "left", "right"]),
   // html element id
   id: PropTypes.string,
   // html element name
@@ -99,7 +97,7 @@ Checkbox.defaultProps = {
   disabled: false,
   id: undefined,
   name: undefined,
-  labelPosition: 'right',
+  labelPosition: "right",
   noWrapper: false,
   indeterminate: false,
 };

@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 
-import { showInfoBarModal } from 'actions';
-import Translate from 'utils/Translate';
+import { showInfoBarModal } from "actions";
+import Translate from "utils/Translate";
 
 const InfoBarTitle = ({ title, name, hasModalToDisplay }) => {
   const dispatch = useDispatch();
@@ -19,7 +19,10 @@ const InfoBarTitle = ({ title, name, hasModalToDisplay }) => {
           onKeyDown={() => dispatch(showInfoBarModal(name))}
           tabIndex={0}
         >
-          <Translate id="react.infoBar.readMore.label" defaultMessage="Read more" />
+          <Translate
+            id="react.infoBar.readMore.label"
+            defaultMessage="Read more"
+          />
         </span>
       )}
     </>

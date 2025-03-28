@@ -1,31 +1,31 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Tooltip } from 'react-tippy';
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Tooltip } from "react-tippy";
 
-import { hideSpinner, showSpinner } from 'actions';
-import ArrayField from 'components/form-elements/ArrayField';
-import LabelField from 'components/form-elements/LabelField';
-import ModalWrapper from 'components/form-elements/ModalWrapper';
-import ProductSelectField from 'components/form-elements/ProductSelectField';
-import SelectField from 'components/form-elements/SelectField';
-import TextField from 'components/form-elements/TextField';
-import DateFormat from 'consts/dateFormat';
-import apiClient from 'utils/apiClient';
-import { debounceAvailableItemsFetch } from 'utils/option-utils';
-import Translate from 'utils/Translate';
-import { formatDate } from 'utils/translation-utils';
+import { hideSpinner, showSpinner } from "actions";
+import ArrayField from "components/form-elements/ArrayField";
+import LabelField from "components/form-elements/LabelField";
+import ModalWrapper from "components/form-elements/ModalWrapper";
+import ProductSelectField from "components/form-elements/ProductSelectField";
+import SelectField from "components/form-elements/SelectField";
+import TextField from "components/form-elements/TextField";
+import DateFormat from "consts/dateFormat";
+import apiClient from "utils/apiClient";
+import { debounceAvailableItemsFetch } from "utils/option-utils";
+import Translate from "utils/Translate";
+import { formatDate } from "utils/translation-utils";
 
 const FIELDS = {
   reasonCode: {
     type: SelectField,
-    label: 'react.stockMovement.reasonFor.label',
-    defaultMessage: 'Reason for not fulfilling full qty',
+    label: "react.stockMovement.reasonFor.label",
+    defaultMessage: "Reason for not fulfilling full qty",
     attributes: {
       required: true,
-      className: 'mb-2',
+      className: "mb-2",
     },
     getDynamicAttr: (props) => ({
       options: props.reasonCodes,
@@ -39,14 +39,19 @@ const FIELDS = {
       isLoading,
       isEmptyData,
     }) => {
-      let className = '';
+      let className = "";
       const rowDate = new Date(rowValues.minExpirationDate);
-      const origDate = originalItem && originalItem.minExpirationDate
-        ? new Date(originalItem.minExpirationDate) : null;
+      const origDate =
+        originalItem && originalItem.minExpirationDate
+          ? new Date(originalItem.minExpirationDate)
+          : null;
       if (!rowValues.originalItem) {
-        className = (origDate && rowDate && rowDate < origDate) || (!origDate && rowDate) ? 'text-danger' : '';
+        className =
+          (origDate && rowDate && rowDate < origDate) || (!origDate && rowDate)
+            ? "text-danger"
+            : "";
       } else {
-        className = 'font-weight-bold';
+        className = "font-weight-bold";
       }
       return {
         className,
@@ -69,19 +74,19 @@ const FIELDS = {
     ),
     fields: {
       product: {
-        fieldKey: 'disabled',
+        fieldKey: "disabled",
         type: ProductSelectField,
-        label: 'react.stockMovement.product.label',
-        defaultMessage: 'Product',
+        label: "react.stockMovement.product.label",
+        defaultMessage: "Product",
         getDynamicAttr: ({ debouncedAvailableItemsFetch }) => ({
           loadOptions: debouncedAvailableItemsFetch,
         }),
       },
-      'product.minExpirationDate': {
+      "product.minExpirationDate": {
         type: LabelField,
-        label: 'react.stockMovement.expiry.label',
-        defaultMessage: 'Expiry',
-        flexWidth: '2',
+        label: "react.stockMovement.expiry.label",
+        defaultMessage: "Expiry",
+        flexWidth: "2",
         attributes: {
           showValueTooltip: true,
         },
@@ -89,45 +94,46 @@ const FIELDS = {
           formatValue: (value) => formatLocalizedDate(value, DateFormat.COMMON),
         }),
       },
-      'product.quantityAvailable': {
+      "product.quantityAvailable": {
         type: LabelField,
-        label: 'react.stockMovement.quantityAvailable.label',
-        defaultMessage: 'Qty Available',
-        flexWidth: '2',
-        fieldKey: '',
+        label: "react.stockMovement.quantityAvailable.label",
+        defaultMessage: "Qty Available",
+        flexWidth: "2",
+        fieldKey: "",
         attributes: {
           // eslint-disable-next-line no-nested-ternary
-          formatValue: (fieldValue) => (_.get(fieldValue, 'quantityAvailable') ? _.get(fieldValue, 'quantityAvailable')
-            .toLocaleString('en-US')
-            : _.get(fieldValue, 'product.quantityAvailable') ? _.get(fieldValue, 'product.quantityAvailable')
-              .toLocaleString('en-US') : null),
+          formatValue: (fieldValue) =>
+            _.get(fieldValue, "quantityAvailable")
+              ? _.get(fieldValue, "quantityAvailable").toLocaleString("en-US")
+              : _.get(fieldValue, "product.quantityAvailable")
+                ? _.get(fieldValue, "product.quantityAvailable").toLocaleString(
+                    "en-US",
+                  )
+                : null,
           showValueTooltip: true,
         },
         getDynamicAttr: ({ fieldValue }) => ({
-          tooltipValue: _.map(fieldValue && fieldValue.availableItems, (availableItem) =>
-            (
+          tooltipValue: _.map(
+            fieldValue && fieldValue.availableItems,
+            (availableItem) => (
               <p>
-                {fieldValue.productCode}
-                {' '}
-                {fieldValue.productName}
-                ,
-                {' '}
-                {availableItem.expirationDate ? availableItem.expirationDate : '---'}
-                ,
-                Qty
-                {' '}
-                {availableItem.quantityAvailable}
+                {fieldValue.productCode} {fieldValue.productName},{" "}
+                {availableItem.expirationDate
+                  ? availableItem.expirationDate
+                  : "---"}
+                , Qty {availableItem.quantityAvailable}
               </p>
-            )),
+            ),
+          ),
         }),
       },
       quantitySelected: {
         type: TextField,
-        label: 'react.stockMovement.quantitySelected.label',
-        defaultMessage: 'Quantity selected',
-        flexWidth: '2',
+        label: "react.stockMovement.quantitySelected.label",
+        defaultMessage: "Quantity selected",
+        flexWidth: "2",
         attributes: {
-          type: 'number',
+          type: "number",
         },
       },
     },
@@ -144,10 +150,7 @@ class SubstitutionsModal extends Component {
   constructor(props) {
     super(props);
     const {
-      fieldConfig: {
-        attributes,
-        getDynamicAttr,
-      },
+      fieldConfig: { attributes, getDynamicAttr },
     } = props;
     const dynamicAttr = getDynamicAttr ? getDynamicAttr(props) : {};
     const attr = { ...attributes, ...dynamicAttr };
@@ -172,10 +175,7 @@ class SubstitutionsModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      fieldConfig: {
-        attributes,
-        getDynamicAttr,
-      },
+      fieldConfig: { attributes, getDynamicAttr },
     } = nextProps;
     const dynamicAttr = getDynamicAttr ? getDynamicAttr(nextProps) : {};
     const attr = { ...attributes, ...dynamicAttr };
@@ -187,8 +187,7 @@ class SubstitutionsModal extends Component {
    * @public
    */
   onOpen() {
-    this.state.attr.onOpen()
-      .then(() => this.fetchSubstitutions());
+    this.state.attr.onOpen().then(() => this.fetchSubstitutions());
   }
 
   /** Sends all changes made by user in this modal to API and updates data.
@@ -198,26 +197,31 @@ class SubstitutionsModal extends Component {
   onSave(values) {
     this.props.showSpinner();
 
-    const substitutions = _.filter(values.substitutions, (sub) =>
-      sub.quantitySelected > 0);
-    const originalItem = _.find(values.substitutions, (sub) => sub.originalItem)
-      || this.state.attr.lineItem;
-    const substitutionReasonCode = _.get(values, 'reasonCode.value');
+    const substitutions = _.filter(
+      values.substitutions,
+      (sub) => sub.quantitySelected > 0,
+    );
+    const originalItem =
+      _.find(values.substitutions, (sub) => sub.originalItem) ||
+      this.state.attr.lineItem;
+    const substitutionReasonCode = _.get(values, "reasonCode.value");
 
     const url = `/api/stockMovementItems/${originalItem.requisitionItemId}/substituteItem`;
     const payload = {
       substitutionItems: _.map(substitutions, (sub, key) => ({
         newProduct: { id: sub.product.id },
         newQuantity: sub.quantitySelected,
-        reasonCode: substitutionReasonCode === 'SUBSTITUTION'
-          ? substitutionReasonCode
-          : `SUBSTITUTION${substitutionReasonCode ? ` (${substitutionReasonCode})` : ''}`,
+        reasonCode:
+          substitutionReasonCode === "SUBSTITUTION"
+            ? substitutionReasonCode
+            : `SUBSTITUTION${substitutionReasonCode ? ` (${substitutionReasonCode})` : ""}`,
         // Sort order of substitution items should be different for each of them so it is increased
         sortOrder: originalItem.sortOrder + key,
       })),
     };
 
-    apiClient.post(url, payload)
+    apiClient
+      .post(url, payload)
       .then(() => {
         this.props.onResponse();
       })
@@ -229,29 +233,31 @@ class SubstitutionsModal extends Component {
   fetchSubstitutions() {
     this.setState({ isLoading: true });
     const url = `/api/stockMovements/${this.state.attr.lineItem.requisitionItemId}/substitutionItems`;
-    return apiClient.get(url)
+    return apiClient
+      .get(url)
       .then((resp) => {
-        let substitutions = _.map(
-          resp.data.data,
-          (val) => ({
-            ...val,
-            disabled: true,
-            product: {
-              id: `${val.productId}`,
-              productCode: `${val.productCode}`,
-              name: `${val.productName}`,
-              displayName: val.product.displayNames?.default,
-              minExpirationDate: val.minExpirationDate,
-              quantityAvailable: `${val.quantityAvailable}`,
-              handlingIcons: val.product.handlingIcons,
-            },
-          }),
-        );
+        let substitutions = _.map(resp.data.data, (val) => ({
+          ...val,
+          disabled: true,
+          product: {
+            id: `${val.productId}`,
+            productCode: `${val.productCode}`,
+            name: `${val.productName}`,
+            displayName: val.product.displayNames?.default,
+            minExpirationDate: val.minExpirationDate,
+            quantityAvailable: `${val.quantityAvailable}`,
+            handlingIcons: val.product.handlingIcons,
+          },
+        }));
         let originalItem = null;
 
         if (_.toInteger(this.state.attr.lineItem.quantityAvailable) > 0) {
           const {
-            productCode, product, productName, minExpirationDate, quantityAvailable,
+            productCode,
+            product,
+            productName,
+            minExpirationDate,
+            quantityAvailable,
           } = this.state.attr.lineItem;
 
           originalItem = {
@@ -266,10 +272,7 @@ class SubstitutionsModal extends Component {
               quantityAvailable,
             },
           };
-          substitutions = [
-            originalItem,
-            ...substitutions,
-          ];
+          substitutions = [originalItem, ...substitutions];
         }
 
         this.setState({
@@ -281,9 +284,11 @@ class SubstitutionsModal extends Component {
         });
       })
       .catch((err) => err)
-      .finally(() => this.setState({
-        isLoading: false,
-      }));
+      .finally(() =>
+        this.setState({
+          isLoading: false,
+        }),
+      );
   }
 
   validate(values) {
@@ -296,16 +301,28 @@ class SubstitutionsModal extends Component {
         subQty += _.toInteger(item.quantitySelected);
       }
 
-      if (item.product && item.quantitySelected > _.toInteger(item.product.quantityAvailable)) {
-        errors.substitutions[key] = { quantitySelected: 'react.stockMovement.errors.higherQtySelected.label' };
+      if (
+        item.product &&
+        item.quantitySelected > _.toInteger(item.product.quantityAvailable)
+      ) {
+        errors.substitutions[key] = {
+          quantitySelected:
+            "react.stockMovement.errors.higherQtySelected.label",
+        };
       }
       if (item.quantitySelected < 0) {
-        errors.substitutions[key] = { quantitySelected: 'react.stockMovement.errors.negativeQtySelected.label' };
+        errors.substitutions[key] = {
+          quantitySelected:
+            "react.stockMovement.errors.negativeQtySelected.label",
+        };
       }
     });
 
-    if (subQty < this.state.attr.lineItem.quantityRequested && !values.reasonCode) {
-      errors.reasonCode = 'react.default.error.requiredField.label';
+    if (
+      subQty < this.state.attr.lineItem.quantityRequested &&
+      !values.reasonCode
+    ) {
+      errors.reasonCode = "react.default.error.requiredField.label";
     }
     return errors;
   }
@@ -325,8 +342,13 @@ class SubstitutionsModal extends Component {
             defaultMessage="Quantity selected"
           />
           :
-          {_.reduce(values.substitutions, (sum, val) =>
-            (sum + (val.quantitySelected ? _.toInteger(val.quantitySelected) : 0)), 0)}
+          {_.reduce(
+            values.substitutions,
+            (sum, val) =>
+              sum +
+              (val.quantitySelected ? _.toInteger(val.quantitySelected) : 0),
+            0,
+          )}
         </div>
         <hr />
       </div>
@@ -345,8 +367,9 @@ class SubstitutionsModal extends Component {
         formProps={{
           isEmptyData: this.state.isEmptyData,
           isLoading: this.state.isLoading,
-          emptyDataMessageId: 'react.stockMovement.noSubstitutionsAvailable.message',
-          defaultEmptyDataMessage: 'There are no substitutions available',
+          emptyDataMessageId:
+            "react.stockMovement.noSubstitutionsAvailable.message",
+          defaultEmptyDataMessage: "There are no substitutions available",
           reasonCodes: this.state.attr.reasonCodes,
           originalItem: this.state.originalItem,
           debouncedAvailableItemsFetch: this.debouncedAvailableItemsFetch,
@@ -360,12 +383,15 @@ class SubstitutionsModal extends Component {
               id="react.stockMovement.productCode.label"
               defaultMessage="Product code"
             />
-            :
-            {this.state.attr.lineItem.productCode}
+            :{this.state.attr.lineItem.productCode}
           </div>
           <div className="font-weight-bold">
             <Tooltip
-              html={<div className="text-truncate">{this.state.attr.lineItem.product.name}</div>}
+              html={
+                <div className="text-truncate">
+                  {this.state.attr.lineItem.product.name}
+                </div>
+              }
               theme="dark"
               disabled={!this.state.attr.lineItem.product.displayNames?.default}
               position="top-start"
@@ -375,10 +401,8 @@ class SubstitutionsModal extends Component {
                 defaultMessage="Product name"
               />
               :
-              {
-              this.state.attr.lineItem.product.displayNames?.default
-              ?? this.state.attr.lineItem.product.name
-              }
+              {this.state.attr.lineItem.product.displayNames?.default ??
+                this.state.attr.lineItem.product.name}
             </Tooltip>
           </div>
           <div className="font-weight-bold">
@@ -386,8 +410,7 @@ class SubstitutionsModal extends Component {
               id="react.stockMovement.quantityRequested.label"
               defaultMessage="Qty Requested"
             />
-            :
-            {this.state.attr.lineItem.quantityRequested}
+            :{this.state.attr.lineItem.quantityRequested}
           </div>
         </div>
       </ModalWrapper>

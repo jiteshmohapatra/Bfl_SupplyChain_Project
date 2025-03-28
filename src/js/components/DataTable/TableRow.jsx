@@ -1,14 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-const TableRow = ({
-  children, className, error,
-}) => (
+const TableRow = ({ children, className, error }) => (
   <div
     role="row"
-    className={`rt-tr ${className} ${!_.isEmpty(error) ? 'rt-invalid' : ''}`}
+    className={`rt-tr ${className} ${!_.isEmpty(error) ? "rt-invalid" : ""}`}
   >
     {children}
   </div>

@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import PropTypes from 'prop-types';
-import { RiArrowDownSFill, RiArrowUpSFill } from 'react-icons/ri';
+import PropTypes from "prop-types";
+import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 
 const TableHeaderCell = ({
   children,
@@ -13,8 +13,8 @@ const TableHeaderCell = ({
   dynamicClassName,
 }) => {
   const sortableProps = {
-    tabIndex: '0',
-    role: 'button',
+    tabIndex: "0",
+    role: "button",
     onClick: columnId ? toggleSort(columnId) : toggleSort,
     onKeyPress: () => {},
   };
@@ -27,10 +27,10 @@ const TableHeaderCell = ({
     >
       {children}
       {sortable && (
-      <div className="sorting-arrows">
-        <RiArrowUpSFill className="arrow-up" />
-        <RiArrowDownSFill className="arrow-down" />
-      </div>
+        <div className="sorting-arrows">
+          <RiArrowUpSFill className="arrow-up" />
+          <RiArrowDownSFill className="arrow-down" />
+        </div>
       )}
     </div>
   );
