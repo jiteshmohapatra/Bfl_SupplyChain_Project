@@ -3,7 +3,7 @@ import React from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import ReactTable from "react-table";
-import ReactTablePropTypes from "react-table/lib/propTypes";
+
 import withFixedColumns from "react-table-hoc-fixed-columns";
 
 import TableHeaderCell from "components/DataTable/TableHeaderCell";

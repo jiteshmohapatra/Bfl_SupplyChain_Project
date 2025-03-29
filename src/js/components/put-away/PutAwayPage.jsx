@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { Router } from "react-router-dom";
 import ReactTable from "react-table";
 import selectTableHOC from "react-table/lib/hoc/selectTable";
 
-import { hideSpinner, showSpinner } from "actions";
+import { hideSpinner, showSpinner } from "";
 import { TableCell } from "components/DataTable";
 import { PUTAWAY_URL } from "consts/applicationUrls";
 import DateFormat from "consts/dateFormat";

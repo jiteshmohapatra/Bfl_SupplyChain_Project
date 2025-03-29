@@ -1,7 +1,7 @@
 import React from "react";
 
 import PropTypes from "prop-types";
-import { RiArrowDownLine, RiArrowUpLine } from "react-icons/all";
+import { RiArrowDownLine, RiArrowUpLine } from "react-icons/ri";
 
 import ArrowValueIndicatorVariant from "consts/arrowValueIndicatorVariant";
 import useTranslate from "hooks/useTranslate";

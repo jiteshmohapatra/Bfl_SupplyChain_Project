@@ -15,7 +15,6 @@ target
 target-eclipse/
 web-app/WEB-INF/
 .classpath
-.settings
 .project
 .DS_Store
 openboxes.ipr
