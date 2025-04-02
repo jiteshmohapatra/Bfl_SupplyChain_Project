@@ -1,7 +1,7 @@
 import React from "react";
 
 import PropTypes from "prop-types";
-import { RiCloseFill } from "react-icons/all";
+//import { RiCloseFill } from "react-icons/all";
 
 import Button from "components/form-elements/Button";
 import Translate from "utils/Translate";

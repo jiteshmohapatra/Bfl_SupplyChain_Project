@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import ReactTable from "react-table";
 import { Tooltip } from "react-tippy";
+import './DashboardTable.css';
 
 import { fetchTranslations } from "actions";
 import { STOCK_MOVEMENT_URL } from "consts/applicationUrls";
@@ -13,7 +14,7 @@ import apiClient from "utils/apiClient";
 import { getCurrentEventComment } from "utils/list-utils";
 import Translate from "utils/Translate";
 
-import "react-table/react-table.css";
+
 import "./StockRequestDashboard.scss";
 
 const COLUMNS = [

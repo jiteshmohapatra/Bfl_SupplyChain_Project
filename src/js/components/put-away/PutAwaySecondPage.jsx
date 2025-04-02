@@ -25,7 +25,9 @@ import Select from "utils/Select";
 import Translate, { translateWithDefaultMessage } from "utils/Translate";
 import { formatDate } from "utils/translation-utils";
 
-import "react-table/react-table.css";
+//import "react-table/react-table.css";
+//import 'react-table-v6/react-table.css';
+
 
 const SelectTreeTable = customTreeTableHOC(ReactTable);
 

@@ -6,7 +6,7 @@ import { getTranslate } from "react-localize-redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import { fetchTranslations, hideSpinner, showSpinner } from "/actions";
+import { fetchTranslations, hideSpinner, showSpinner } from "actions";
 import PutAwayCheckPage from "components/put-away/PutAwayCheckPage";
 import PutAwayPage from "components/put-away/PutAwayPage";
 import PutAwaySecondPage from "components/put-away/PutAwaySecondPage";

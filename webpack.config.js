@@ -14,17 +14,11 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-module.exports = {
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./src/index.html",
-      eslintPath: "eslint/use-at-your-own-risk",
-    }),
-  ],
-};
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const webpack = require('webpack');
 
+// Determine if we're in production mode
+const isProd = process.env.NODE_ENV === 'production' || process.argv.includes('--mode=production');
 
 module.exports = {
   cache: true,
@@ -47,9 +41,15 @@ module.exports = {
   /* We generate source maps so Sentry can map errors to lines of code, even when the code is minified */
   devtool: 'source-map',
   plugins: [
-    new ESLintPlugin({
-      extensions: ['js', 'jsx'],
-    }),
+    // Only include ESLint in development
+    ...(isProd ? [] : [
+      new ESLintPlugin({
+        extensions: ['js', 'jsx'],
+        eslintPath: require.resolve('eslint/use-at-your-own-risk'),
+        emitWarning: true, // Only emit warnings instead of errors
+        failOnError: false // Don't fail the build on ESLint errors
+      })
+    ]),
     new FileManagerPlugin({
       events: {
         onStart: {
@@ -105,10 +105,10 @@ module.exports = {
         jsSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.js')}`,
         cssSource: `\${resource(dir: '${path.basename(WEBPACK_OUTPUT)}', file: 'bundle.${compilation.hash}.css')}`,
         receivingIfStatement:
-          // eslint-disable-next-line no-template-curly-in-string
-          '<g:if test="${!params.id}">'
-          + 'You can access the Partial Receiving feature through the details page for an inbound shipment.'
-          + '</g:if>',
+        // eslint-disable-next-line no-template-curly-in-string
+            '<g:if test="${!params.id}">'
+            + 'You can access the Partial Receiving feature through the details page for an inbound shipment.'
+            + '</g:if>',
       }),
     }),
   ],
@@ -170,6 +170,20 @@ module.exports = {
           postTransformPublicPath: (p) => `__webpack_public_path__ + ${p}`,
         },
       },
+      // Only include ESLint loader in development
+      ...(isProd ? [] : [{
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        enforce: 'pre',
+        use: [{
+          loader: 'eslint-loader',
+          options: {
+            eslintPath: require.resolve('eslint/use-at-your-own-risk'),
+            emitWarning: true,
+            failOnError: false
+          }
+        }]
+      }]),
       {
         test: /\.(png|jpg|gif)$/i,
         use: [

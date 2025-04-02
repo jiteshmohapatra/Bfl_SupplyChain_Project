@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Router } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import ReactTable from "react-table";
 import selectTableHOC from "react-table/lib/hoc/selectTable";
 
-import { hideSpinner, showSpinner } from "";
+import { hideSpinner, showSpinner } from "actions";
 import { TableCell } from "components/DataTable";
 import { PUTAWAY_URL } from "consts/applicationUrls";
 import DateFormat from "consts/dateFormat";
@@ -18,7 +18,7 @@ import Select from "utils/Select";
 import Translate from "utils/Translate";
 import { formatDate } from "utils/translation-utils";
 
-import "react-table/react-table.css";
+//import "react-table/react-table.css";
 
 const SelectTreeTable = selectTableHOC(customTreeTableHOC(ReactTable));
 
@@ -27,8 +27,8 @@ const SelectTreeTable = selectTableHOC(customTreeTableHOC(ReactTable));
 function getNodes(data, node = []) {
   data.forEach((item) => {
     if (
-      Object.prototype.hasOwnProperty.call(item, "_subRows") &&
-      item._subRows
+        Object.prototype.hasOwnProperty.call(item, "_subRows") &&
+        item._subRows
     ) {
       // eslint-disable-next-line no-param-reassign
       node = getNodes(item._subRows, node);
@@ -113,22 +113,22 @@ class PutAwayPage extends Component {
       Header: <Translate id="react.putAway.name.label" defaultMessage="Name" />,
       accessor: "product",
       Cell: (row) => (
-        <TableCell
-          {...row}
-          value={row.value?.displayNameOrDefaultName}
-          tooltip={row.value?.name !== row.value?.displayNameOrDefaultName}
-          tooltipLabel={row.value?.name}
-        />
+          <TableCell
+              {...row}
+              value={row.value?.displayNameOrDefaultName}
+              tooltip={row.value?.name !== row.value?.displayNameOrDefaultName}
+              tooltipLabel={row.value?.name}
+          />
       ),
       style: { whiteSpace: "normal" },
       Filter,
     },
     {
       Header: (
-        <Translate
-          id="react.putAway.lotSerialNo.label"
-          defaultMessage="Lot/Serial No."
-        />
+          <Translate
+              id="react.putAway.lotSerialNo.label"
+              defaultMessage="Lot/Serial No."
+          />
       ),
       accessor: "inventoryItem.lotNumber",
       style: { whiteSpace: "normal" },
@@ -136,25 +136,25 @@ class PutAwayPage extends Component {
     },
     {
       Header: (
-        <Translate id="react.putAway.expiry.label" defaultMessage="Expiry" />
+          <Translate id="react.putAway.expiry.label" defaultMessage="Expiry" />
       ),
       accessor: "inventoryItem.expirationDate",
       style: { whiteSpace: "normal" },
       Cell: (props) => (
-        <span>
+          <span>
           {props?.value
-            ? this.props.formatLocalizedDate(props.value, DateFormat.COMMON)
-            : props.value}
+              ? this.props.formatLocalizedDate(props.value, DateFormat.COMMON)
+              : props.value}
         </span>
       ),
       Filter,
     },
     {
       Header: (
-        <Translate
-          id="react.putAway.recipient.label"
-          defaultMessage="Recipient"
-        />
+          <Translate
+              id="react.putAway.recipient.label"
+              defaultMessage="Recipient"
+          />
       ),
       accessor: "recipient.name",
       style: { whiteSpace: "normal" },
@@ -162,15 +162,15 @@ class PutAwayPage extends Component {
     },
     {
       Header: (
-        <Translate
-          id="react.putAway.qtyReceiving.label"
-          defaultMessage="Qty in receiving"
-        />
+          <Translate
+              id="react.putAway.qtyReceiving.label"
+              defaultMessage="Qty in receiving"
+          />
       ),
       accessor: "quantity",
       style: { whiteSpace: "normal" },
       Cell: (props) => (
-        <span>
+          <span>
           {props.value ? props.value.toLocaleString("en-US") : props.value}
         </span>
       ),
@@ -178,27 +178,27 @@ class PutAwayPage extends Component {
     },
     {
       Header: (
-        <Translate
-          id="react.putAway.stockMovement.label"
-          defaultMessage="Stock Movement"
-        />
+          <Translate
+              id="react.putAway.stockMovement.label"
+              defaultMessage="Stock Movement"
+          />
       ),
       accessor: "stockMovement.name",
       style: { whiteSpace: "normal" },
       Expander: ({ row, isExpanded }) => (
-        <span className="ml-2">
+          <span className="ml-2">
           <input
-            type="checkbox"
-            name="aggregationCheckbox"
-            checked={this.checkSelected(row)}
-            value={row._subRows[0]._original.stockMovement.id}
-            ref={(elem) => {
-              if (elem) {
-                // eslint-disable-next-line no-param-reassign
-                elem.indeterminate = this.checkIndeterminate(row);
-              }
-            }}
-            onChange={this.toggleSelectionsByStockMovement}
+              type="checkbox"
+              name="aggregationCheckbox"
+              checked={this.checkSelected(row)}
+              value={row._subRows[0]._original.stockMovement.id}
+              ref={(elem) => {
+                if (elem) {
+                  // eslint-disable-next-line no-param-reassign
+                  elem.indeterminate = this.checkIndeterminate(row);
+                }
+              }}
+              onChange={this.toggleSelectionsByStockMovement}
           />
           <div className={`rt-expander ${isExpanded && "-open"}`}>&bull;</div>
         </span>
@@ -219,34 +219,34 @@ class PutAwayPage extends Component {
     const url = `/api/putaways?location.id=${locationId}`;
 
     return apiClient
-      .get(url)
-      .then((response) => {
-        const putAwayCandidates = parseResponse(response.data.data).map(
-          (item) => ({ ...item, _id: _.uniqueId("item_") }),
-        );
+        .get(url)
+        .then((response) => {
+          const putAwayCandidates = parseResponse(response.data.data).map(
+              (item) => ({ ...item, _id: _.uniqueId("item_") }),
+          );
 
-        const pendingPutAways = putAwayCandidates.filter(
-          ({ putawayStatus }) => putawayStatus !== "READY",
-        );
-        const readyPutAways = putAwayCandidates
-          .filter(({ putawayStatus }) => putawayStatus === "READY")
-          .map((item) => ({
-            ...item,
-            putawayFacility: {
-              id: item.currentFacility ? item.currentFacility.id : null,
-            },
-          }));
+          const pendingPutAways = putAwayCandidates.filter(
+              ({ putawayStatus }) => putawayStatus !== "READY",
+          );
+          const readyPutAways = putAwayCandidates
+              .filter(({ putawayStatus }) => putawayStatus === "READY")
+              .map((item) => ({
+                ...item,
+                putawayFacility: {
+                  id: item.currentFacility ? item.currentFacility.id : null,
+                },
+              }));
 
-        this.setState(
-          {
-            putawayItems: readyPutAways,
-            pendingPutAways,
-            readyPutAways,
-          },
-          () => this.props.hideSpinner(),
-        );
-      })
-      .catch(() => this.props.hideSpinner());
+          this.setState(
+              {
+                putawayItems: readyPutAways,
+                pendingPutAways,
+                readyPutAways,
+              },
+              () => this.props.hideSpinner(),
+          );
+        })
+        .catch(() => this.props.hideSpinner());
   }
 
   /**
@@ -257,7 +257,7 @@ class PutAwayPage extends Component {
     this.props.showSpinner();
     const url = `/api/putaways?location.id=${this.props.locationId}`;
     const items = _.filter(this.state.putawayItems, (item) =>
-      _.includes([...this.state.selection], item._id),
+        _.includes([...this.state.selection], item._id),
     );
     const payload = {
       putawayNumber: "",
@@ -271,26 +271,26 @@ class PutAwayPage extends Component {
     };
 
     return apiClient
-      .post(url, payload)
-      .then((response) => {
-        const putAway = parseResponse(response.data.data);
-        this.props.hideSpinner();
-        const expanded = {};
+        .post(url, payload)
+        .then((response) => {
+          const putAway = parseResponse(response.data.data);
+          this.props.hideSpinner();
+          const expanded = {};
 
-        if (this.state.pivotBy.length) {
-          _.forEach(this.state.putawayItems, (item, index) => {
-            expanded[index] = true;
+          if (this.state.pivotBy.length) {
+            _.forEach(this.state.putawayItems, (item, index) => {
+              expanded[index] = true;
+            });
+          }
+
+          this.props.history.push(PUTAWAY_URL.edit(putAway.id));
+          this.props.nextPage({
+            putAway,
+            pivotBy: this.state.pivotBy,
+            expanded,
           });
-        }
-
-        this.props.history.push(PUTAWAY_URL.edit(putAway.id));
-        this.props.nextPage({
-          putAway,
-          pivotBy: this.state.pivotBy,
-          expanded,
-        });
-      })
-      .catch(() => this.props.hideSpinner());
+        })
+        .catch(() => this.props.hideSpinner());
   }
 
   /**
@@ -321,14 +321,14 @@ class PutAwayPage extends Component {
    */
   checkIndeterminate(row) {
     return (
-      _.some(
-        row._subRows,
-        (subRow) =>
-          !_.includes([...this.state.selection], subRow._original._id),
-      ) &&
-      _.some(row._subRows, (subRow) =>
-        _.includes([...this.state.selection], subRow._original._id),
-      )
+        _.some(
+            row._subRows,
+            (subRow) =>
+                !_.includes([...this.state.selection], subRow._original._id),
+        ) &&
+        _.some(row._subRows, (subRow) =>
+            _.includes([...this.state.selection], subRow._original._id),
+        )
     );
   }
 
@@ -340,7 +340,7 @@ class PutAwayPage extends Component {
    */
   checkSelected(row) {
     return _.every(row._subRows, (subRow) =>
-      _.includes([...this.state.selection], subRow._original._id),
+        _.includes([...this.state.selection], subRow._original._id),
     );
   }
 
@@ -353,13 +353,13 @@ class PutAwayPage extends Component {
     const { target } = event;
     const { checked, value } = target;
     const itemsToToggle = _.map(
-      _.filter(
-        this.state.putawayItems,
-        (product) =>
-          product.stockMovement.id === value &&
-          product.putawayStatus === "READY",
-      ),
-      (item) => item._id,
+        _.filter(
+            this.state.putawayItems,
+            (product) =>
+                product.stockMovement.id === value &&
+                product.putawayStatus === "READY",
+        ),
+        (item) => item._id,
     );
     this.toggleSelection(itemsToToggle, checked);
   };
@@ -445,7 +445,7 @@ class PutAwayPage extends Component {
    * @param {object} row
    * @public
    */
-  // eslint-disable-next-line no-underscore-dangle
+      // eslint-disable-next-line no-underscore-dangle
   filterMethod = (filter, row) => {
     let val = row[filter.id];
     if (filter.id === "inventoryItem.expirationDate") {
@@ -455,9 +455,9 @@ class PutAwayPage extends Component {
       val = val ? `${val.name} ${val.displayNameOrDefaultName}` : null;
     }
     return (
-      row._aggregated ||
-      row._groupedByPivot ||
-      _.toString(val).toLowerCase().includes(filter.value.toLowerCase())
+        row._aggregated ||
+        row._groupedByPivot ||
+        _.toString(val).toLowerCase().includes(filter.value.toLowerCase())
     );
   };
 
@@ -470,7 +470,7 @@ class PutAwayPage extends Component {
       toggleTree,
     } = this;
     const { putawayItems, columns, selectAll, selectType, pivotBy, expanded } =
-      this.state;
+        this.state;
     const extraProps = {
       selectAll,
       isSelected,
@@ -483,152 +483,152 @@ class PutAwayPage extends Component {
     };
 
     return (
-      <div className="putaway">
-        <div className="d-flex justify-content-between mb-2 putaway-buttons">
-          <div>
-            <Translate
-              id="react.putAway.showBy.label"
-              defaultMessage="Show by"
-            />
-            :
-            <button
-              type="button"
-              className="btn btn-primary ml-2 btn-xs"
-              data-toggle="button"
-              aria-pressed="false"
-              onClick={toggleTree}
-            >
-              {pivotBy && pivotBy.length ? (
-                <Translate
-                  id="react.putAway.stockMovement.label"
-                  defaultMessage="Stock Movement"
-                />
-              ) : (
-                <Translate
-                  id="react.putAway.product.label"
-                  defaultMessage="Product"
-                />
-              )}
-            </button>
-          </div>
-          <div className="row bd-highlight">
-            <div className="mr-1">
+        <div className="putaway">
+          <div className="d-flex justify-content-between mb-2 putaway-buttons">
+            <div>
               <Translate
-                id="react.putAway.lines.label"
-                defaultMessage="Lines in pending putaways"
+                  id="react.putAway.showBy.label"
+                  defaultMessage="Show by"
               />
               :
-            </div>
-            <div style={{ width: "150px" }}>
-              <Select
-                options={[
-                  {
-                    value: false,
-                    label: (
-                      <Translate
-                        id="react.putAway.exclude.label"
-                        defaultMessage="Exclude"
-                      />
-                    ),
-                  },
-                  {
-                    value: true,
-                    label: (
-                      <Translate
-                        id="react.putAway.include.label"
-                        defaultMessage="Include"
-                      />
-                    ),
-                  },
-                ]}
-                onChange={(val) => this.filterPutAways(val.value)}
-                initialValue={{
-                  value: false,
-                  label: (
+              <button
+                  type="button"
+                  className="btn btn-primary ml-2 btn-xs"
+                  data-toggle="button"
+                  aria-pressed="false"
+                  onClick={toggleTree}
+              >
+                {pivotBy && pivotBy.length ? (
                     <Translate
-                      id="react.putAway.exclude.label"
-                      defaultMessage="Exclude"
+                        id="react.putAway.stockMovement.label"
+                        defaultMessage="Stock Movement"
                     />
-                  ),
-                }}
-                clearable={false}
-                className="select-xs"
-              />
+                ) : (
+                    <Translate
+                        id="react.putAway.product.label"
+                        defaultMessage="Product"
+                    />
+                )}
+              </button>
             </div>
-          </div>
-          <button
-            type="button"
-            disabled={this.state.selection.size < 1}
-            onClick={() => this.createPutAway()}
-            className="btn btn-outline-primary btn-form float-right btn-xs"
-          >
-            <Translate
-              id="react.putAway.startPutAway.label"
-              defaultMessage="Start Putaway"
-            />
-          </button>
-        </div>
-        {putawayItems ? (
-          <SelectTreeTable
-            data={putawayItems}
-            columns={columns}
-            ref={(r) => {
-              this.selectTable = r;
-            }}
-            className="-striped -highlight"
-            {...extraProps}
-            defaultPageSize={Number.MAX_SAFE_INTEGER}
-            minRows={0}
-            showPaginationBottom={false}
-            filterable
-            defaultFilterMethod={this.filterMethod}
-            freezeWhenExpanded
-            SelectInputComponent={({ id, checked, onClick, row }) => (
-              <input
-                type={selectType}
-                checked={checked}
-                onChange={() => {}}
-                onClick={(e) => {
-                  const { shiftKey } = e;
-
-                  e.stopPropagation();
-                  onClick(id, shiftKey, row);
-                }}
-                disabled={row.putawayStatus !== "READY"}
+            <div className="row bd-highlight">
+              <div className="mr-1">
+                <Translate
+                    id="react.putAway.lines.label"
+                    defaultMessage="Lines in pending putaways"
+                />
+                :
+              </div>
+              <div style={{ width: "150px" }}>
+                <Select
+                    options={[
+                      {
+                        value: false,
+                        label: (
+                            <Translate
+                                id="react.putAway.exclude.label"
+                                defaultMessage="Exclude"
+                            />
+                        ),
+                      },
+                      {
+                        value: true,
+                        label: (
+                            <Translate
+                                id="react.putAway.include.label"
+                                defaultMessage="Include"
+                            />
+                        ),
+                      },
+                    ]}
+                    onChange={(val) => this.filterPutAways(val.value)}
+                    initialValue={{
+                      value: false,
+                      label: (
+                          <Translate
+                              id="react.putAway.exclude.label"
+                              defaultMessage="Exclude"
+                          />
+                      ),
+                    }}
+                    clearable={false}
+                    className="select-xs"
+                />
+              </div>
+            </div>
+            <button
+                type="button"
+                disabled={this.state.selection.size < 1}
+                onClick={() => this.createPutAway()}
+                className="btn btn-outline-primary btn-form float-right btn-xs"
+            >
+              <Translate
+                  id="react.putAway.startPutAway.label"
+                  defaultMessage="Start Putaway"
               />
-            )}
-            getTdProps={(state, rowInfo) => ({
-              style: {
-                color:
-                  _.get(rowInfo, "original.putawayStatus") === "READY" ||
-                  rowInfo.aggregated
-                    ? "black"
-                    : "gray",
-              },
-              onClick: (event, handleOriginal) => {
-                const { target } = event;
-                // Fire the original onClick handler, if the other part of row is clicked on
-                if (handleOriginal && target.name !== "aggregationCheckbox") {
-                  handleOriginal();
-                }
-              },
-            })}
-          />
-        ) : null}
-        <div className="submit-buttons">
-          <button
-            type="button"
-            disabled={this.state.selection.size < 1}
-            onClick={() => this.createPutAway()}
-            className="btn btn-outline-primary btn-form float-right btn-xs"
-          >
-            <Translate
-              id="react.putAway.startPutAway.label"
-              defaultMessage="Start Putaway"
-            />
-          </button>
+            </button>
+          </div>
+          {putawayItems ? (
+              <SelectTreeTable
+                  data={putawayItems}
+                  columns={columns}
+                  ref={(r) => {
+                    this.selectTable = r;
+                  }}
+                  className="-striped -highlight"
+                  {...extraProps}
+                  defaultPageSize={Number.MAX_SAFE_INTEGER}
+                  minRows={0}
+                  showPaginationBottom={false}
+                  filterable
+                  defaultFilterMethod={this.filterMethod}
+                  freezeWhenExpanded
+                  SelectInputComponent={({ id, checked, onClick, row }) => (
+                      <input
+                          type={selectType}
+                          checked={checked}
+                          onChange={() => {}}
+                          onClick={(e) => {
+                            const { shiftKey } = e;
+
+                            e.stopPropagation();
+                            onClick(id, shiftKey, row);
+                          }}
+                          disabled={row.putawayStatus !== "READY"}
+                      />
+                  )}
+                  getTdProps={(state, rowInfo) => ({
+                    style: {
+                      color:
+                          _.get(rowInfo, "original.putawayStatus") === "READY" ||
+                          rowInfo.aggregated
+                              ? "black"
+                              : "gray",
+                    },
+                    onClick: (event, handleOriginal) => {
+                      const { target } = event;
+                      // Fire the original onClick handler, if the other part of row is clicked on
+                      if (handleOriginal && target.name !== "aggregationCheckbox") {
+                        handleOriginal();
+                      }
+                    },
+                  })}
+              />
+          ) : null}
+          <div className="submit-buttons">
+            <button
+                type="button"
+                disabled={this.state.selection.size < 1}
+                onClick={() => this.createPutAway()}
+                className="btn btn-outline-primary btn-form float-right btn-xs"
+            >
+              <Translate
+                  id="react.putAway.startPutAway.label"
+                  defaultMessage="Start Putaway"
+              />
+            </button>
+          </div>
         </div>
-      </div>
     );
   }
 }
@@ -638,12 +638,10 @@ const mapStateToProps = (state) => ({
   formatLocalizedDate: formatDate(state.localize),
 });
 
-export default withRouter(
-  connect(mapStateToProps, {
-    showSpinner,
-    hideSpinner,
-  })(PutAwayPage),
-);
+export default connect(mapStateToProps, {
+  showSpinner,
+  hideSpinner,
+})(withRouter(PutAwayPage));
 
 PutAwayPage.propTypes = {
   /** Function called when data is loading */

@@ -1,0 +1,19 @@
+/* src/js/components/dashboard/DashboardTable.css */
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e0e0e0;
+}
+.dashboard-table th,
+.dashboard-table td {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+}
+.dashboard-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+.dashboard-table tr:nth-child(even) {
+    background-color: #fafafa;
+}

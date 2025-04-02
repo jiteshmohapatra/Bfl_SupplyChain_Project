@@ -19,7 +19,7 @@ import Filter from "utils/Filter";
 import Translate from "utils/Translate";
 import { formatDate } from "utils/translation-utils";
 
-import "react-table/react-table.css";
+//import "react-table/react-table.css";
 
 const SelectTreeTable = selectTableHOC(customTreeTableHOC(ReactTable));
 

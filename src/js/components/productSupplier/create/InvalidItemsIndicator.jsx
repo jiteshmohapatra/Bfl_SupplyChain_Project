@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import PropTypes from "prop-types";
-import { RiCheckboxCircleLine } from "react-icons/all";
+//import { RiCheckboxCircleLine } from "react-icons/all";
 import { RiErrorWarningLine } from "react-icons/ri";
 
 import Button from "components/form-elements/Button";

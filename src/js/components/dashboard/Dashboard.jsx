@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { defaults } from "react-chartjs-2";
 import { connect } from "react-redux";
 import { SortableContainer } from "react-sortable-hoc";
+import './DashboardTable.css';
 
 import {
   addToIndicators,
@@ -23,7 +24,7 @@ import UnarchiveIndicators from "components/dashboard/UnarchiveIndicators";
 import apiClient from "utils/apiClient";
 import Translate from "utils/Translate";
 
-import "react-table/react-table.css";
+
 import "react-confirm-alert/src/react-confirm-alert.css";
 import "components/dashboard/Dashboard.scss";
 // Disable charts legends by default.

@@ -5,6 +5,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import ReactDOM from "react-dom";
 import { LocalizeProvider } from "react-localize-redux";
+
 import MetaTags from "react-meta-tags";
 import Provider from "react-redux/es/components/Provider";
 // eslint-disable-next-line import/extensions,import/no-unresolved

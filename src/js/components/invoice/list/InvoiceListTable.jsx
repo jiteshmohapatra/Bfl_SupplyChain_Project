@@ -18,7 +18,7 @@ import ContextMenu from "utils/ContextMenu";
 import { findActions } from "utils/list-utils";
 import Translate from "utils/Translate";
 
-import "react-table/react-table.css";
+//import "react-table/react-table.css";
 
 const InvoiceListTable = ({
   filterParams,
