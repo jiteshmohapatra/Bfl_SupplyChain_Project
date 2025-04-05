@@ -192,7 +192,7 @@ class AuthController {
             }
 
             // Create account
-            if (!userInstance.hasErrors() && userInstance.save(flush: true)) {
+            if (!userInstance.hasErrors() && userInstance.save(flush: false)) {
 
                 // Attempt to add default roles to user instance
                 userService.assignDefaultRoles(userInstance)

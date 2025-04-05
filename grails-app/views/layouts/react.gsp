@@ -4,7 +4,7 @@
 <head>
     <%= NewRelic.getBrowserTimingHeader() %>
     <title><g:layoutTitle default="OpenBoxes" /></title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css">
     <g:if test="${session.useDebugLocale}">
         <script type="text/javascript">
           var _jipt = [];

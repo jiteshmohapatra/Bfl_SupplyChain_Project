@@ -1,115 +1,123 @@
-import ColorPalette from "components/dashboard/ColorPalette.scss";
-
 /* global _ */
 
-function formatColorPalette(colorPalette) {
-  const formattedPalette = {
-    state: {
-      default: [],
-      dark: [],
-      light: [],
-    },
-    gyr: {
-      // [ success, warning, error ]
-      default: [],
-      dark: [],
-      light: [],
-    },
-    default: null,
-  };
-
-  Object.entries(colorPalette).forEach(([key, value]) => {
-    const stateMatch = key.match(/^(light|dark)?[sS]tate[0-9]+$/);
-    const gyrMatch = key.match(
-      /^(light|dark)?([sS]uccess|[wW]arning|[eE]rror)$/,
-    );
-
-    if (stateMatch) {
-      formattedPalette.state[stateMatch[1] || "default"].push(value);
-    }
-    if (gyrMatch) {
-      let index = 0;
-      if (gyrMatch[2].toLowerCase() === "warning") {
-        index = 1;
-      } else if (gyrMatch[2].toLowerCase() === "error") {
-        index = 2;
-      }
-      formattedPalette.gyr[gyrMatch[1] || "default"][index] = value;
-    }
-    if (key === "default") {
-      formattedPalette.default = value;
-    }
-  });
-
-  return formattedPalette;
-}
-
-const COLORS = formatColorPalette(ColorPalette);
+// Hard-coded color palette - no SCSS import
+const COLORS = {
+  state: {
+    default: [
+      '#c1e4ff', '#9ad0ff', '#72bcff', '#4aa8ff', '#2294ff',
+      '#0080fd', '#0066ca', '#004d97', '#003364', '#001a32'
+    ],
+    light: [
+      '#e6f3ff', '#cce7ff', '#b3dbff', '#99cfff', '#80c3ff'
+    ],
+    dark: [
+      '#002142', '#001a36', '#00142b', '#000d1f', '#000714'
+    ]
+  },
+  gyr: {
+    default: ['#28a745', '#ffc107', '#dc3545'],
+    light: ['#a3e9b7', '#ffe9a6', '#f6b3bc'],
+    dark: ['#165c26', '#876600', '#741c24']
+  },
+  default: '#cccccc'
+};
 
 function getRandomColor(index = null, palette = "default") {
-  const paletteLength = COLORS.state[palette].length;
-
-  if (!index) {
-    return COLORS.state[palette][_.random(0, paletteLength - 1)];
-  }
-
   try {
+    const paletteArray = COLORS.state[palette] || COLORS.state.default;
+    const paletteLength = paletteArray.length;
+
+    if (paletteLength === 0) {
+      return '#cccccc'; // Fallback color if palette is empty
+    }
+
+    if (index === null || index === undefined) {
+      return paletteArray[_.random(0, paletteLength - 1)];
+    }
+
     // index % length makes sure that index is in range
-    return COLORS.state[palette][index % paletteLength];
+    return paletteArray[index % paletteLength];
   } catch (error) {
-    // if error, returns a random normal color
-    return COLORS.state[palette][_.random(0, paletteLength - 1)];
+    console.warn("Error in getRandomColor:", error);
+    return '#cccccc'; // Fallback color
   }
 }
 
-function getColorByName(name, palette) {
-  const gyrMatch = name.match(/(success|warning|error)/);
-  const stateMatch = name.match(/state([0-9]+)/);
+function getColorByName(name, palette = "default") {
+  try {
+    if (!name) return COLORS.default;
 
-  if (name === "default") {
-    return COLORS.default;
-  }
-  if (gyrMatch) {
-    let gyrIndex = 0;
-    if (gyrMatch[1].toLowerCase() === "warning") {
-      gyrIndex = 1;
-    } else if (gyrMatch[1].toLowerCase() === "error") {
-      gyrIndex = 2;
+    if (name === "default") {
+      return COLORS.default;
     }
-    return COLORS.gyr[palette][gyrIndex];
-  }
-  if (stateMatch) {
-    const stateIndex = stateMatch[1] - 1;
-    return COLORS.state[palette][stateIndex];
-  }
 
-  // If no match, return random color
-  return getRandomColor(_.random(0, 8), palette);
+    // Check for success, warning, error
+    if (name.includes('success')) {
+      return COLORS.gyr[palette]?.[0] || COLORS.gyr.default[0];
+    }
+    if (name.includes('warning')) {
+      return COLORS.gyr[palette]?.[1] || COLORS.gyr.default[1];
+    }
+    if (name.includes('error')) {
+      return COLORS.gyr[palette]?.[2] || COLORS.gyr.default[2];
+    }
+
+    // Check for stateX pattern
+    const stateMatch = name.match(/state([0-9]+)/);
+    if (stateMatch) {
+      const stateIndex = parseInt(stateMatch[1], 10) - 1;
+      const stateArray = COLORS.state[palette] || COLORS.state.default;
+      if (stateIndex >= 0 && stateIndex < stateArray.length) {
+        return stateArray[stateIndex];
+      }
+    }
+
+    // If no match, return random color
+    return getRandomColor(_.random(0, 8), palette);
+  } catch (error) {
+    console.warn("Error in getColorByName:", error);
+    return '#cccccc'; // Fallback color
+  }
 }
 
 function getColor(index, config, hover = false) {
-  let { palette } = config;
-  if (hover) {
-    const palettes = ["default", "dark", "light"];
-    palette = palettes[(palettes.indexOf(palette) + 1) % palettes.length];
-  }
+  try {
+    if (!config || !config.data) {
+      return getRandomColor(index);
+    }
 
-  if (config.data.colorsArray && config.data.colorsArray.length) {
-    return getColorByName(config.data.colorsArray[index], palette);
+    let palette = (config.palette && typeof config.palette === 'string') ? config.palette : "default";
+    if (hover) {
+      const palettes = ["default", "dark", "light"];
+      const currentIndex = palettes.indexOf(palette);
+      palette = palettes[(currentIndex >= 0 ? currentIndex : 0 + 1) % palettes.length];
+    }
+
+    if (config.data.colorsArray && Array.isArray(config.data.colorsArray) && config.data.colorsArray.length) {
+      return getColorByName(config.data.colorsArray[index], palette);
+    }
+    if (config.data.color) {
+      return getColorByName(config.data.color, palette);
+    }
+    return getRandomColor(index, palette);
+  } catch (error) {
+    console.warn("Error in getColor:", error);
+    return '#cccccc'; // Fallback color
   }
-  if (config.data.color) {
-    return getColorByName(config.data.color, palette);
-  }
-  return getRandomColor(index, palette);
 }
 
 function getArrayOfColors(length, config, hover = false) {
-  const colorsArray = [];
-  for (let index = 0; index < length; index += 1) {
-    const color = getColor(index, config, hover);
-    colorsArray.push(color);
+  try {
+    const colorsArray = [];
+    for (let index = 0; index < length; index += 1) {
+      const color = getColor(index, config, hover);
+      colorsArray.push(color);
+    }
+    return colorsArray;
+  } catch (error) {
+    console.warn("Error in getArrayOfColors:", error);
+    return Array(length).fill('#cccccc'); // Fallback colors
   }
-  return colorsArray;
 }
 
 export { getArrayOfColors, getColor, getColorByName, getRandomColor };

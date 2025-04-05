@@ -1,33 +1,31 @@
 import { applyMiddleware, createStore } from "redux";
 import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import ReduxPromise from "redux-promise";
 import reduxThunk from "redux-thunk";
 
-import rootReducer from "reducers";
+import rootReducer from "./reducers"; // Make sure the path is correct
 
+// redux-persist configuration
 const persistConfig = {
-  key: "reducer",
+  key: "root",
   storage,
-  // The indicators payload has some weird and complex structure,
-  // that is causing "Error: createPersistoid: error serializing state"
-  // (see reference in the comments section in the: OBPIH-4735),
-  // hence there is need to temporarily disable the indicator reducer
-  // from the persisted reducers.
-  blacklist: ["indicators", "spinner", "connection", "infoBarVisibility"],
+  blacklist: ["indicators", "spinner", "connection", "infoBarVisibility"], // non-persistent reducers
 };
 
-const createStoreWithMiddleware = applyMiddleware(
-  ReduxPromise,
-  reduxThunk,
-)(createStore);
-const store = createStoreWithMiddleware(
-  persistReducer(persistConfig, rootReducer),
-);
+// Wrap the rootReducer with persistReducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// Apply middleware (do NOT call the middleware functions!)
+const middleware = applyMiddleware(ReduxPromise, reduxThunk);
+
+// Create the Redux store with middleware and persisted reducer
+const store = createStore(persistedReducer, middleware);
+
+// Create the persistor instance
 const persistor = persistStore(store);
 
+// Export store, dispatch, and persistor
 export const { dispatch } = store;
-
 export { persistor };
-
 export default store;
