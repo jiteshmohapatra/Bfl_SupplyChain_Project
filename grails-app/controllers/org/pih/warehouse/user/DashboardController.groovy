@@ -117,7 +117,7 @@ class DashboardController {
             redirect(controller: "stockMovement", action: "list", params: [direction: 'INBOUND'] )
             return
         }
-        render(view: "/common/index")
+        render(view: "/common/react")
     }
 
 
