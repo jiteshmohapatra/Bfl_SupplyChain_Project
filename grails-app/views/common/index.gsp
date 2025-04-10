@@ -298,7 +298,11 @@
        </div>
         <nav class="nav">
             <a href="${createLink(uri: '/dashboard/index')}" class="nav-item">Dashboard</a>
-            <a href="${createLink(uri: '/inventoryBrowser/index')}" class="nav-item">Analytics</a>
+            <a href="${createLink(uri: '/inventoryBrowser/index')}
+
+
+
+            " class="nav-item">Analytics</a>
             <a href="#" class="nav-item active">Inventory</a>
             <a href="#" class="nav-item">Purchasing</a>
             <a href="#" class="nav-item">Inbound</a>

@@ -45,6 +45,6 @@ npm-debug.log
 #grails-app/assets/images/*.woff2
 #grails-app/assets/images/*.ttf
 docker/mysql
-docker/openboxes.war
+#docker/openboxes.war
 .gradle
 .~*#
