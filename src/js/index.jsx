@@ -12,6 +12,12 @@ import Provider from "react-redux/es/components/Provider";
 import MainRouter from "src/MainRouter";
 import store from "store";
 
+
+
+
+
+
+
 import "bootstrap/dist/js/bootstrap";
 // eslint-disable-next-line import/extensions
 import "@fontsource/inter";
@@ -26,6 +32,7 @@ import "react-tippy/dist/tippy.css";
 
 library.add(fab, fas);
 // eslint-disable-next-line camelcase,no-undef
+
 __webpack_public_path__ = `${window.CONTEXT_PATH}/static/webpack/`;
 
 // Initialize Sentry as early as possible so that it can capture startup errors as well.

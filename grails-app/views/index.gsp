@@ -1,1 +1,1 @@
-${response.sendRedirect("dashboard/index")}
+${response.sendRedirect(request.contextPath + "/dashboard/index")}

@@ -3,7 +3,8 @@
 import React, { Component } from "react";
 
 import PropTypes from "prop-types";
-import { Bar, Doughnut, HorizontalBar, Line } from "react-chartjs-2";
+import { Doughnut, HorizontalBar, Line } from "react-chartjs-2";
+import { Bar } from 'react-chartjs-2';
 import { getTranslate } from "react-localize-redux";
 import { connect } from "react-redux";
 import { SortableElement } from "react-sortable-hoc";
