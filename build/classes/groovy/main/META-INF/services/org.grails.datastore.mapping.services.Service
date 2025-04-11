@@ -1,0 +1,17 @@
+org.pih.warehouse.core.$LocationDataServiceImplementation
+org.pih.warehouse.core.$LocationGroupDataServiceImplementation
+org.pih.warehouse.core.$LocationRoleDataServiceImplementation
+org.pih.warehouse.core.$LocationTypeDataServiceImplementation
+org.pih.warehouse.core.$OrganizationDataServiceImplementation
+org.pih.warehouse.core.$UnitOfMeasureConversionDataServiceImplementation
+org.pih.warehouse.core.$UserDataServiceImplementation
+org.pih.warehouse.inventory.$InventoryItemDataServiceImplementation
+org.pih.warehouse.inventory.$InventoryLevelDataServiceImplementation
+org.pih.warehouse.inventory.$TransactionEntryDataServiceImplementation
+org.pih.warehouse.invoice.$InvoiceDataServiceImplementation
+org.pih.warehouse.product.$CategoryDataServiceImplementation
+org.pih.warehouse.product.$ProductDataServiceImplementation
+org.pih.warehouse.product.$ProductGroupDataServiceImplementation
+org.pih.warehouse.product.$ProductSupplierDataServiceImplementation
+org.pih.warehouse.product.$ProductSupplierPreferenceDataServiceImplementation
+org.pih.warehouse.requisition.$RequisitionDataServiceImplementation

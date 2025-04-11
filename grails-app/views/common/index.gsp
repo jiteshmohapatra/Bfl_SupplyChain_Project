@@ -43,16 +43,61 @@
         .nav {
             display: flex;
             flex-grow: 1;
+            position: relative;
         }
         .nav-item {
             padding: 10px 15px;
             color: #333;
             text-decoration: none;
             font-size: 14px;
+            position: relative;
+            display: flex;
+            align-items: center;
         }
         .nav-item.active {
             color: #1976d2;
             border-bottom: 2px solid #1976d2;
+        }
+        .nav-item.has-dropdown {
+            padding-right: 20px; /* Space for the arrow */
+        }
+        .nav-item.has-dropdown::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #333; /* Downward triangle arrow */
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .nav-item:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            min-width: 200px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 5px 0;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .dropdown a:hover {
+            background-color: #f0f0f0;
         }
         .icons {
             display: flex;
@@ -70,6 +115,7 @@
             background-color: #fff;
             border-right: 1px solid #e0e0e0;
             transition: width 0.3s;
+            overflow-y: auto;
         }
         .sidebar-item {
             padding: 15px;
@@ -78,6 +124,7 @@
             align-items: center;
             border-bottom: 1px solid #f0f0f0;
             cursor: pointer;
+            text-align: center;
         }
         .sidebar-item.active {
             background-color: #f0f0f0;
@@ -91,6 +138,10 @@
             font-size: 12px;
             color: #666;
             text-align: center;
+            white-space: nowrap;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .content {
             flex: 1;
@@ -99,18 +150,15 @@
         }
         .dashboard-row {
             display: flex;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
             gap: 20px;
+            margin-bottom: 20px;
         }
         .card {
             background-color: #fff;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            flex: 1;
+            flex: 1 1 calc(25% - 15px);
             min-width: 250px;
-            max-width: 100%;
         }
         .card-header {
             padding: 15px;
@@ -145,7 +193,7 @@
         }
         .chart-container {
             padding: 15px;
-            height: 200px;
+            height: 250px;
             position: relative;
         }
         .chart-title {
@@ -163,12 +211,31 @@
         .status-circles {
             display: flex;
             justify-content: space-around;
-            padding: 20px 0;
+            align-items: center;
+            height: 100%;
+            position: relative;
+        }
+        .status-circles::before,
+        .status-circles::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #e0e0e0;
+        }
+        .status-circles::before {
+            left: 33.33%;
+        }
+        .status-circles::after {
+            left: 66.66%;
         }
         .status-circle {
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 33.33%;
+            text-align: center;
         }
         .circle {
             width: 10px;
@@ -184,6 +251,12 @@
         }
         .circle.red {
             background-color: #f44336;
+        }
+        .circle.green {
+            background-color: #4caf50;
+        }
+        .circle.amber {
+            background-color: #ff9800;
         }
         .circle-number {
             font-size: 24px;
@@ -253,8 +326,8 @@
             margin: 0 10px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        /* Enhanced Responsive Design */
+        @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
             }
@@ -270,39 +343,89 @@
             .sidebar-item {
                 flex: 1 0 25%;
                 padding: 10px;
+                min-width: 100px;
             }
             .content {
                 margin-left: 0;
                 width: 100%;
             }
             .dashboard-row {
-                flex-direction: column;
+                flex-wrap: wrap;
             }
             .card {
+                flex: 1 1 100%;
                 min-width: 100%;
-                margin-right: 0;
+            }
+            .dropdown {
+                position: static;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+            }
+            .dropdown a {
+                padding: 10px;
+            }
+            .nav-item.has-dropdown::after {
+                display: none; /* Hide arrow on small screens if needed */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
             }
             .nav {
                 display: none;
             }
             .icons {
-                margin-left: auto;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .sidebar-item {
+                flex: 1 0 33.33%;
+            }
+            .status-circles::before,
+            .status-circles::after {
+                display: none;
+            }
+            .status-circle {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .status-circle:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-item {
+                flex: 1 0 50%;
+            }
+            .card {
+                min-width: 100%;
+            }
+            .footer span {
+                display: block;
+                margin: 5px 0;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-       <div class="logo">
-           <img src="https://www.openboxes.com/img/logo_30.png" alt="Logo" class="logo-icon">
-       </div>
+        <div class="logo">
+            <img src="https://www.openboxes.com/img/logo_30.png" alt="Logo" class="logo-icon">
+        </div>
         <nav class="nav">
-            <a href="${createLink(uri: '/dashboard/index')}" class="nav-item">Dashboard</a>
-            <a href="${createLink(uri: '/inventoryBrowser/index')}
-
-
-
-            " class="nav-item">Analytics</a>
+            <a href="#" class="nav-item">Dashboard</a>
+            <div class="nav-item has-dropdown">Analytics
+                <div class="dropdown">
+                    <a href="#">Browse inventory</a>
+                    <a href="#">Inventory Snapshots</a>
+                    <a href="#">Consumption Report</a>
+                </div>
+            </div>
             <a href="#" class="nav-item active">Inventory</a>
             <a href="#" class="nav-item">Purchasing</a>
             <a href="#" class="nav-item">Inbound</a>
@@ -354,10 +477,9 @@
                     </div>
                     <div class="card-body">
                         <div class="big-number">24</div>
-                        <div class="subtitle">Products</div>
+                        <div class="subtitle">In stock</div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Products in Receiving Bin</div>
@@ -371,10 +493,9 @@
                         <div class="subtitle">Products</div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Your In Progress Shipments</div>
+                        <div class="card-title">Your in Progress Shipments</div>
                         <div class="card-actions">
                             <div class="card-action">ⓘ</div>
                             <div class="card-action">⋮</div>
@@ -385,10 +506,9 @@
                         <div class="subtitle">Shipments</div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Your In Progress Putaways</div>
+                        <div class="card-title">Your in Progress Putaways</div>
                         <div class="card-actions">
                             <div class="card-action">ⓘ</div>
                             <div class="card-action">⋮</div>
@@ -471,17 +591,17 @@
                     <div class="card-body">
                         <div class="status-circles">
                             <div class="status-circle">
-                                <div class="circle" style="background-color: #4caf50;"></div>
+                                <div class="circle green"></div>
                                 <div class="circle-number">0</div>
                                 <div class="circle-label">Created < 4 days ago</div>
                             </div>
                             <div class="status-circle">
-                                <div class="circle" style="background-color: #ff9800;"></div>
+                                <div class="circle amber"></div>
                                 <div class="circle-number">0</div>
                                 <div class="circle-label">Created < 4 days ago</div>
                             </div>
                             <div class="status-circle">
-                                <div class="circle" style="background-color: #f44336;"></div>
+                                <div class="circle red"></div>
                                 <div class="circle-number">0</div>
                                 <div class="circle-label">Created > 7 days ago</div>
                             </div>
@@ -587,7 +707,6 @@
     <!-- Include Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Script to create the Expiration Summary chart
         document.addEventListener('DOMContentLoaded', function () {
             const expirationCtx = document.getElementById('expirationChart').getContext('2d');
             new Chart(expirationCtx, {
@@ -634,7 +753,6 @@
                 }
             });
 
-            // Script to create the Inventory Summary chart
             const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
             new Chart(inventoryCtx, {
                 type: 'bar',
@@ -649,7 +767,7 @@
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // Horizontal bars
+                    indexAxis: 'y',
                     scales: {
                         x: {
                             beginAtZero: true,
