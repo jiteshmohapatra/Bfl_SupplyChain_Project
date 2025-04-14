@@ -78,14 +78,6 @@
                             ${warehouse.message(code:'localization.disable.label', default: 'Disable translation mode')}
                         </g:link>
                     </g:if>
-                    <g:else>
-                        <g:link role="menuitem" controller="user" action="enableLocalizationMode" class="dropdown-item">
-                            <span class="icon">
-                                <i class="ri-map-pin-line"></i>
-                            </span>
-                            ${warehouse.message(code:'localization.enable.label', default: 'Enable translation mode')}
-                        </g:link>
-                    </g:else>
                     <g:link role="menuitem" controller="dashboard" action="flushCache" class="dropdown-item">
                         <span class="icon">
                             <i class="ri-refresh-line"></i>

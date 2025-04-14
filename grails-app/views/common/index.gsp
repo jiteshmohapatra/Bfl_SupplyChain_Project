@@ -702,7 +702,8 @@
         <span>IP Address: 127.0.0.1</span> |
         <span>Hostname: ubuntu-s-1vcpu-2gb-nyc3-01 (demo.openboxes.com)</span> |
         <span>Timezone: Asia/Kolkata</span>
-    </div>
+    </div>  \
+    
 
     <!-- Include Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
